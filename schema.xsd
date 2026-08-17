@@ -1,0 +1,1008 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <!-- TYPE DEFINITIONS -->
+
+    <xs:simpleType name="NumberType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\s*[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="IntegerType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\s*[-+]?[0-9]+\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="BoolLiteralType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\s*(true|false|TRUE|FALSE|True|False)\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="AutoKeywordType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\s*auto\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ValTokenType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\s*[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px|%|vw|vh|vmin|vmax)?\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ValType">
+        <xs:union memberTypes="AutoKeywordType ValTokenType NumberType"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="FontSizeTokenType">
+        <xs:restriction base="xs:string">
+            <xs:pattern
+                    value="\s*[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px|rem|vw|vh|vmin|vmax)?\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="FontSizeType">
+        <xs:union memberTypes="NumberType FontSizeTokenType"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="WhitespaceOnlyType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Rect1Type">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\s*[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Rect2Type">
+        <xs:restriction base="xs:string">
+            <xs:pattern
+                    value="\s*[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)\s+[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Rect4Type">
+        <xs:restriction base="xs:string">
+            <xs:pattern
+                    value="\s*[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)\s+[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)\s+[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)\s+[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="RectType">
+        <xs:union memberTypes="WhitespaceOnlyType Rect1Type Rect2Type Rect4Type"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="UiRect1Type">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\s*[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px|%|vw|vh|vmin|vmax)?\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="UiRect2Type">
+        <xs:restriction base="xs:string">
+            <xs:pattern
+                    value="\s*[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px|%|vw|vh|vmin|vmax)?\s+[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px|%|vw|vh|vmin|vmax)?\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="UiRect3Type">
+        <xs:restriction base="xs:string">
+            <xs:pattern
+                    value="\s*[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px|%|vw|vh|vmin|vmax)?\s+[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px|%|vw|vh|vmin|vmax)?\s+[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px|%|vw|vh|vmin|vmax)?\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="UiRect4Type">
+        <xs:restriction base="xs:string">
+            <xs:pattern
+                    value="\s*[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px|%|vw|vh|vmin|vmax)?\s+[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px|%|vw|vh|vmin|vmax)?\s+[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px|%|vw|vh|vmin|vmax)?\s+[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px|%|vw|vh|vmin|vmax)?\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="UiRectType">
+        <xs:union memberTypes="WhitespaceOnlyType UiRect1Type UiRect2Type UiRect3Type UiRect4Type"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="BorderRadiusType">
+        <xs:union memberTypes="WhitespaceOnlyType UiRect1Type UiRect4Type"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="GridTrackType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\s*([-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px|%|fr)|auto)\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="GridTemplateType">
+        <xs:restriction base="xs:string">
+            <xs:pattern
+                    value="\s*([-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px)?(\s+[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px)?)*)?\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="GridPlacementType">
+        <xs:union memberTypes="AutoKeywordType IntegerType"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="HexColorType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\s*#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="FunctionalColorType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\s*(rgb|rgba|hsl|hsla)\([^)]+\)\s*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="NamedCssColorType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="transparent"/>
+            <xs:enumeration value="black"/>
+            <xs:enumeration value="silver"/>
+            <xs:enumeration value="gray"/>
+            <xs:enumeration value="grey"/>
+            <xs:enumeration value="white"/>
+            <xs:enumeration value="maroon"/>
+            <xs:enumeration value="red"/>
+            <xs:enumeration value="purple"/>
+            <xs:enumeration value="fuchsia"/>
+            <xs:enumeration value="magenta"/>
+            <xs:enumeration value="green"/>
+            <xs:enumeration value="lime"/>
+            <xs:enumeration value="olive"/>
+            <xs:enumeration value="yellow"/>
+            <xs:enumeration value="navy"/>
+            <xs:enumeration value="blue"/>
+            <xs:enumeration value="teal"/>
+            <xs:enumeration value="aqua"/>
+            <xs:enumeration value="cyan"/>
+            <xs:enumeration value="aliceblue"/>
+            <xs:enumeration value="antiquewhite"/>
+            <xs:enumeration value="aquamarine"/>
+            <xs:enumeration value="azure"/>
+            <xs:enumeration value="beige"/>
+            <xs:enumeration value="bisque"/>
+            <xs:enumeration value="blanchedalmond"/>
+            <xs:enumeration value="blueviolet"/>
+            <xs:enumeration value="brown"/>
+            <xs:enumeration value="burlywood"/>
+            <xs:enumeration value="cadetblue"/>
+            <xs:enumeration value="chartreuse"/>
+            <xs:enumeration value="chocolate"/>
+            <xs:enumeration value="coral"/>
+            <xs:enumeration value="cornflowerblue"/>
+            <xs:enumeration value="cornsilk"/>
+            <xs:enumeration value="crimson"/>
+            <xs:enumeration value="darkblue"/>
+            <xs:enumeration value="darkcyan"/>
+            <xs:enumeration value="darkgoldenrod"/>
+            <xs:enumeration value="darkgray"/>
+            <xs:enumeration value="darkgrey"/>
+            <xs:enumeration value="darkgreen"/>
+            <xs:enumeration value="darkkhaki"/>
+            <xs:enumeration value="darkmagenta"/>
+            <xs:enumeration value="darkolivegreen"/>
+            <xs:enumeration value="darkorange"/>
+            <xs:enumeration value="darkorchid"/>
+            <xs:enumeration value="darkred"/>
+            <xs:enumeration value="darksalmon"/>
+            <xs:enumeration value="darkseagreen"/>
+            <xs:enumeration value="darkslateblue"/>
+            <xs:enumeration value="darkslategray"/>
+            <xs:enumeration value="darkslategrey"/>
+            <xs:enumeration value="darkturquoise"/>
+            <xs:enumeration value="darkviolet"/>
+            <xs:enumeration value="deeppink"/>
+            <xs:enumeration value="deepskyblue"/>
+            <xs:enumeration value="dimgray"/>
+            <xs:enumeration value="dimgrey"/>
+            <xs:enumeration value="dodgerblue"/>
+            <xs:enumeration value="firebrick"/>
+            <xs:enumeration value="floralwhite"/>
+            <xs:enumeration value="forestgreen"/>
+            <xs:enumeration value="gainsboro"/>
+            <xs:enumeration value="ghostwhite"/>
+            <xs:enumeration value="gold"/>
+            <xs:enumeration value="goldenrod"/>
+            <xs:enumeration value="greenyellow"/>
+            <xs:enumeration value="honeydew"/>
+            <xs:enumeration value="hotpink"/>
+            <xs:enumeration value="indianred"/>
+            <xs:enumeration value="indigo"/>
+            <xs:enumeration value="ivory"/>
+            <xs:enumeration value="khaki"/>
+            <xs:enumeration value="lavender"/>
+            <xs:enumeration value="lavenderblush"/>
+            <xs:enumeration value="lawngreen"/>
+            <xs:enumeration value="lemonchiffon"/>
+            <xs:enumeration value="lightblue"/>
+            <xs:enumeration value="lightcoral"/>
+            <xs:enumeration value="lightcyan"/>
+            <xs:enumeration value="lightgoldenrodyellow"/>
+            <xs:enumeration value="lightgray"/>
+            <xs:enumeration value="lightgrey"/>
+            <xs:enumeration value="lightgreen"/>
+            <xs:enumeration value="lightpink"/>
+            <xs:enumeration value="lightsalmon"/>
+            <xs:enumeration value="lightseagreen"/>
+            <xs:enumeration value="lightskyblue"/>
+            <xs:enumeration value="lightslategray"/>
+            <xs:enumeration value="lightslategrey"/>
+            <xs:enumeration value="lightsteelblue"/>
+            <xs:enumeration value="lightyellow"/>
+            <xs:enumeration value="limegreen"/>
+            <xs:enumeration value="linen"/>
+            <xs:enumeration value="mediumaquamarine"/>
+            <xs:enumeration value="mediumblue"/>
+            <xs:enumeration value="mediumorchid"/>
+            <xs:enumeration value="mediumpurple"/>
+            <xs:enumeration value="mediumseagreen"/>
+            <xs:enumeration value="mediumslateblue"/>
+            <xs:enumeration value="mediumspringgreen"/>
+            <xs:enumeration value="mediumturquoise"/>
+            <xs:enumeration value="mediumvioletred"/>
+            <xs:enumeration value="midnightblue"/>
+            <xs:enumeration value="mintcream"/>
+            <xs:enumeration value="mistyrose"/>
+            <xs:enumeration value="moccasin"/>
+            <xs:enumeration value="navajowhite"/>
+            <xs:enumeration value="oldlace"/>
+            <xs:enumeration value="olivedrab"/>
+            <xs:enumeration value="orange"/>
+            <xs:enumeration value="orangered"/>
+            <xs:enumeration value="orchid"/>
+            <xs:enumeration value="palegoldenrod"/>
+            <xs:enumeration value="palegreen"/>
+            <xs:enumeration value="paleturquoise"/>
+            <xs:enumeration value="palevioletred"/>
+            <xs:enumeration value="papayawhip"/>
+            <xs:enumeration value="peachpuff"/>
+            <xs:enumeration value="peru"/>
+            <xs:enumeration value="pink"/>
+            <xs:enumeration value="plum"/>
+            <xs:enumeration value="powderblue"/>
+            <xs:enumeration value="rebeccapurple"/>
+            <xs:enumeration value="rosybrown"/>
+            <xs:enumeration value="royalblue"/>
+            <xs:enumeration value="saddlebrown"/>
+            <xs:enumeration value="salmon"/>
+            <xs:enumeration value="sandybrown"/>
+            <xs:enumeration value="seagreen"/>
+            <xs:enumeration value="seashell"/>
+            <xs:enumeration value="sienna"/>
+            <xs:enumeration value="skyblue"/>
+            <xs:enumeration value="slateblue"/>
+            <xs:enumeration value="slategray"/>
+            <xs:enumeration value="slategrey"/>
+            <xs:enumeration value="snow"/>
+            <xs:enumeration value="springgreen"/>
+            <xs:enumeration value="steelblue"/>
+            <xs:enumeration value="tan"/>
+            <xs:enumeration value="thistle"/>
+            <xs:enumeration value="tomato"/>
+            <xs:enumeration value="turquoise"/>
+            <xs:enumeration value="violet"/>
+            <xs:enumeration value="wheat"/>
+            <xs:enumeration value="whitesmoke"/>
+            <xs:enumeration value="yellowgreen"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ColorType">
+        <xs:union memberTypes="NamedCssColorType HexColorType FunctionalColorType"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="DisplayType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="flex"/>
+            <xs:enumeration value="grid"/>
+            <xs:enumeration value="block"/>
+            <xs:enumeration value="none"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="BoxSizingType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="border"/>
+            <xs:enumeration value="content"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="PositionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="absolute"/>
+            <xs:enumeration value="relative"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="OverflowAxisType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="visible"/>
+            <xs:enumeration value="clip"/>
+            <xs:enumeration value="hidden"/>
+            <xs:enumeration value="scroll"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="VisualBoxType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="padding"/>
+            <xs:enumeration value="content"/>
+            <xs:enumeration value="border"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="AlignItemsType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="default"/>
+            <xs:enumeration value="start"/>
+            <xs:enumeration value="end"/>
+            <xs:enumeration value="center"/>
+            <xs:enumeration value="baseline"/>
+            <xs:enumeration value="stretch"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="JustifyItemsType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="default"/>
+            <xs:enumeration value="start"/>
+            <xs:enumeration value="end"/>
+            <xs:enumeration value="center"/>
+            <xs:enumeration value="stretch"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="AlignSelfType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="auto"/>
+            <xs:enumeration value="start"/>
+            <xs:enumeration value="end"/>
+            <xs:enumeration value="center"/>
+            <xs:enumeration value="stretch"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="JustifySelfType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="auto"/>
+            <xs:enumeration value="start"/>
+            <xs:enumeration value="end"/>
+            <xs:enumeration value="center"/>
+            <xs:enumeration value="stretch"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="AlignContentType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="default"/>
+            <xs:enumeration value="start"/>
+            <xs:enumeration value="end"/>
+            <xs:enumeration value="center"/>
+            <xs:enumeration value="stretch"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="JustifyContentType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="default"/>
+            <xs:enumeration value="start"/>
+            <xs:enumeration value="end"/>
+            <xs:enumeration value="center"/>
+            <xs:enumeration value="space-between"/>
+            <xs:enumeration value="space-around"/>
+            <xs:enumeration value="space-evenly"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="DirectionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ltr"/>
+            <xs:enumeration value="rtl"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="FlexDirectionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="row"/>
+            <xs:enumeration value="column"/>
+            <xs:enumeration value="row-reverse"/>
+            <xs:enumeration value="column-reverse"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="FlexWrapType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="no-wrap"/>
+            <xs:enumeration value="wrap"/>
+            <xs:enumeration value="wrap-reverse"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="GridAutoFlowType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="row"/>
+            <xs:enumeration value="column"/>
+            <xs:enumeration value="row-dense"/>
+            <xs:enumeration value="column-dense"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="FontWeightNamedType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="thin"/>
+            <xs:enumeration value="extra_light"/>
+            <xs:enumeration value="light"/>
+            <xs:enumeration value="normal"/>
+            <xs:enumeration value="medium"/>
+            <xs:enumeration value="semibold"/>
+            <xs:enumeration value="bold"/>
+            <xs:enumeration value="extra_bold"/>
+            <xs:enumeration value="black"/>
+            <xs:enumeration value="extra_black"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="FontWeightType">
+        <xs:union memberTypes="IntegerType FontWeightNamedType"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="FontStyleType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="normal"/>
+            <xs:enumeration value="italic"/>
+            <xs:enumeration value="oblique"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="TooltipAnchorType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="top"/>
+            <xs:enumeration value="bottom"/>
+            <xs:enumeration value="left"/>
+            <xs:enumeration value="right"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ImageModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="auto"/>
+            <xs:enumeration value="sliced"/>
+            <xs:enumeration value="tiled"/>
+            <xs:enumeration value="stretch"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ScrollDirectionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="vertical"/>
+            <xs:enumeration value="horizontal"/>
+            <xs:enumeration value="both"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="DividerOrientationType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="horizontal"/>
+            <xs:enumeration value="vertical"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- ELEMENT ATTRIBUTES -->
+
+    <xs:attributeGroup name="elementAttrs">
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="bg-color" type="ColorType"/>
+        <xs:attribute name="border-color" type="ColorType"/>
+        <xs:attribute name="border-color-top" type="ColorType"/>
+        <xs:attribute name="border-color-right" type="ColorType"/>
+        <xs:attribute name="border-color-bottom" type="ColorType"/>
+        <xs:attribute name="border-color-left" type="ColorType"/>
+        <xs:attribute name="display" type="DisplayType"/>
+        <xs:attribute name="box-sizing" type="BoxSizingType"/>
+        <xs:attribute name="position" type="PositionType"/>
+
+        <xs:attribute name="left" type="ValType"/>
+        <xs:attribute name="right" type="ValType"/>
+        <xs:attribute name="top" type="ValType"/>
+        <xs:attribute name="bottom" type="ValType"/>
+
+        <xs:attribute name="width" type="ValType"/>
+        <xs:attribute name="height" type="ValType"/>
+        <xs:attribute name="min-width" type="ValType"/>
+        <xs:attribute name="min-height" type="ValType"/>
+        <xs:attribute name="max-width" type="ValType"/>
+        <xs:attribute name="max-height" type="ValType"/>
+        <xs:attribute name="aspect-ratio" type="NumberType"/>
+        <xs:attribute name="overflow-x" type="OverflowAxisType"/>
+        <xs:attribute name="overflow-y" type="OverflowAxisType"/>
+        <xs:attribute name="scrollbar-width" type="NumberType"/>
+        <xs:attribute name="overflow-clip-visual-box" type="VisualBoxType"/>
+        <xs:attribute name="overflow-clip-margin" type="NumberType"/>
+        <xs:attribute name="align-items" type="AlignItemsType"/>
+        <xs:attribute name="justify-items" type="JustifyItemsType"/>
+        <xs:attribute name="align-self" type="AlignSelfType"/>
+        <xs:attribute name="justify-self" type="JustifySelfType"/>
+        <xs:attribute name="align-content" type="AlignContentType"/>
+        <xs:attribute name="justify-content" type="JustifyContentType"/>
+        <xs:attribute name="direction" type="DirectionType"/>
+        <xs:attribute name="margin" type="UiRectType"/>
+        <xs:attribute name="padding" type="UiRectType"/>
+        <xs:attribute name="border" type="UiRectType"/>
+        <xs:attribute name="border-radius" type="BorderRadiusType"/>
+        <xs:attribute name="row-gap" type="ValType"/>
+        <xs:attribute name="column-gap" type="ValType"/>
+        <xs:attribute name="flex-direction" type="FlexDirectionType"/>
+        <xs:attribute name="flex-wrap" type="FlexWrapType"/>
+        <xs:attribute name="flex-grow" type="NumberType"/>
+        <xs:attribute name="flex-shrink" type="NumberType"/>
+        <xs:attribute name="flex-basis" type="ValType"/>
+        <xs:attribute name="grid-auto-flow" type="GridAutoFlowType"/>
+        <xs:attribute name="grid-template-rows" type="GridTrackType"/>
+        <xs:attribute name="grid-template-columns" type="GridTrackType"/>
+        <xs:attribute name="grid-auto-rows" type="GridTemplateType"/>
+        <xs:attribute name="grid-auto-columns" type="GridTemplateType"/>
+        <xs:attribute name="grid-row" type="GridPlacementType"/>
+        <xs:attribute name="grid-column" type="GridPlacementType"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hoverElementAttrs">
+        <xs:attribute name="hover.bg-color" type="ColorType"/>
+        <xs:attribute name="hover.border-color" type="ColorType"/>
+        <xs:attribute name="hover.border-color-top" type="ColorType"/>
+        <xs:attribute name="hover.border-color-right" type="ColorType"/>
+        <xs:attribute name="hover.border-color-bottom" type="ColorType"/>
+        <xs:attribute name="hover.border-color-left" type="ColorType"/>
+        <xs:attribute name="hover.display" type="DisplayType"/>
+        <xs:attribute name="hover.box-sizing" type="BoxSizingType"/>
+        <xs:attribute name="hover.position" type="PositionType"/>
+
+        <xs:attribute name="hover.left" type="ValType"/>
+        <xs:attribute name="hover.right" type="ValType"/>
+        <xs:attribute name="hover.top" type="ValType"/>
+        <xs:attribute name="hover.bottom" type="ValType"/>
+
+        <xs:attribute name="hover.width" type="ValType"/>
+        <xs:attribute name="hover.height" type="ValType"/>
+        <xs:attribute name="hover.min-width" type="ValType"/>
+        <xs:attribute name="hover.min-height" type="ValType"/>
+        <xs:attribute name="hover.max-width" type="ValType"/>
+        <xs:attribute name="hover.max-height" type="ValType"/>
+        <xs:attribute name="hover.aspect-ratio" type="NumberType"/>
+        <xs:attribute name="hover.overflow-x" type="OverflowAxisType"/>
+        <xs:attribute name="hover.overflow-y" type="OverflowAxisType"/>
+        <xs:attribute name="hover.scrollbar-width" type="NumberType"/>
+        <xs:attribute name="hover.overflow-clip-visual-box" type="VisualBoxType"/>
+        <xs:attribute name="hover.overflow-clip-margin" type="NumberType"/>
+        <xs:attribute name="hover.align-items" type="AlignItemsType"/>
+        <xs:attribute name="hover.justify-items" type="JustifyItemsType"/>
+        <xs:attribute name="hover.align-self" type="AlignSelfType"/>
+        <xs:attribute name="hover.justify-self" type="JustifySelfType"/>
+        <xs:attribute name="hover.align-content" type="AlignContentType"/>
+        <xs:attribute name="hover.justify-content" type="JustifyContentType"/>
+        <xs:attribute name="hover.direction" type="DirectionType"/>
+        <xs:attribute name="hover.margin" type="UiRectType"/>
+        <xs:attribute name="hover.padding" type="UiRectType"/>
+        <xs:attribute name="hover.border" type="UiRectType"/>
+        <xs:attribute name="hover.border-radius" type="BorderRadiusType"/>
+        <xs:attribute name="hover.row-gap" type="ValType"/>
+        <xs:attribute name="hover.column-gap" type="ValType"/>
+        <xs:attribute name="hover.flex-direction" type="FlexDirectionType"/>
+        <xs:attribute name="hover.flex-wrap" type="FlexWrapType"/>
+        <xs:attribute name="hover.flex-grow" type="NumberType"/>
+        <xs:attribute name="hover.flex-shrink" type="NumberType"/>
+        <xs:attribute name="hover.flex-basis" type="ValType"/>
+        <xs:attribute name="hover.grid-auto-flow" type="GridAutoFlowType"/>
+        <xs:attribute name="hover.grid-template-rows" type="GridTrackType"/>
+        <xs:attribute name="hover.grid-template-columns" type="GridTrackType"/>
+        <xs:attribute name="hover.grid-auto-rows" type="GridTemplateType"/>
+        <xs:attribute name="hover.grid-auto-columns" type="GridTemplateType"/>
+        <xs:attribute name="hover.grid-row" type="GridPlacementType"/>
+        <xs:attribute name="hover.grid-column" type="GridPlacementType"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="clickElementAttrs">
+        <xs:attribute name="click.bg-color" type="ColorType"/>
+        <xs:attribute name="click.border-color" type="ColorType"/>
+        <xs:attribute name="click.border-color-top" type="ColorType"/>
+        <xs:attribute name="click.border-color-right" type="ColorType"/>
+        <xs:attribute name="click.border-color-bottom" type="ColorType"/>
+        <xs:attribute name="click.border-color-left" type="ColorType"/>
+        <xs:attribute name="click.display" type="DisplayType"/>
+        <xs:attribute name="click.box-sizing" type="BoxSizingType"/>
+        <xs:attribute name="click.position" type="PositionType"/>
+
+        <xs:attribute name="click.left" type="ValType"/>
+        <xs:attribute name="click.right" type="ValType"/>
+        <xs:attribute name="click.top" type="ValType"/>
+        <xs:attribute name="click.bottom" type="ValType"/>
+
+        <xs:attribute name="click.width" type="ValType"/>
+        <xs:attribute name="click.height" type="ValType"/>
+        <xs:attribute name="click.min-width" type="ValType"/>
+        <xs:attribute name="click.min-height" type="ValType"/>
+        <xs:attribute name="click.max-width" type="ValType"/>
+        <xs:attribute name="click.max-height" type="ValType"/>
+        <xs:attribute name="click.aspect-ratio" type="NumberType"/>
+        <xs:attribute name="click.overflow-x" type="OverflowAxisType"/>
+        <xs:attribute name="click.overflow-y" type="OverflowAxisType"/>
+        <xs:attribute name="click.scrollbar-width" type="NumberType"/>
+        <xs:attribute name="click.overflow-clip-visual-box" type="VisualBoxType"/>
+        <xs:attribute name="click.overflow-clip-margin" type="NumberType"/>
+        <xs:attribute name="click.align-items" type="AlignItemsType"/>
+        <xs:attribute name="click.justify-items" type="JustifyItemsType"/>
+        <xs:attribute name="click.align-self" type="AlignSelfType"/>
+        <xs:attribute name="click.justify-self" type="JustifySelfType"/>
+        <xs:attribute name="click.align-content" type="AlignContentType"/>
+        <xs:attribute name="click.justify-content" type="JustifyContentType"/>
+        <xs:attribute name="click.direction" type="DirectionType"/>
+        <xs:attribute name="click.margin" type="UiRectType"/>
+        <xs:attribute name="click.padding" type="UiRectType"/>
+        <xs:attribute name="click.border" type="UiRectType"/>
+        <xs:attribute name="click.border-radius" type="BorderRadiusType"/>
+        <xs:attribute name="click.row-gap" type="ValType"/>
+        <xs:attribute name="click.column-gap" type="ValType"/>
+        <xs:attribute name="click.flex-direction" type="FlexDirectionType"/>
+        <xs:attribute name="click.flex-wrap" type="FlexWrapType"/>
+        <xs:attribute name="click.flex-grow" type="NumberType"/>
+        <xs:attribute name="click.flex-shrink" type="NumberType"/>
+        <xs:attribute name="click.flex-basis" type="ValType"/>
+        <xs:attribute name="click.grid-auto-flow" type="GridAutoFlowType"/>
+        <xs:attribute name="click.grid-template-rows" type="GridTrackType"/>
+        <xs:attribute name="click.grid-template-columns" type="GridTrackType"/>
+        <xs:attribute name="click.grid-auto-rows" type="GridTemplateType"/>
+        <xs:attribute name="click.grid-auto-columns" type="GridTemplateType"/>
+        <xs:attribute name="click.grid-row" type="GridPlacementType"/>
+        <xs:attribute name="click.grid-column" type="GridPlacementType"/>
+    </xs:attributeGroup>
+
+    <!-- WIDGET ATTRIBUTES -->
+
+    <xs:attributeGroup name="textAttrs">
+        <xs:attribute name="content" type="xs:string"/>
+        <xs:attribute name="font" type="xs:string"/>
+        <xs:attribute name="font-weight" type="FontWeightType"/>
+        <xs:attribute name="font-width" type="xs:float"/>
+        <xs:attribute name="font-size" type="FontSizeType"/>
+        <xs:attribute name="font-style" type="FontStyleType"/>
+        <xs:attribute name="color" type="ColorType"/>
+
+        <xs:attribute name="hover.content" type="xs:string"/>
+        <xs:attribute name="hover.font" type="xs:string"/>
+        <xs:attribute name="hover.font-weight" type="FontWeightType"/>
+        <xs:attribute name="hover.font-width" type="xs:float"/>
+        <xs:attribute name="hover.font-size" type="FontSizeType"/>
+        <xs:attribute name="hover.font-style" type="FontStyleType"/>
+        <xs:attribute name="hover.color" type="ColorType"/>
+
+        <xs:attribute name="click.content" type="xs:string"/>
+        <xs:attribute name="click.font" type="xs:string"/>
+        <xs:attribute name="click.font-weight" type="FontWeightType"/>
+        <xs:attribute name="click.font-width" type="xs:float"/>
+        <xs:attribute name="click.font-size" type="FontSizeType"/>
+        <xs:attribute name="click.font-style" type="FontStyleType"/>
+        <xs:attribute name="click.color" type="ColorType"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="checkboxAttrs">
+        <xs:attribute name="checked" type="BoolLiteralType"/>
+        <xs:attribute name="check-color" type="ColorType"/>
+        <xs:attribute name="check-symbol" type="xs:string"/>
+
+        <xs:attribute name="hover.checked" type="BoolLiteralType"/>
+        <xs:attribute name="hover.check-color" type="ColorType"/>
+        <xs:attribute name="hover.check-symbol" type="xs:string"/>
+
+        <xs:attribute name="click.checked" type="BoolLiteralType"/>
+        <xs:attribute name="click.check-color" type="ColorType"/>
+        <xs:attribute name="click.check-symbol" type="xs:string"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="dividerAttrs">
+        <xs:attribute name="orientation" type="DividerOrientationType"/>
+
+        <!-- "click" and "hover" overrides not supported-->
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="dropdownAttrs">
+        <xs:attribute name="placeholder" type="xs:string"/>
+        <xs:attribute name="dropdown-bg-color" type="ColorType"/>
+        <xs:attribute name="menu-bg-color" type="ColorType"/>
+
+
+        <xs:attribute name="hover.placeholder" type="xs:string"/>
+        <xs:attribute name="hover.dropdown-bg-color" type="ColorType"/>
+        <xs:attribute name="hover.menu-bg-color" type="ColorType"/>
+
+
+        <xs:attribute name="click.placeholder" type="xs:string"/>
+        <xs:attribute name="click.dropdown-bg-color" type="ColorType"/>
+        <xs:attribute name="click.menu-bg-color" type="ColorType"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="imageAttrs">
+        <xs:attribute name="src" type="xs:string"/>
+        <xs:attribute name="color" type="ColorType"/>
+        <xs:attribute name="flip-x" type="BoolLiteralType"/>
+        <xs:attribute name="flip-y" type="BoolLiteralType"/>
+        <xs:attribute name="rect" type="RectType"/>
+        <xs:attribute name="mode" type="ImageModeType"/>
+        <xs:attribute name="visual-box" type="VisualBoxType"/>
+
+
+        <xs:attribute name="hover.src" type="xs:string"/>
+        <xs:attribute name="hover.color" type="ColorType"/>
+        <xs:attribute name="hover.flip-x" type="BoolLiteralType"/>
+        <xs:attribute name="hover.flip-y" type="BoolLiteralType"/>
+        <xs:attribute name="hover.rect" type="RectType"/>
+        <xs:attribute name="hover.mode" type="ImageModeType"/>
+        <xs:attribute name="hover.visual-box" type="VisualBoxType"/>
+
+
+        <xs:attribute name="click.src" type="xs:string"/>
+        <xs:attribute name="click.color" type="ColorType"/>
+        <xs:attribute name="click.flip-x" type="BoolLiteralType"/>
+        <xs:attribute name="click.flip-y" type="BoolLiteralType"/>
+        <xs:attribute name="click.rect" type="RectType"/>
+        <xs:attribute name="click.mode" type="ImageModeType"/>
+        <xs:attribute name="click.visual-box" type="VisualBoxType"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="progressBarAttrs">
+        <xs:attribute name="min" type="xs:float"/>
+        <xs:attribute name="max" type="xs:float"/>
+        <xs:attribute name="value" type="xs:float"/>
+        <xs:attribute name="track-color" type="ColorType"/>
+        <xs:attribute name="fill-color" type="ColorType"/>
+        <xs:attribute name="track-height" type="xs:float"/>
+
+        <xs:attribute name="hover.min" type="xs:float"/>
+        <xs:attribute name="hover.max" type="xs:float"/>
+        <xs:attribute name="hover.value" type="xs:float"/>
+        <xs:attribute name="hover.track-color" type="ColorType"/>
+        <xs:attribute name="hover.fill-color" type="ColorType"/>
+        <xs:attribute name="hover.track-height" type="xs:float"/>
+
+        <xs:attribute name="click.min" type="xs:float"/>
+        <xs:attribute name="click.max" type="xs:float"/>
+        <xs:attribute name="click.value" type="xs:float"/>
+        <xs:attribute name="click.track-color" type="ColorType"/>
+        <xs:attribute name="click.fill-color" type="ColorType"/>
+        <xs:attribute name="click.track-height" type="xs:float"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="scrollViewAttrs">
+        <xs:attribute name="scroll-direction" type="ScrollDirectionType"/>
+        <xs:attribute name="scroll-speed" type="xs:float"/>
+        <xs:attribute name="color" type="ColorType"/>
+        <xs:attribute name="smooth" type="BoolLiteralType"/>
+
+        <xs:attribute name="hover.scroll-direction" type="ScrollDirectionType"/>
+        <xs:attribute name="hover.scroll-speed" type="xs:float"/>
+        <xs:attribute name="hover.color" type="ColorType"/>
+        <xs:attribute name="hover.smooth" type="BoolLiteralType"/>
+
+        <xs:attribute name="click.scroll-direction" type="ScrollDirectionType"/>
+        <xs:attribute name="click.scroll-speed" type="xs:float"/>
+        <xs:attribute name="click.color" type="ColorType"/>
+        <xs:attribute name="click.smooth" type="BoolLiteralType"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="sliderAttrs">
+        <xs:attribute name="min" type="xs:float"/>
+        <xs:attribute name="max" type="xs:float"/>
+        <xs:attribute name="step" type="xs:float"/>
+        <xs:attribute name="value" type="xs:float"/>
+        <xs:attribute name="track-color" type="ColorType"/>
+        <xs:attribute name="thumb-color" type="ColorType"/>
+        <xs:attribute name="fill-color" type="ColorType"/>
+        <xs:attribute name="track-height" type="xs:float"/>
+        <xs:attribute name="thumb-size" type="xs:float"/>
+
+        <xs:attribute name="hover.min" type="xs:float"/>
+        <xs:attribute name="hover.max" type="xs:float"/>
+        <xs:attribute name="hover.step" type="xs:float"/>
+        <xs:attribute name="hover.value" type="xs:float"/>
+        <xs:attribute name="hover.track-color" type="ColorType"/>
+        <xs:attribute name="hover.thumb-color" type="ColorType"/>
+        <xs:attribute name="hover.fill-color" type="ColorType"/>
+        <xs:attribute name="hover.track-height" type="xs:float"/>
+        <xs:attribute name="hover.thumb-size" type="xs:float"/>
+
+        <xs:attribute name="click.min" type="xs:float"/>
+        <xs:attribute name="click.max" type="xs:float"/>
+        <xs:attribute name="click.step" type="xs:float"/>
+        <xs:attribute name="click.value" type="xs:float"/>
+        <xs:attribute name="click.track-color" type="ColorType"/>
+        <xs:attribute name="click.thumb-color" type="ColorType"/>
+        <xs:attribute name="click.fill-color" type="ColorType"/>
+        <xs:attribute name="click.track-height" type="xs:float"/>
+        <xs:attribute name="click.thumb-size" type="xs:float"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="textInputAttrs">
+        <xs:attribute name="value" type="xs:string"/>
+        <xs:attribute name="placeholder" type="xs:string"/>
+        <xs:attribute name="text-color" type="ColorType"/>
+        <xs:attribute name="placeholder-color" type="ColorType"/>
+        <xs:attribute name="font-size" type="FontSizeType"/>
+
+        <xs:attribute name="hover.value" type="xs:string"/>
+        <xs:attribute name="hover.placeholder" type="xs:string"/>
+        <xs:attribute name="hover.text-color" type="ColorType"/>
+        <xs:attribute name="hover.placeholder-color" type="ColorType"/>
+        <xs:attribute name="hover.font-size" type="FontSizeType"/>
+
+        <xs:attribute name="click.value" type="xs:string"/>
+        <xs:attribute name="click.placeholder" type="xs:string"/>
+        <xs:attribute name="click.text-color" type="ColorType"/>
+        <xs:attribute name="click.placeholder-color" type="ColorType"/>
+        <xs:attribute name="click.font-size" type="FontSizeType"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="tooltipAttrs">
+        <xs:attribute name="text" type="xs:string"/>
+        <xs:attribute name="anchor" type="TooltipAnchorType"/>
+        <xs:attribute name="text-color" type="ColorType"/>
+        <xs:attribute name="font-size" type="FontSizeType"/>
+    </xs:attributeGroup>
+
+    <!-- WIDGETS -->
+
+    <xs:group name="AnyElementGroup">
+        <xs:choice>
+            <xs:element ref="Node"/>
+            <xs:element ref="Button"/>
+            <xs:element ref="Text"/>
+            <xs:element ref="Image"/>
+            <xs:element ref="Checkbox"/>
+            <xs:element ref="TextInput"/>
+            <xs:element ref="Slider"/>
+            <xs:element ref="ProgressBar"/>
+            <xs:element ref="Tooltip"/>
+            <xs:element ref="Divider"/>
+            <xs:element ref="ScrollView"/>
+            <xs:element ref="Dropdown"/>
+        </xs:choice>
+    </xs:group>
+
+    <xs:element name="Node">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:group ref="AnyElementGroup" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Button">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:group ref="AnyElementGroup" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Text">
+        <xs:complexType mixed="true">
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+            <xs:attributeGroup ref="textAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Checkbox">
+        <xs:complexType>
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+            <xs:attributeGroup ref="checkboxAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Divider">
+        <xs:complexType>
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+            <xs:attributeGroup ref="dividerAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Dropdown">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:group ref="AnyElementGroup" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+            <xs:attributeGroup ref="dropdownAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Image">
+        <xs:complexType>
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+            <xs:attributeGroup ref="imageAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="ProgressBar">
+        <xs:complexType>
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+            <xs:attributeGroup ref="progressBarAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="ScrollView">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:group ref="AnyElementGroup" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+            <xs:attributeGroup ref="scrollViewAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Slider">
+        <xs:complexType>
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+            <xs:attributeGroup ref="sliderAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="TextInput">
+        <xs:complexType>
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+            <xs:attributeGroup ref="textInputAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Tooltip">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:group ref="AnyElementGroup" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+            <xs:attributeGroup ref="tooltipAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Page">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:group ref="AnyElementGroup" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

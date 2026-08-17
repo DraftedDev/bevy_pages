@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../schema.xsd"
+        justify-content="center"
+        align-items="center"
+>
+    <Node
+            flex-direction="column"
+            align-items="center"
+            row-gap="24px"
+            padding="32px"
+    >
+        <Text
+                font-size="36px"
+                color="white"
+        >
+            Counter
+        </Text>
+
+        <Text
+                font-size="72px"
+                color="#4CAF50"
+                id="counter"
+        >
+            0
+        </Text>
+
+        <Node
+                flex-direction="row"
+                column-gap="16px"
+                justify-content="center"
+                align-items="center"
+        >
+            <Button
+                    id="decrement"
+                    width="64px"
+                    height="64px"
+                    justify-content="center"
+                    align-items="center"
+            >
+                <Text
+                        font-size="32px"
+                        color="white"
+                >
+                    -
+                </Text>
+            </Button>
+
+            <Button
+                    id="reset"
+                    width="120px"
+                    height="64px"
+                    justify-content="center"
+                    align-items="center"
+            >
+                <Text
+                        font-size="20px"
+                        color="white"
+                >
+                    Reset
+                </Text>
+            </Button>
+
+            <Button
+                    id="increment"
+                    width="64px"
+                    height="64px"
+                    justify-content="center"
+                    align-items="center"
+            >
+                <Text
+                        font-size="32px"
+                        color="white"
+                >+
+                </Text>
+            </Button>
+        </Node>
+    </Node>
+</Page>

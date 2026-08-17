@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../schema.xsd"
+        justify-content="center"
+        align-items="center"
+>
+    <ScrollView width="90vw" height="90vh" bg-color="rgb(25, 25, 25)" justify-content="center" align-items="center"
+                flex-direction="column" scroll-direction="both">
+
+        <!-- Text + Button -->
+        <Node justify-content="space-evenly" align-items="center" border="1px" border-color="darkgrey" padding="20">
+            <Button id="decrement" width="200px" height="50px" align-items="center" justify-content="center">
+                <Text>Decrement</Text>
+            </Button>
+            <Text id="counter">0</Text>
+            <Button id="increment" width="200px" height="50px" align-items="center" justify-content="center">
+                <Text>Increment</Text>
+            </Button>
+        </Node>
+
+        <!-- Checkbox + Slider + Progress -->
+        <Node justify-content="space-evenly" align-items="center" border="1px" border-color="darkgrey" padding="20">
+            <Checkbox id="checkbox"/>
+            <Text id="checkbox-text">Not Checked</Text>
+            <Divider orientation="vertical"/>
+            <Slider id="slider"/>
+            <Divider orientation="vertical"/>
+            <ProgressBar id="progress"/>
+        </Node>
+
+        <!-- Dropdown + Scroll View + Text Input -->
+        <Node justify-content="space-evenly" align-items="center" border="1px" border-color="darkgrey" padding="20">
+            <Dropdown placeholder="Select an option" width="350px">
+                <Text font-size="14">Option 1</Text>
+                <Text font-size="14">Option 2</Text>
+                <Text font-size="14">Option 3</Text>
+            </Dropdown>
+            <Divider orientation="vertical"/>
+            <TextInput placeholder="Enter some text"/>
+            <Divider orientation="vertical"/>
+            <ScrollView width="200px" height="200px" scroll-direction="both">
+                <Text font-size="12">Did I ever tell you what the definition of insanity is?</Text>
+                <Text font-size="12">Insanity is doing the exact... same thing... over and over again expecting... shit
+                    to
+                    change...
+                </Text>
+                <Text font-size="12">That. Is. Crazy.</Text>
+                <Text font-size="12">The first time somebody told me that, I dunno, I thought they were bullshitting me,
+                    so, boom, I
+                    shot him. The thing is... he was right.
+                </Text>
+                <Text font-size="12">And then I started seeing, everywhere I looked, everywhere I looked all these
+                    pricks,
+                    everywhere I looked, doing the exact same thing... over and over and over and over again
+                    thinking:
+                </Text>
+                <Text font-size="12">"This time is gonna be different. No, no, no please... This time is gonna be
+                    different." I'm
+                    sorry, I don't like... The way... you are looking at me...
+                </Text>
+                <Text font-size="12">Okay, Do you have a problem in your head, do you think I am bullshitting you, do
+                    you think
+                    I am lying? It's okay, man. I'm gonna chill, hermano. I'm gonna
+                    chill...
+                </Text>
+                <Text font-size="12">The thing is... Alright, the thing is I killed you once already...and it's not like
+                    I am
+                    crazy.
+                </Text>
+                <Text font-size="12">It's okay... It's like water under the bridge.</Text>
+                <Text font-size="12">Did I ever tell you the definition... of insanity?</Text>
+            </ScrollView>
+        </Node>
+
+        <!-- Image + Tooltip -->
+        <Node justify-content="space-evenly" align-items="center" border="1px" border-color="darkgrey" padding="20"
+              flex-direction="column">
+            <Text padding="15px 0">Hover over me!</Text>
+            <Tooltip text="This is a fancy tooltip!" anchor="right">
+                <Image src="bevy.png"/>
+            </Tooltip>
+        </Node>
+    </ScrollView>
+</Page>
