@@ -51,5 +51,6 @@ Some events are triggered by widget logic and are not supported by all widgets.
     - Supported by: `Checkbox`, `Slider`.
 - `ElementSet<T>`
     - Triggered when a widget's value is set.
-    - Also contains the new value of the widget as `T`.
-    - Supported by: `Slider (f32)`, `TextInput (String)`.
+    - Also contains the new value of the widget as `T` & (optionally) the delta of the value change as `T` (
+      only applicable for numeric types).
+    - Supported by: `Slider (f32)`, `TextInput (String)`, `Dropdown (String)`.

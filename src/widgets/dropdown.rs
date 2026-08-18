@@ -1,4 +1,5 @@
-use crate::element::ElementProps;
+use crate::element::{ElementId, ElementProps};
+use crate::events::ElementSet;
 use crate::parser::color::parse_color;
 use crate::parser::values::parse_attribute;
 use crate::props::Properties;
@@ -7,8 +8,6 @@ use bevy::asset::AssetServer;
 use bevy::color::Color;
 use bevy::prelude::*;
 use roxmltree::Node as XmlNode;
-
-// TODO: Support ElementSet events
 
 pub(crate) fn trigger_menu(
     mut trigger_query: Query<
@@ -27,10 +26,11 @@ pub(crate) fn trigger_menu(
 }
 
 pub(crate) fn option_select(
+    mut commands: Commands,
     interaction_query: Query<(Entity, &Interaction), Changed<Interaction>>,
     child_of_query: Query<&ChildOf>,
     menu_query: Query<&ChildOf, With<DropdownMenu>>,
-    mut root_query: Query<(&mut DropdownState, &Children)>,
+    mut root_query: Query<(Entity, &mut DropdownState, &Children, Option<&ElementId>)>,
     trigger_query: Query<&Children, With<DropdownTrigger>>,
     label_query: Query<Entity, With<DropdownLabelText>>,
     mut text_query: Query<&mut Text>,
@@ -42,7 +42,8 @@ pub(crate) fn option_select(
         }
 
         if let Some(root_entity) = find_dropdown_root(clicked_entity, &child_of_query, &menu_query)
-            && let Ok((mut state, root_children)) = root_query.get_mut(root_entity)
+            && let Ok((entity, mut state, root_children, element_id)) =
+                root_query.get_mut(root_entity)
         {
             // Extract label text from the clicked entity or its child subtree
             let extracted_label =
@@ -52,6 +53,13 @@ pub(crate) fn option_select(
             state.selected_value = extracted_label.clone();
             state.selected_label = extracted_label.clone();
             state.is_open = false; // Auto-close menu on selection
+
+            commands.trigger(ElementSet {
+                entity,
+                id: element_id.cloned(),
+                value: extracted_label.clone(),
+                delta: None,
+            });
 
             // Sync the trigger header label text
             for child in root_children.iter() {
@@ -293,6 +301,8 @@ pub struct DropdownLabelText;
 /// ## Logic
 ///
 /// Use the [DropdownProps] to control the dropdown.
+/// Furthermore, the dropdown widget triggers `ElementSet<String>` when an option is selected.
+///
 /// You can also use generic element events to implement custom behavior.
 #[derive(Clone, Debug, Default)]
 pub struct DropdownWidget {

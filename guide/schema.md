@@ -314,7 +314,7 @@ All the attributes listed support state overrides.
 ### Logic
 
 Use the `DropdownProps` to control the dropdown.
-You can also use generic element events to implement custom behavior.
+Furthermore, the dropdown widget triggers `ElementSet<String>` when an option is selected.
 
 ---
 
