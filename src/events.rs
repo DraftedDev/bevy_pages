@@ -3,7 +3,7 @@ use bevy::prelude::{Entity, Event};
 use std::fmt::{Debug, Formatter};
 use std::hash::Hash;
 
-/// An event triggered when a clickable element like a button is clicked.
+/// An event triggered when an element is clicked.
 ///
 /// This event is triggered by a universal interaction system
 /// and is therefore not needed to be manually triggered by widget logic.
@@ -22,7 +22,7 @@ impl ElementClick {
     }
 }
 
-/// An event triggered when the mouse hovers over an interactable element like a button.
+/// An event triggered when the mouse hovers over an element.
 ///
 /// This event is triggered by a universal interaction system
 /// and is therefore not needed to be manually triggered by widget logic.
