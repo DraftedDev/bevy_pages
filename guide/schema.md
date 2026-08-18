@@ -244,6 +244,34 @@ You may also use generic element events to implement custom behavior.
 
 ---
 
+## Switch widget.
+
+A switch widget.
+
+It's really just a fancier checkbox.
+
+### XML Usage
+
+Build a switch widget using the `<Switch />` tag.
+
+#### Attributes
+
+- `toggled = "<bool>"`: The state of the switch.
+- `thumb-color = "<color>"`: The color of the thumb when not toggled.
+- `thumb-color-on = "<color>"`: The color of the thumb when toggled.
+- `thumb-size = "<float>"`: The size of the thumb in pixels.
+
+All the attributes listed support state overrides.
+
+### Logic
+
+Use `SwitchProps` to control the switch widget.
+Furthermore, the widget emits `ElementToggle` events when toggled.
+
+You may also use generic element events to implement custom behavior.
+
+---
+
 ## Divider Widget
 
 A widget to show a divider line.

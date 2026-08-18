@@ -7,6 +7,9 @@ use std::fmt::Debug;
 /// Contains the checkbox widget and functionality.
 pub mod checkbox;
 
+/// Contains the switch widget and functionality.
+pub mod switch;
+
 /// Contains the node widget and functionality.
 pub mod node;
 

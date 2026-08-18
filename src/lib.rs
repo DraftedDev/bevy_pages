@@ -84,6 +84,7 @@ impl PagesPlugin {
             .with_widget::<widgets::button::ButtonWidget>()
             .with_widget::<widgets::text::TextWidget>()
             .with_widget::<widgets::checkbox::CheckboxWidget>()
+            .with_widget::<widgets::switch::SwitchWidget>()
             .with_widget::<widgets::text_input::TextInputWidget>()
             .with_widget::<widgets::slider::SliderWidget>()
             .with_widget::<widgets::progress_bar::ProgressBarWidget>()
@@ -120,6 +121,13 @@ impl Plugin for PagesPlugin {
                     .in_set(PageSystemSet),
             )
             .add_observer(widgets::checkbox::toggle_checkbox)
+            // Switch Widget Logic
+            .add_systems(
+                Update,
+                (widgets::switch::sync_visuals, widgets::switch::update_props)
+                    .in_set(PageSystemSet),
+            )
+            .add_observer(widgets::switch::toggle_switch)
             // Text Input Widget Logic
             .add_systems(
                 Update,

@@ -706,6 +706,23 @@
         <xs:attribute name="click.check-symbol" type="xs:string"/>
     </xs:attributeGroup>
 
+    <xs:attributeGroup name="switchAttrs">
+        <xs:attribute name="toggled" type="BoolLiteralType"/>
+        <xs:attribute name="thumb-color" type="ColorType"/>
+        <xs:attribute name="thumb-color-on" type="ColorType"/>
+        <xs:attribute name="thumb-size" type="xs:float"/>
+
+        <xs:attribute name="hover.toggled" type="BoolLiteralType"/>
+        <xs:attribute name="hover.thumb-color" type="ColorType"/>
+        <xs:attribute name="hover.thumb-color-on" type="ColorType"/>
+        <xs:attribute name="hover.thumb-size" type="xs:float"/>
+
+        <xs:attribute name="hover.toggled" type="BoolLiteralType"/>
+        <xs:attribute name="hover.thumb-color" type="ColorType"/>
+        <xs:attribute name="hover.thumb-color-on" type="ColorType"/>
+        <xs:attribute name="hover.thumb-size" type="xs:float"/>
+    </xs:attributeGroup>
+
     <xs:attributeGroup name="dividerAttrs">
         <xs:attribute name="orientation" type="DividerOrientationType"/>
 
@@ -864,6 +881,7 @@
             <xs:element ref="Text"/>
             <xs:element ref="Image"/>
             <xs:element ref="Checkbox"/>
+            <xs:element ref="Switch"/>
             <xs:element ref="TextInput"/>
             <xs:element ref="Slider"/>
             <xs:element ref="ProgressBar"/>
@@ -911,6 +929,15 @@
             <xs:attributeGroup ref="hoverElementAttrs"/>
             <xs:attributeGroup ref="clickElementAttrs"/>
             <xs:attributeGroup ref="checkboxAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Switch">
+        <xs:complexType>
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+            <xs:attributeGroup ref="switchAttrs"/>
         </xs:complexType>
     </xs:element>
 

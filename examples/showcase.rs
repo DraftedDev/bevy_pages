@@ -18,6 +18,7 @@ fn main() {
         .add_observer(counter)
         .add_observer(checkbox)
         .add_observer(slider)
+        .add_observer(switch)
         .run();
 }
 
@@ -56,6 +57,25 @@ fn checkbox(
                 "Checked".to_string()
             } else {
                 "Not Checked".to_string()
+            }
+        });
+    }
+}
+
+fn switch(
+    toggle: On<ElementToggle>,
+    page: Res<Page>,
+    mut query: Query<&mut Properties<TextProps>>,
+) {
+    let entity = page.get("switch-text");
+    let mut text = query.get_mut(entity).unwrap();
+
+    if toggle.matches_id("switch") {
+        text.mutate(|props| {
+            props.content = if toggle.state {
+                "Toggled".to_string()
+            } else {
+                "Not Toggled".to_string()
             }
         });
     }

@@ -19,10 +19,13 @@
             </Button>
         </Node>
 
-        <!-- Checkbox + Slider + Progress -->
+        <!-- Checkbox + Switch + Slider + Progress -->
         <Node justify-content="space-evenly" align-items="center" border="1px" border-color="darkgrey" padding="20">
             <Checkbox id="checkbox"/>
             <Text id="checkbox-text">Not Checked</Text>
+            <Divider orientation="vertical"/>
+            <Switch id="switch"/>
+            <Text id="switch-text">Not Toggled</Text>
             <Divider orientation="vertical"/>
             <Slider id="slider"/>
             <Divider orientation="vertical"/>
