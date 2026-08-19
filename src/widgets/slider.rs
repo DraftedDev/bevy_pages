@@ -3,6 +3,7 @@ use crate::events::ElementSet;
 use crate::parser::color::parse_color;
 use crate::parser::values::{parse_attribute, parse_float};
 use crate::props::Properties;
+use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
 use bevy::asset::AssetServer;
 use bevy::color::Color;
@@ -16,7 +17,7 @@ use bevy::ui_widgets::{
 };
 use roxmltree::Node as XmlNode;
 
-pub(crate) fn sync_visuals(
+fn sync_visuals(
     mut commands: Commands,
     mut slider_query: Query<
         (
@@ -68,7 +69,7 @@ pub(crate) fn sync_visuals(
     }
 }
 
-pub(crate) fn update_props(
+fn update_props(
     mut slider_query: Query<
         (Entity, &Properties<SliderProps>, &Hovered, &SliderDragState),
         Or<(
@@ -177,6 +178,10 @@ impl Widget for SliderWidget {
         Self: Sized,
     {
         "Slider"
+    }
+
+    fn setup(&self, app: &mut App) {
+        app.add_systems(Update, (update_props, sync_visuals).in_set(PageSystemSet));
     }
 
     fn parse(&mut self, node: &XmlNode) -> Result<(), String>

@@ -3,17 +3,19 @@ use crate::parser::color::parse_color;
 use crate::parser::values::parse_attribute;
 use crate::parser::values::{parse_bool, parse_matches, parse_rect};
 use crate::props::Properties;
+use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
+use bevy::app::{App, Update};
 use bevy::asset::AssetServer;
 use bevy::color::Color;
 use bevy::math::Rect;
 use bevy::prelude::{
-    Changed, Entity, EntityCommands, ImageNode, Interaction, NodeImageMode, Or, Query, Res,
-    TextureSlicer, VisualBox,
+    Changed, Entity, EntityCommands, ImageNode, Interaction, IntoScheduleConfigs, NodeImageMode,
+    Or, Query, Res, TextureSlicer, VisualBox,
 };
 use roxmltree::Node;
 
-pub(crate) fn update_props(
+fn update_props(
     assets: Res<AssetServer>,
     mut query: Query<
         (&Interaction, &Properties<ImageProps>, &mut ImageNode),
@@ -74,6 +76,10 @@ impl Widget for ImageWidget {
         Self: Sized,
     {
         "Image"
+    }
+
+    fn setup(&self, app: &mut App) {
+        app.add_systems(Update, update_props.in_set(PageSystemSet));
     }
 
     fn parse(&mut self, node: &Node) -> Result<(), String>

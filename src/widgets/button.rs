@@ -2,6 +2,7 @@ use crate::element::ElementProps;
 use crate::parser::color::{darken_color, lighten_color};
 use crate::parser::values::parse_ui_rect;
 use crate::widgets::Widget;
+use bevy::app::App;
 use bevy::asset::AssetServer;
 use bevy::color::Color;
 use bevy::prelude::{Entity, EntityCommands};
@@ -34,6 +35,8 @@ impl Widget for ButtonWidget {
     {
         "Button"
     }
+
+    fn setup(&self, _: &mut App) {}
 
     fn parse(&mut self, _: &Node) -> Result<(), String>
     where

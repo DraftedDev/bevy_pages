@@ -2,6 +2,7 @@ use crate::element::ElementProps;
 use crate::parser::color::parse_color;
 use crate::parser::values::{parse_attribute, parse_float};
 use crate::props::Properties;
+use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
 use bevy::asset::AssetServer;
 use bevy::color::Color;
@@ -10,7 +11,7 @@ use bevy::prelude::*;
 use bevy::ui::{BackgroundColor, BorderRadius, Node, PositionType, Val};
 use roxmltree::Node as XmlNode;
 
-pub(crate) fn sync_progress_bar_visuals(
+fn sync_progress_bar_visuals(
     pb_query: Query<(&ProgressBarState, &Children), Changed<ProgressBarState>>,
     mut fill_query: Query<&mut Node, With<ProgressBarFill>>,
 ) {
@@ -25,7 +26,7 @@ pub(crate) fn sync_progress_bar_visuals(
     }
 }
 
-pub(crate) fn update_props(
+fn update_props(
     mut root_query: Query<
         (
             Ref<Properties<ProgressBarProps>>,
@@ -149,6 +150,13 @@ impl Widget for ProgressBarWidget {
         Self: Sized,
     {
         "ProgressBar"
+    }
+
+    fn setup(&self, app: &mut App) {
+        app.add_systems(
+            Update,
+            (update_props, sync_progress_bar_visuals).in_set(PageSystemSet),
+        );
     }
 
     fn parse(&mut self, node: &XmlNode) -> Result<(), String>

@@ -3,18 +3,20 @@ use crate::events::{ElementClick, ElementToggle};
 use crate::parser::color::{darken_color, lighten_color, parse_color};
 use crate::parser::values::{parse_attribute, parse_bool};
 use crate::props::Properties;
+use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
+use bevy::app::{App, Update};
 use bevy::asset::AssetServer;
 use bevy::color::Color;
 use bevy::prelude::{
     AlignItems, AlignSelf, BorderColor, Changed, Children, Commands, Component, Entity,
-    EntityCommands, FontSize, Interaction, JustifyContent, JustifySelf, Node, On, Or, Query, Text,
-    TextColor, TextFont, UiRect, Val, With,
+    EntityCommands, FontSize, Interaction, IntoScheduleConfigs, JustifyContent, JustifySelf, Node,
+    On, Or, Query, Text, TextColor, TextFont, UiRect, Val, With,
 };
 use bevy::ui::Display;
 use roxmltree::Node as XmlNode;
 
-pub(crate) fn toggle_checkbox(
+fn toggle_checkbox(
     trigger: On<ElementClick>,
     mut commands: Commands,
     mut query: Query<(&mut CheckboxState, Option<&ElementId>)>,
@@ -30,7 +32,7 @@ pub(crate) fn toggle_checkbox(
     }
 }
 
-pub(crate) fn sync_visuals(
+fn sync_visuals(
     query: Query<(&CheckboxState, &Children), Changed<CheckboxState>>,
     mut checkmarks: Query<&mut Node, With<CheckboxCheckmark>>,
 ) {
@@ -47,7 +49,7 @@ pub(crate) fn sync_visuals(
     }
 }
 
-pub(crate) fn update_props(
+fn update_props(
     mut query: Query<
         (&Interaction, &Properties<CheckboxProps>, &Children),
         Or<(Changed<Interaction>, Changed<Properties<CheckboxProps>>)>,
@@ -110,6 +112,11 @@ impl Widget for CheckboxWidget {
         Self: Sized,
     {
         "Checkbox"
+    }
+
+    fn setup(&self, app: &mut App) {
+        app.add_systems(Update, (update_props, sync_visuals.in_set(PageSystemSet)))
+            .add_observer(toggle_checkbox);
     }
 
     fn parse(&mut self, node: &XmlNode) -> Result<(), String>

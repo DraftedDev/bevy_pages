@@ -59,6 +59,8 @@ impl Widget for DividerWidget {
         "Divider"
     }
 
+    fn setup(&self, _: &mut App) {}
+
     fn parse(&mut self, node: &XmlNode) -> Result<(), String>
     where
         Self: Sized,

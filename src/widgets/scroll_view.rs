@@ -2,6 +2,7 @@ use crate::element::ElementProps;
 use crate::parser::color::parse_color;
 use crate::parser::values::{parse_attribute, parse_bool, parse_float, parse_matches};
 use crate::props::Properties;
+use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
 use bevy::asset::AssetServer;
 use bevy::color::Color;
@@ -12,7 +13,7 @@ use bevy::ui_widgets::{ControlOrientation, Scrollbar, ScrollbarDragState, Scroll
 use roxmltree::Node as XmlNode;
 use rustc_hash::FxHashSet;
 
-pub(crate) fn update_scroll_bounds(
+fn update_scroll_bounds(
     mut scroll_query: Query<(Entity, &Children, &mut ScrollViewState), With<ScrollViewArea>>,
     content_query: Query<&ComputedNode, With<ScrollViewContent>>,
     area_query: Query<&ComputedNode, With<ScrollViewArea>>,
@@ -31,7 +32,7 @@ pub(crate) fn update_scroll_bounds(
     }
 }
 
-pub(crate) fn scroll_view_mouse_wheel(
+fn scroll_view_mouse_wheel(
     mut mouse_wheel_events: MessageReader<MouseWheel>,
     mut scroll_query: Query<(Entity, &Interaction, &mut ScrollViewState), With<ScrollViewArea>>,
     parent_query: Query<(&ChildOf, Option<&Interaction>)>,
@@ -88,7 +89,7 @@ pub(crate) fn scroll_view_mouse_wheel(
     }
 }
 
-pub(crate) fn scroll_view_keyboard(
+fn scroll_view_keyboard(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut scroll_query: Query<(Entity, &Interaction, &mut ScrollViewState), With<ScrollViewArea>>,
     parent_query: Query<(&ChildOf, Option<&Interaction>)>,
@@ -151,7 +152,7 @@ pub(crate) fn scroll_view_keyboard(
     }
 }
 
-pub(crate) fn apply_scroll_physics(
+fn apply_scroll_physics(
     time: Res<Time>,
     mut scroll_query: Query<(&mut ScrollViewState, &mut ScrollPosition), With<ScrollViewArea>>,
 ) {
@@ -206,7 +207,7 @@ pub(crate) fn update_visuals(
     }
 }
 
-pub(crate) fn update_props(
+fn update_props(
     root_query: Query<(&Properties<ScrollViewProps>, &Children)>,
     children_query: Query<&Children>,
     mut area_query: Query<
@@ -433,6 +434,22 @@ impl Widget for ScrollViewWidget {
         Self: Sized,
     {
         "ScrollView"
+    }
+
+    fn setup(&self, app: &mut App) {
+        app.add_systems(
+            Update,
+            (
+                update_props,
+                update_scroll_bounds,
+                scroll_view_mouse_wheel,
+                scroll_view_keyboard,
+                apply_scroll_physics,
+                update_visuals,
+            )
+                .chain()
+                .in_set(PageSystemSet),
+        );
     }
 
     fn parse(&mut self, node: &XmlNode) -> Result<(), String>

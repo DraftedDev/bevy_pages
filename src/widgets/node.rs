@@ -1,5 +1,6 @@
 use crate::element::ElementProps;
 use crate::widgets::Widget;
+use bevy::app::App;
 use bevy::asset::AssetServer;
 use bevy::prelude::{Entity, EntityCommands};
 use roxmltree::Node;
@@ -26,6 +27,8 @@ impl Widget for NodeWidget {
     {
         "Node"
     }
+
+    fn setup(&self, _: &mut App) {}
 
     fn parse(&mut self, _: &Node) -> Result<(), String> {
         Ok(())

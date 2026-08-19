@@ -3,6 +3,7 @@ use crate::events::{ElementClick, ElementToggle};
 use crate::parser::color::{darken_color, lighten_color, parse_color};
 use crate::parser::values::{parse_attribute, parse_bool, parse_float};
 use crate::props::Properties;
+use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
 use bevy::asset::AssetServer;
 use bevy::color::Color;
@@ -10,7 +11,7 @@ use bevy::prelude::*;
 use bevy::ui::{AlignItems, BorderColor, JustifyContent, Node, PositionType, UiRect, Val};
 use roxmltree::Node as XmlNode;
 
-pub(crate) fn toggle_switch(
+fn toggle_switch(
     trigger: On<ElementClick>,
     mut commands: Commands,
     mut query: Query<(&mut SwitchState, Option<&ElementId>)>,
@@ -26,7 +27,7 @@ pub(crate) fn toggle_switch(
     }
 }
 
-pub(crate) fn sync_visuals(
+fn sync_visuals(
     query: Query<(&SwitchState, &Properties<SwitchProps>, &Children), Changed<SwitchState>>,
     mut thumbs: Query<(&mut Node, &mut BackgroundColor), With<SwitchThumb>>,
 ) {
@@ -63,7 +64,7 @@ pub(crate) fn sync_visuals(
     }
 }
 
-pub(crate) fn update_props(
+fn update_props(
     mut query: Query<
         (
             &Interaction,
@@ -156,6 +157,11 @@ impl Widget for SwitchWidget {
         Self: Sized,
     {
         "Switch"
+    }
+
+    fn setup(&self, app: &mut App) {
+        app.add_systems(Update, (sync_visuals, update_props).in_set(PageSystemSet))
+            .add_observer(toggle_switch);
     }
 
     fn parse(&mut self, node: &XmlNode) -> Result<(), String>

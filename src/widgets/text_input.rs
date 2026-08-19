@@ -3,6 +3,7 @@ use crate::events::ElementSet;
 use crate::parser::color::{darken_color, lighten_color, parse_color};
 use crate::parser::values::{parse_attribute, parse_bool, parse_float, parse_font_size};
 use crate::props::Properties;
+use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
 use bevy::asset::AssetServer;
 use bevy::color::Color;
@@ -14,7 +15,7 @@ use bevy::text::{EditableText, TextCursorStyle};
 use bevy::ui::{AlignItems, BorderColor, Display, JustifyContent, UiRect, Val};
 use roxmltree::Node as XmlNode;
 
-pub(crate) fn sync_text_changes(
+fn sync_text_changes(
     mut commands: Commands,
     mut query: Query<
         (
@@ -44,7 +45,7 @@ pub(crate) fn sync_text_changes(
     }
 }
 
-pub(crate) fn unfocus_on_outside_click(
+fn unfocus_on_outside_click(
     trigger: On<Pointer<Press>>,
     mut focus: ResMut<InputFocus>,
     editable_query: Query<(), With<EditableText>>,
@@ -54,7 +55,7 @@ pub(crate) fn unfocus_on_outside_click(
     }
 }
 
-pub(crate) fn update_props(
+fn update_props(
     mut query: Query<
         (
             &Interaction,
@@ -131,6 +132,14 @@ impl Widget for TextInputWidget {
         Self: Sized,
     {
         "TextInput"
+    }
+
+    fn setup(&self, app: &mut App) {
+        app.add_systems(
+            Update,
+            (update_props, sync_text_changes).in_set(PageSystemSet),
+        )
+        .add_observer(unfocus_on_outside_click);
     }
 
     fn parse(&mut self, node: &XmlNode) -> Result<(), String>

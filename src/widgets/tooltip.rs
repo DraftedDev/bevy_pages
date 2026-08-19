@@ -2,6 +2,7 @@ use crate::element::ElementProps;
 use crate::parser::color::parse_color;
 use crate::parser::values::{parse_attribute, parse_font_size, parse_matches};
 use crate::props::Properties;
+use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
 use bevy::asset::AssetServer;
 use bevy::color::Color;
@@ -9,7 +10,7 @@ use bevy::prelude::*;
 use bevy::ui::{FocusPolicy, PositionType, UiRect, Val, ZIndex};
 use roxmltree::Node as XmlNode;
 
-pub(crate) fn sync_visuals(
+fn sync_visuals(
     query: Query<(&Interaction, &Children), (With<Properties<TooltipProps>>, Changed<Interaction>)>,
     mut popup_query: Query<&mut Node, With<TooltipPopup>>,
 ) {
@@ -29,7 +30,7 @@ pub(crate) fn sync_visuals(
     }
 }
 
-pub(crate) fn update_props(
+fn update_props(
     mut query: Query<
         (Entity, &Interaction, &Properties<TooltipProps>),
         Or<(Changed<Interaction>, Changed<Properties<TooltipProps>>)>,
@@ -164,6 +165,10 @@ impl Widget for TooltipWidget {
         Self: Sized,
     {
         "Tooltip"
+    }
+
+    fn setup(&self, app: &mut App) {
+        app.add_systems(Update, (update_props, sync_visuals).in_set(PageSystemSet));
     }
 
     fn parse(&mut self, node: &XmlNode) -> Result<(), String>

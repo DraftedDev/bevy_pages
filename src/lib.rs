@@ -109,95 +109,18 @@ impl Plugin for PagesPlugin {
             })
             .insert_resource(PageSpawner::new())
             .configure_sets(Update, PageSystemSet.run_if(resource_exists::<Page>))
-            // General Interactions
-            .add_systems(Update, systems::interactions.in_set(PageSystemSet))
-            // Text Widget logic
-            .add_systems(Update, widgets::text::update_props.in_set(PageSystemSet))
-            // Image Widget logic
-            .add_systems(Update, widgets::image::update_props.in_set(PageSystemSet))
-            // Checkbox Widget Logic
             .add_systems(
                 Update,
                 (
-                    widgets::checkbox::update_props,
-                    widgets::checkbox::sync_visuals,
-                )
-                    .in_set(PageSystemSet),
-            )
-            .add_observer(widgets::checkbox::toggle_checkbox)
-            // Switch Widget Logic
-            .add_systems(
-                Update,
-                (widgets::switch::sync_visuals, widgets::switch::update_props)
-                    .in_set(PageSystemSet),
-            )
-            .add_observer(widgets::switch::toggle_switch)
-            // Text Input Widget Logic
-            .add_systems(
-                Update,
-                (
-                    widgets::text_input::update_props,
-                    widgets::text_input::sync_text_changes,
-                )
-                    .in_set(PageSystemSet),
-            )
-            .add_observer(widgets::text_input::unfocus_on_outside_click)
-            // Slider Widget Logic
-            .add_systems(
-                Update,
-                (widgets::slider::update_props, widgets::slider::sync_visuals)
-                    .in_set(PageSystemSet),
-            )
-            // Progress Bar Widget Logic
-            .add_systems(
-                Update,
-                (
-                    widgets::progress_bar::update_props,
-                    widgets::progress_bar::sync_progress_bar_visuals,
-                )
-                    .in_set(PageSystemSet),
-            )
-            // Tooltip Widget Logic
-            .add_systems(
-                Update,
-                (
-                    widgets::tooltip::update_props,
-                    widgets::tooltip::sync_visuals,
-                )
-                    .in_set(PageSystemSet),
-            )
-            // Scroll View Widget Logic
-            .add_systems(
-                Update,
-                (
-                    widgets::scroll_view::update_props,
-                    widgets::scroll_view::update_scroll_bounds,
-                    widgets::scroll_view::scroll_view_mouse_wheel,
-                    widgets::scroll_view::scroll_view_keyboard,
-                    widgets::scroll_view::apply_scroll_physics,
-                    widgets::scroll_view::update_visuals,
-                )
-                    .chain()
-                    .in_set(PageSystemSet),
-            )
-            // Dropdown Widget Logic
-            .add_systems(
-                Update,
-                (
-                    widgets::dropdown::update_props,
-                    widgets::dropdown::option_select,
-                    widgets::dropdown::trigger_menu,
-                    widgets::dropdown::visibility,
-                    widgets::dropdown::close_on_outside_click,
-                )
-                    .in_set(PageSystemSet),
-            )
-            // Spawn & Despawn Logic
-            .add_systems(
-                Update,
-                spawner::spawn_page.run_if(on_message::<AssetEvent<Page>>),
+                    systems::interactions.in_set(PageSystemSet),
+                    spawner::spawn_page.run_if(on_message::<AssetEvent<Page>>),
+                ),
             )
             .add_observer(spawner::despawn_page);
+
+        for widget in self.widgets.values() {
+            widget.setup(app);
+        }
     }
 }
 

@@ -3,13 +3,14 @@ use crate::events::ElementSet;
 use crate::parser::color::parse_color;
 use crate::parser::values::parse_attribute;
 use crate::props::Properties;
+use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
 use bevy::asset::AssetServer;
 use bevy::color::Color;
 use bevy::prelude::*;
 use roxmltree::Node as XmlNode;
 
-pub(crate) fn trigger_menu(
+fn trigger_menu(
     mut trigger_query: Query<
         (&Interaction, &ChildOf),
         (With<DropdownTrigger>, Changed<Interaction>),
@@ -25,7 +26,7 @@ pub(crate) fn trigger_menu(
     }
 }
 
-pub(crate) fn option_select(
+fn option_select(
     mut commands: Commands,
     interaction_query: Query<(Entity, &Interaction), Changed<Interaction>>,
     child_of_query: Query<&ChildOf>,
@@ -77,7 +78,7 @@ pub(crate) fn option_select(
     }
 }
 
-pub(crate) fn visibility(
+fn visibility(
     root_query: Query<(&DropdownState, &Children), Changed<DropdownState>>,
     mut menu_query: Query<(&mut Node, &mut ZIndex), With<DropdownMenu>>,
 ) {
@@ -96,7 +97,7 @@ pub(crate) fn visibility(
     }
 }
 
-pub(crate) fn close_on_outside_click(
+fn close_on_outside_click(
     mouse_button: Res<ButtonInput<MouseButton>>,
     mut root_query: Query<(Entity, &mut DropdownState)>,
     interaction_query: Query<&Interaction>,
@@ -121,7 +122,7 @@ pub(crate) fn close_on_outside_click(
     }
 }
 
-pub(crate) fn update_props(
+fn update_props(
     root_query: Query<(&Properties<DropdownProps>, &DropdownState, &Children)>,
     mut trigger_query: Query<
         (&Interaction, &Children, &mut BackgroundColor),
@@ -319,6 +320,20 @@ impl Widget for DropdownWidget {
         Self: Sized,
     {
         "Dropdown"
+    }
+
+    fn setup(&self, app: &mut App) {
+        app.add_systems(
+            Update,
+            (
+                update_props,
+                option_select,
+                trigger_menu,
+                visibility,
+                close_on_outside_click,
+            )
+                .in_set(PageSystemSet),
+        );
     }
 
     fn parse(&mut self, node: &XmlNode) -> Result<(), String> {

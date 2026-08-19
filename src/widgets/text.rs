@@ -1,17 +1,19 @@
 use crate::element::ElementProps;
 use crate::parser::values::parse_attribute;
 use crate::props::Properties;
+use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
+use bevy::app::{App, Update};
 use bevy::asset::{AssetServer, Handle};
 use bevy::color::Color;
 use bevy::prelude::{
-    Changed, Entity, EntityCommands, FontSize, FontSource, FontStyle, FontWeight, FontWidth, Or,
-    Query, Res, Text, TextColor, TextFont,
+    Changed, Entity, EntityCommands, FontSize, FontSource, FontStyle, FontWeight, FontWidth,
+    IntoScheduleConfigs, Or, Query, Res, Text, TextColor, TextFont,
 };
 use bevy::ui::Interaction;
 use roxmltree::Node;
 
-pub(crate) fn update_props(
+fn update_props(
     assets: Res<AssetServer>,
     mut query: Query<
         (
@@ -84,6 +86,10 @@ impl Widget for TextWidget {
         Self: Sized,
     {
         "Text"
+    }
+
+    fn setup(&self, app: &mut App) {
+        app.add_systems(Update, update_props.in_set(PageSystemSet));
     }
 
     fn parse(&mut self, node: &Node) -> Result<(), String> {
