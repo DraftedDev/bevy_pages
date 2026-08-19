@@ -1,6 +1,6 @@
 [package]
 name = "bevy_pages"
-version = "0.3.1"
+version = "0.3.2"
 edition = "2024"
 authors = ["Mikail Plotzky <mp@ypon.com>"]
 description = "A lightweight and elegant framework to upgrade your Bevy UI experience."
