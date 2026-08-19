@@ -13,6 +13,7 @@ use bevy::prelude::{
     Changed, Entity, EntityCommands, ImageNode, Interaction, IntoScheduleConfigs, NodeImageMode,
     Or, Query, Res, TextureSlicer, VisualBox,
 };
+use bevy::ui::Val;
 use roxmltree::Node;
 
 fn update_props(
@@ -119,11 +120,26 @@ impl Widget for ImageWidget {
 
     fn apply_defaults(
         &self,
-        _: &Node,
-        _: &mut ElementProps,
-        _: &mut ElementProps,
-        _: &mut ElementProps,
+        node: &Node,
+        default: &mut ElementProps,
+        hover: &mut ElementProps,
+        click: &mut ElementProps,
     ) {
+        crate::set_missing_attrs!(
+            node,
+
+            "width" => default.node.width = Val::Px(250.0),
+            "hover.width" => hover.node.width = default.node.width,
+            "click.width" => click.node.width = default.node.width,
+
+            "height" => default.node.height = Val::Px(250.0),
+            "hover.height" => hover.node.height = default.node.height,
+            "click.height" => click.node.height = default.node.height,
+
+            "flex-grow" => default.node.flex_grow = 1.0,
+            "hover.flex-grow" => hover.node.flex_grow = default.node.flex_grow,
+            "click.flex-grow" => click.node.flex_grow = default.node.flex_grow,
+        );
     }
 
     fn dyn_clone(&self) -> Box<dyn Widget> {

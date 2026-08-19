@@ -81,7 +81,7 @@
               flex-direction="column">
             <Text padding="15px 0">Hover over me!</Text>
             <Tooltip text="This is a fancy tooltip!" anchor="right">
-                <Image src="bevy.png"/>
+                <Image src="bevy.png" width="auto" height="auto"/>
             </Tooltip>
         </Node>
     </ScrollView>
