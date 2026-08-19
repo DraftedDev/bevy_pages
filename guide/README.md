@@ -7,3 +7,4 @@ This is the official guide to `bevy_pages`.
 - [Quick Start](./quick-start.md)
 - [Events](./events.md)
 - [Schema](./schema.md)
+- [Widget Development](widget-dev.md)
