@@ -847,22 +847,11 @@
 
     <xs:attributeGroup name="textInputAttrs">
         <xs:attribute name="value" type="xs:string"/>
-        <xs:attribute name="placeholder" type="xs:string"/>
-        <xs:attribute name="text-color" type="ColorType"/>
-        <xs:attribute name="placeholder-color" type="ColorType"/>
         <xs:attribute name="font-size" type="FontSizeType"/>
-
-        <xs:attribute name="hover.value" type="xs:string"/>
-        <xs:attribute name="hover.placeholder" type="xs:string"/>
-        <xs:attribute name="hover.text-color" type="ColorType"/>
-        <xs:attribute name="hover.placeholder-color" type="ColorType"/>
-        <xs:attribute name="hover.font-size" type="FontSizeType"/>
-
-        <xs:attribute name="click.value" type="xs:string"/>
-        <xs:attribute name="click.placeholder" type="xs:string"/>
-        <xs:attribute name="click.text-color" type="ColorType"/>
-        <xs:attribute name="click.placeholder-color" type="ColorType"/>
-        <xs:attribute name="click.font-size" type="FontSizeType"/>
+        <xs:attribute name="font" type="xs:string"/>
+        <xs:attribute name="visible-width" type="xs:float"/>
+        <xs:attribute name="allow-newlines" type="BoolLiteralType"/>
+        <xs:attribute name="color" type="ColorType"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="tooltipAttrs">

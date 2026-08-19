@@ -137,13 +137,11 @@ impl Plugin for PagesPlugin {
                 Update,
                 (
                     widgets::text_input::update_props,
-                    widgets::text_input::sync_visuals,
-                    widgets::text_input::handle_typing,
-                    widgets::text_input::handle_click_outside,
+                    widgets::text_input::sync_text_changes,
                 )
                     .in_set(PageSystemSet),
             )
-            .add_observer(widgets::text_input::handle_focus)
+            .add_observer(widgets::text_input::unfocus_on_outside_click)
             // Slider Widget Logic
             .add_systems(
                 Update,

@@ -40,7 +40,7 @@
                 <Text font-size="14">Option 3</Text>
             </Dropdown>
             <Divider orientation="vertical"/>
-            <TextInput placeholder="Enter some text"/>
+            <TextInput value="Here goes some text..."/>
             <Divider orientation="vertical"/>
             <ScrollView width="200px" height="200px" scroll-direction="both">
                 <Text font-size="12">Did I ever tell you what the definition of insanity is?</Text>
