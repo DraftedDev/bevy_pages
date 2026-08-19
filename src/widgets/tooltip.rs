@@ -3,6 +3,7 @@ use crate::parser::color::parse_color;
 use crate::parser::values::{parse_attribute, parse_font_size, parse_matches};
 use crate::props::Properties;
 use crate::widgets::Widget;
+use crate::widgets::text::TextProps;
 use bevy::asset::AssetServer;
 use bevy::color::Color;
 use bevy::prelude::*;
@@ -151,7 +152,7 @@ pub struct TooltipText;
 ///
 /// ## Logic
 ///
-/// This widget does not have any special code logic.
+/// Use [TooltipProps] to control the text.
 /// You can use generic element events to implement custom behavior.
 #[derive(Clone, Debug, Default)]
 pub struct TooltipWidget {

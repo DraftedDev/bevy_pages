@@ -61,7 +61,7 @@ pub(crate) fn update_props(
 ///
 /// ## Logic
 ///
-/// This widget does not have any special code logic.
+/// Use [ImageProps] to control the image widget.
 /// Use generic element events to implement custom behavior.
 #[derive(Clone, Debug, Default)]
 pub struct ImageWidget {

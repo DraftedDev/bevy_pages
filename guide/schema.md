@@ -288,7 +288,7 @@ The attributes listed do not support any state overrides.
 
 ### Logic
 
-This widget does not have any special code logic.
+This widget does not have any special code logic, but you can read `DividerProps`.
 Use generic element events to implement custom behavior.
 
 ---
@@ -340,7 +340,7 @@ All the attributes listed support state overrides.
 
 ### Logic
 
-This widget does not have any special code logic.
+Use `ImageProps` to control the image widget.
 Use generic element events to implement custom behavior.
 
 ---
@@ -430,28 +430,29 @@ You may also use generic element events to implement custom behavior.
 
 ## Text Input Widget
 
-A text input widget allowing user text input.
+A text input widget that enables typed user input.
 
 ### XML Usage
 
-Build a text input widget using the `<TextInput />` tag.
+Build a new text input widget using the `<TextInput/>` tag.
 
 #### Attributes
 
-- `value = "<string>"`: The value of the text input.
-- `placeholder = "<string>"`: The placeholder text to display when the text input is empty.
-- `text-color = "<color>"`: The text color.
-- `placeholder-color = "<color>"`: The placeholder color.
-- `font-size = "<float>"`: The font size of the text in pixels.
+- `value = "<string>"`: The text input value.
+- `font-size = "<fontSize>"`: The text font size.
+- `font = "<string>"`: The font of the text. When unspecified, the default bevy font will be used.
+- `visible-width = "<float>"`: The optional maximum width of visible text inside the text box.
+- `allow-newlines = "<bool>"`: If the text input should allow new lines.
+- `color = "<color>"`: The text color.
 
-All the attributes listed support state overrides.
+All the attributes listed, except `value`, support state overrides.
 
 ### Logic
 
-Use the `TextInputProps` to control the text input.
-The widget also emits `ElementSet<String>` events.
+Use `TextInputProps` to control the text input widget.
+Furthermore, the widget emits `ElementSet<String>` events when text is typed.
 
-You may also use generic element events to implement custom behavior.
+You can also use generic element events to implement custom behavior.
 
 ---
 
@@ -478,5 +479,5 @@ All the attributes listed support state overrides.
 
 ### Logic
 
-This widget does not have any special code logic.
+Use `TooltipProps` to control the text.
 You can use generic element events to implement custom behavior.

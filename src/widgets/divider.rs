@@ -44,7 +44,7 @@ impl DividerOrientation {
 ///
 /// ## Logic
 ///
-/// This widget does not have any special code logic.
+/// This widget does not have any special code logic, but you can read [DividerProps].
 /// Use generic element events to implement custom behavior.
 #[derive(Clone, Debug, Default)]
 pub struct DividerWidget {
