@@ -55,6 +55,7 @@ impl PagesPlugin {
     /// You should call [PagesPlugin::with_default_widgets] or [PagesPlugin::with_widget] to add widgets.
     ///
     /// Alternatively, you can use [PagesPlugin::default] which will add the default widgets automatically.
+    #[inline(always)]
     pub fn empty() -> Self {
         Self {
             initial_read_capacity: 2048,
@@ -67,18 +68,21 @@ impl PagesPlugin {
     /// This should be the average size (in bytes) of the XML files you plan to load.
     ///
     /// Defaults to `2048`.
+    #[inline(always)]
     pub fn with_initial_read_capacity(mut self, initial_read_capacity: usize) -> Self {
         self.initial_read_capacity = initial_read_capacity;
         self
     }
 
     /// Registers a new widget to be parsed and spawned from XML.
+    #[inline(always)]
     pub fn with_widget<W: Widget + Default>(mut self) -> Self {
         self.widgets.insert(W::name(), Box::new(W::default()));
         self
     }
 
     /// Registers the default widgets found in the [widgets] module.
+    #[inline(always)]
     pub fn with_default_widgets(self) -> Self {
         self.with_widget::<widgets::node::NodeWidget>()
             .with_widget::<widgets::button::ButtonWidget>()
@@ -200,6 +204,7 @@ impl Plugin for PagesPlugin {
 }
 
 impl Default for PagesPlugin {
+    #[inline(always)]
     fn default() -> Self {
         Self {
             initial_read_capacity: 2048,

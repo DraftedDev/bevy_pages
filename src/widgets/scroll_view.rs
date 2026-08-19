@@ -317,6 +317,7 @@ pub enum ScrollDirection {
 
 impl ScrollDirection {
     /// Parses a scroll direction from a string.
+    #[inline(always)]
     pub fn parse(s: &str) -> Result<Self, String> {
         parse_matches(
             s,
@@ -329,6 +330,7 @@ impl ScrollDirection {
     }
 
     /// Converts the scroll direction to bevy's [Overflow].
+    #[inline(always)]
     pub fn to_overflow(self) -> Overflow {
         match self {
             Self::Vertical => Overflow {
@@ -374,6 +376,7 @@ pub struct ScrollViewState {
 }
 
 impl Default for ScrollViewState {
+    #[inline(always)]
     fn default() -> Self {
         Self {
             current_offset: Vec2::ZERO,
@@ -655,6 +658,7 @@ impl ScrollViewProps {
 }
 
 impl Default for ScrollViewProps {
+    #[inline(always)]
     fn default() -> Self {
         Self {
             direction: ScrollDirection::default(),

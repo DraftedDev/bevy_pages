@@ -72,6 +72,7 @@ pub trait Widget: Debug + Send + Sync + 'static {
 }
 
 impl Clone for Box<dyn Widget> {
+    #[inline(always)]
     fn clone(&self) -> Self {
         self.dyn_clone()
     }

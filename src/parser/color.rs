@@ -1,5 +1,6 @@
 use bevy::color::{Alpha, Color, Srgba};
 
+#[inline(always)]
 pub(crate) fn lighten_color(color: Color, factor: f32) -> Color {
     let Srgba {
         red,
@@ -15,6 +16,7 @@ pub(crate) fn lighten_color(color: Color, factor: f32) -> Color {
     .with_alpha(alpha)
 }
 
+#[inline(always)]
 pub(crate) fn darken_color(color: Color, factor: f32) -> Color {
     let Srgba {
         red,

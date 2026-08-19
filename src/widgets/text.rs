@@ -235,6 +235,7 @@ impl TextProps {
 }
 
 impl Default for TextProps {
+    #[inline(always)]
     fn default() -> Self {
         Self {
             content: String::new(),

@@ -17,6 +17,7 @@ pub struct ElementClick {
 
 impl ElementClick {
     /// Returns [true] if the target element ID matches the given ID.
+    #[inline(always)]
     pub fn matches_id(&self, id: impl Into<ElementId>) -> bool {
         self.id.as_ref().map(|i| *i == id.into()).unwrap_or(false)
     }
@@ -36,6 +37,7 @@ pub struct ElementHover {
 
 impl ElementHover {
     /// Returns [true] if the target element ID matches the given ID.
+    #[inline(always)]
     pub fn matches_id(&self, id: impl Into<ElementId>) -> bool {
         self.id.as_ref().map(|i| *i == id.into()).unwrap_or(false)
     }
@@ -55,6 +57,7 @@ pub struct ElementSpawn {
 
 impl ElementSpawn {
     /// Returns [true] if the target element ID matches the given ID.
+    #[inline(always)]
     pub fn matches_id(&self, id: impl Into<ElementId>) -> bool {
         self.id.as_ref().map(|i| *i == id.into()).unwrap_or(false)
     }
@@ -77,6 +80,7 @@ pub struct ElementToggle {
 
 impl ElementToggle {
     /// Returns [true] if the target element ID matches the given ID.
+    #[inline(always)]
     pub fn matches_id(&self, id: impl Into<ElementId>) -> bool {
         self.id.as_ref().map(|i| *i == id.into()).unwrap_or(false)
     }
@@ -101,12 +105,14 @@ pub struct ElementSet<T> {
 
 impl<T> ElementSet<T> {
     /// Returns [true] if the target element ID matches the given ID.
+    #[inline(always)]
     pub fn matches_id(&self, id: impl Into<ElementId>) -> bool {
         self.id.as_ref().map(|i| *i == id.into()).unwrap_or(false)
     }
 }
 
 impl<T: Clone> Clone for ElementSet<T> {
+    #[inline(always)]
     fn clone(&self) -> Self {
         Self {
             entity: self.entity,
@@ -118,6 +124,7 @@ impl<T: Clone> Clone for ElementSet<T> {
 }
 
 impl<T: Debug> Debug for ElementSet<T> {
+    #[inline(always)]
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("ElementSet")
             .field("entity", &self.entity)
@@ -129,6 +136,7 @@ impl<T: Debug> Debug for ElementSet<T> {
 }
 
 impl<T: Hash> Hash for ElementSet<T> {
+    #[inline(always)]
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         self.entity.hash(state);
         self.id.hash(state);
@@ -138,6 +146,7 @@ impl<T: Hash> Hash for ElementSet<T> {
 }
 
 impl<T: PartialEq> PartialEq for ElementSet<T> {
+    #[inline(always)]
     fn eq(&self, other: &Self) -> bool {
         self.entity == other.entity
             && self.id == other.id

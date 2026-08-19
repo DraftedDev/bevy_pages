@@ -110,6 +110,7 @@ pub enum TooltipAnchor {
 
 impl TooltipAnchor {
     /// Parses a string into a [TooltipAnchor].
+    #[inline(always)]
     pub fn parse(s: &str) -> Result<Self, String> {
         parse_matches(
             s,
@@ -324,6 +325,7 @@ impl TooltipProps {
 }
 
 impl Default for TooltipProps {
+    #[inline(always)]
     fn default() -> Self {
         Self {
             text: String::new(),

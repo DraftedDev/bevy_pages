@@ -310,6 +310,7 @@ impl SwitchProps {
 }
 
 impl Default for SwitchProps {
+    #[inline(always)]
     fn default() -> Self {
         Self {
             state: false,

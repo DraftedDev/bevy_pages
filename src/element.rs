@@ -80,7 +80,8 @@ impl Element {
         root_entity
     }
 
-    /// Returns the [ElementId] of the element, if it has one.
+    /// Returns the [ElementId] of the element, if it has one
+    #[inline(always)]
     pub fn id(&self) -> Option<ElementId> {
         self.id.clone()
     }
@@ -103,17 +104,20 @@ pub struct ElementId(SmolStr);
 
 impl ElementId {
     /// Creates a new [ElementId].
+    #[inline(always)]
     pub fn new(s: impl AsRef<str>) -> Self {
         Self(SmolStr::new(s))
     }
 
     /// Creates a new [ElementId] from a static string.
+    #[inline(always)]
     pub fn new_static(s: &'static str) -> Self {
         Self(SmolStr::new_static(s))
     }
 }
 
 impl From<&'static str> for ElementId {
+    #[inline(always)]
     fn from(s: &'static str) -> Self {
         Self::new_static(s)
     }
@@ -125,16 +129,19 @@ pub(crate) struct ElementRegistry {
 }
 
 impl ElementRegistry {
+    #[inline(always)]
     pub(crate) fn new(cap: usize) -> Self {
         Self {
             ids: FxHashMap::with_capacity_and_hasher(cap, Default::default()),
         }
     }
 
+    #[inline(always)]
     pub(crate) fn register_element(&mut self, id: ElementId, entity: Entity) {
         self.ids.insert(id, entity);
     }
 
+    #[inline(always)]
     pub(crate) fn get_element(&self, id: ElementId) -> Option<Entity> {
         self.ids.get(&id).cloned()
     }

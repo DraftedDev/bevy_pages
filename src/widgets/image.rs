@@ -207,6 +207,7 @@ impl ImageProps {
 }
 
 impl Default for ImageProps {
+    #[inline(always)]
     fn default() -> Self {
         Self {
             src: "".to_string(),

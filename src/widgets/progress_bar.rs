@@ -94,6 +94,7 @@ pub struct ProgressBarState {
 
 impl ProgressBarState {
     /// Returns the progress normalized between `0.0` and `1.0`.
+    #[inline(always)]
     pub fn normalized(&self) -> f32 {
         if self.max > self.min {
             ((self.value - self.min) / (self.max - self.min)).clamp(0.0, 1.0)
@@ -103,6 +104,7 @@ impl ProgressBarState {
     }
 
     /// Returns the current progress as a percentage between `0.0` and `100.0`.
+    #[inline(always)]
     pub fn percentage(&self) -> f32 {
         self.normalized() * 100.0
     }
@@ -315,6 +317,7 @@ impl ProgressBarProps {
 }
 
 impl Default for ProgressBarProps {
+    #[inline(always)]
     fn default() -> Self {
         Self {
             min: 0.0,

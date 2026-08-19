@@ -437,6 +437,7 @@ impl TextInputProps {
 }
 
 impl Default for TextInputProps {
+    #[inline(always)]
     fn default() -> Self {
         Self {
             value: "".to_string(),

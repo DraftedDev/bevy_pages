@@ -181,6 +181,7 @@ pub(crate) fn update_props(
     }
 }
 
+#[inline]
 fn find_dropdown_root(
     start_entity: Entity,
     child_of_query: &Query<&ChildOf>,
@@ -203,6 +204,7 @@ fn find_dropdown_root(
     }
 }
 
+#[inline]
 fn extract_text_from_entity(
     entity: Entity,
     text_query: &Query<&mut Text>,
@@ -225,6 +227,7 @@ fn extract_text_from_entity(
     None
 }
 
+#[inline]
 fn is_hierarchy_interacting(
     entity: Entity,
     interaction_query: &Query<&Interaction>,
@@ -261,6 +264,7 @@ pub struct DropdownState {
 }
 
 impl Default for DropdownState {
+    #[inline(always)]
     fn default() -> Self {
         Self {
             is_open: false,
@@ -470,6 +474,7 @@ impl DropdownProps {
 }
 
 impl Default for DropdownProps {
+    #[inline(always)]
     fn default() -> Self {
         Self {
             placeholder: String::default(),

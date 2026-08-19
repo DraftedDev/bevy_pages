@@ -19,6 +19,7 @@ pub struct PageLoader {
 
 impl PageLoader {
     /// Retrieves a widget by its name or [None] if it isn't registered.
+    #[inline(always)]
     pub fn get_widget(&self, name: &str) -> Option<&dyn Widget> {
         self.widgets.get(name).map(|w| w.as_ref())
     }
@@ -76,6 +77,7 @@ pub enum PageLoaderError {
 }
 
 impl Display for PageLoaderError {
+    #[cold]
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             PageLoaderError::Io(e) => write!(f, "IO Error: {e}"),

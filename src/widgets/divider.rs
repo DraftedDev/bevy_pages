@@ -19,6 +19,7 @@ pub enum DividerOrientation {
 
 impl DividerOrientation {
     /// Parses the divider orientation from a string.
+    #[inline(always)]
     pub fn parse(s: &str) -> Result<Self, String> {
         parse_matches(
             s,
@@ -147,6 +148,7 @@ pub struct DividerProps {
 }
 
 impl DividerProps {
+    #[inline(always)]
     fn parse(node: &XmlNode, prefix: Option<&str>, base: &Self) -> Result<Self, String> {
         let orientation = parse_attribute(node, "orientation", prefix, DividerOrientation::parse)?
             .unwrap_or(base.orientation);

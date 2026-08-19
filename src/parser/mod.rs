@@ -19,6 +19,7 @@ use roxmltree::{Document, Node};
 pub(crate) mod color;
 pub(crate) mod values;
 
+#[inline(always)]
 pub(crate) fn parse_page(loader: &PageLoader, doc: Document) -> Result<Page, String> {
     let root_xml = doc
         .root()
@@ -88,6 +89,7 @@ pub(crate) fn parse_props(
     })
 }
 
+#[inline(always)]
 pub(crate) fn parse_children_elements(
     node: &Node,
     loader: &PageLoader,

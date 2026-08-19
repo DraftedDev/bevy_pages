@@ -46,6 +46,7 @@ pub struct PageSpawner {
 }
 
 impl PageSpawner {
+    #[inline(always)]
     pub(crate) fn new() -> Self {
         Self {
             handle: None,
@@ -58,6 +59,7 @@ impl PageSpawner {
     /// **NOTE:** Make sure to [PageSpawner::despawn] any existing page before spawning a new one.
     ///
     /// This will indirectly trigger [SpawnPage].
+    #[inline(always)]
     pub fn spawn(&mut self, handle: Handle<Page>) {
         self.handle = Some(handle);
     }
@@ -67,6 +69,7 @@ impl PageSpawner {
     /// Won't panic if no page is currently spawned.
     ///
     /// This will directly trigger [DespawnPage].
+    #[inline(always)]
     pub fn despawn(&mut self, commands: &mut Commands) {
         commands.trigger(DespawnPage);
     }

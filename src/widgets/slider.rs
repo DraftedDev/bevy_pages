@@ -403,6 +403,7 @@ impl SliderProps {
 }
 
 impl Default for SliderProps {
+    #[inline(always)]
     fn default() -> Self {
         Self {
             min: 0.0,

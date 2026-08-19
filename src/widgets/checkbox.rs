@@ -238,6 +238,7 @@ impl CheckboxProps {
 }
 
 impl Default for CheckboxProps {
+    #[inline(always)]
     fn default() -> Self {
         Self {
             state: false,

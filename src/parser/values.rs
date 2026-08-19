@@ -277,6 +277,7 @@ pub(crate) fn parse_matches<T>(
     ))
 }
 
+#[inline(always)]
 pub(crate) fn parse_float(i: &str) -> Result<f32, String> {
     i.to_lowercase()
         .trim()
@@ -284,6 +285,7 @@ pub(crate) fn parse_float(i: &str) -> Result<f32, String> {
         .map_err(|err| format!("Failed to parse float '{i}': {err}"))
 }
 
+#[inline(always)]
 pub(crate) fn parse_int(i: &str) -> Result<i32, String> {
     i.to_lowercase()
         .trim()
@@ -291,6 +293,7 @@ pub(crate) fn parse_int(i: &str) -> Result<i32, String> {
         .map_err(|err| format!("Failed to parse int '{i}': {err}"))
 }
 
+#[inline(always)]
 pub(crate) fn parse_bool(i: &str) -> Result<bool, String> {
     i.to_lowercase()
         .trim()
