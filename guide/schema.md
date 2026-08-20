@@ -59,6 +59,7 @@ complex type definitions:
 | Grid Track     | Syntax: `auto`, `<float><unit>`. Available units: `px`, `%`, `fr`.                                                                                                | `auto`, `1fr`, `10%`                         |
 | Grid Template  | Space seperated list of track sized. Optionally with `px` suffix.                                                                                                 | `100px`, `10px 20px 30px`,  `50 100 150 200` |
 | Grid Placement | Either an integer or `auto`.                                                                                                                                      | `1`, `2`, `auto`                             |
+| Border Rect    | Available: `<float>` for uniform, `<float> <float>` for X & Y axis, `<float> <float> <float> <float>` for min X, min Y, max X, max Y.                             | `100.0`, `20.0 10.0`, `5.0 10.0 15.0 20.0`   |
 
 ---
 
@@ -335,6 +336,17 @@ Build a new image widget using the `<Image />` tag.
 - `rect = "<rect>"`: The rect to clip the image to.
 - `mode = "<auto|sliced|tiled|stretch>"`: The layout mode to use for the image.
 - `visual-box = "<padding|content|border>"`: The visual box of the image.
+- `sliced-border = "<borderRect>"`: The border rect when `mode = "sliced"`.
+- `sliced-center-scale-stretch = "<float>"`: The center scale when `mode = "sliced"` and
+  `sliced-center-scale = "tile"`.
+- `sliced-center-scale = "<stretch|tile>"`: The center scale when `mode = "sliced"`.
+- `sliced-sides-scale-stretch = "<float>"`: The sides scale when `mode = "sliced"` and
+  `sliced-sides-scale = "tile"`.
+- `sliced-sides-scale = "<stretch|tile>"`: The sides scale when `mode = "sliced"`.
+- `sliced-max-corner-scale = "<float>"`: The max corner scale when `mode = "sliced"`.
+- `tiled-x = "<bool>"`: Whether to tile the image horizontally, when `mode = "tiled"`.
+- `tiled-y = "<bool>"`: Whether to tile the image vertically, when `mode = "tiled"`.
+- `tiled-stretch = "<float>"`: The stretch scale when `mode = "tiled"`.
 
 All the attributes listed support state overrides.
 

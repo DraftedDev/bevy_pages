@@ -113,6 +113,13 @@
         <xs:union memberTypes="WhitespaceOnlyType UiRect1Type UiRect4Type"/>
     </xs:simpleType>
 
+    <xs:simpleType name="BorderRectType">
+        <xs:restriction base="xs:string">
+            <xs:pattern
+                    value="^\s*[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?(\s*[\s,]\s*[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?){0}\s*$|^\s*[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?(\s*[\s,]\s*[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s*$|^\s*[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?(\s*[\s,]\s*[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?){3}\s*$"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="GridTrackType">
         <xs:restriction base="xs:string">
             <xs:pattern value="\s*([-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px|%|fr)|auto)\s*"/>
@@ -481,6 +488,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="ImageSlicedScaleType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="stretch"/>
+            <xs:enumeration value="tile"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="ScrollDirectionType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="vertical"/>
@@ -753,6 +767,15 @@
         <xs:attribute name="rect" type="RectType"/>
         <xs:attribute name="mode" type="ImageModeType"/>
         <xs:attribute name="visual-box" type="VisualBoxType"/>
+        <xs:attribute name="sliced-border" type="BorderRectType"/>
+        <xs:attribute name="sliced-center-scale-stretch" type="xs:float"/>
+        <xs:attribute name="sliced-center-scale" type="ImageSlicedScaleType"/>
+        <xs:attribute name="sliced-sides-scale-stretch" type="xs:float"/>
+        <xs:attribute name="sliced-sides-scale" type="ImageSlicedScaleType"/>
+        <xs:attribute name="sliced-max-corner-scale" type="xs:float"/>
+        <xs:attribute name="tiled-x" type="BoolLiteralType"/>
+        <xs:attribute name="tiled-y" type="BoolLiteralType"/>
+        <xs:attribute name="tiled-stretch" type="xs:float"/>
 
 
         <xs:attribute name="hover.src" type="xs:string"/>
@@ -762,6 +785,15 @@
         <xs:attribute name="hover.rect" type="RectType"/>
         <xs:attribute name="hover.mode" type="ImageModeType"/>
         <xs:attribute name="hover.visual-box" type="VisualBoxType"/>
+        <xs:attribute name="hover.sliced-border" type="BorderRectType"/>
+        <xs:attribute name="hover.sliced-center-scale-stretch" type="xs:float"/>
+        <xs:attribute name="hover.sliced-center-scale" type="ImageSlicedScaleType"/>
+        <xs:attribute name="hover.sliced-sides-scale-stretch" type="xs:float"/>
+        <xs:attribute name="hover.sliced-sides-scale" type="ImageSlicedScaleType"/>
+        <xs:attribute name="hover.sliced-max-corner-scale" type="xs:float"/>
+        <xs:attribute name="hover.tiled-x" type="BoolLiteralType"/>
+        <xs:attribute name="hover.tiled-y" type="BoolLiteralType"/>
+        <xs:attribute name="hover.tiled-stretch" type="xs:float"/>
 
 
         <xs:attribute name="click.src" type="xs:string"/>
@@ -771,6 +803,16 @@
         <xs:attribute name="click.rect" type="RectType"/>
         <xs:attribute name="click.mode" type="ImageModeType"/>
         <xs:attribute name="click.visual-box" type="VisualBoxType"/>
+        <xs:attribute name="click.sliced-border" type="BorderRectType"/>
+        <xs:attribute name="click.sliced-center-scale-stretch" type="xs:float"/>
+        <xs:attribute name="click.sliced-center-scale" type="ImageSlicedScaleType"/>
+        <xs:attribute name="click.sliced-sides-scale-stretch" type="xs:float"/>
+        <xs:attribute name="click.sliced-sides-scale" type="ImageSlicedScaleType"/>
+        <xs:attribute name="click.sliced-max-corner-scale" type="xs:float"/>
+        <xs:attribute name="click.tiled-x" type="BoolLiteralType"/>
+        <xs:attribute name="click.tiled-y" type="BoolLiteralType"/>
+        <xs:attribute name="click.tiled-stretch" type="xs:float"/>
+
     </xs:attributeGroup>
 
     <xs:attributeGroup name="progressBarAttrs">
