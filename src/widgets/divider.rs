@@ -24,8 +24,8 @@ impl DividerOrientation {
         parse_matches(
             s,
             &[
-                ("horizontal", || Ok(Self::Horizontal)),
-                ("vertical", || Ok(Self::Vertical)),
+                ("horizontal", &|| Ok(Self::Horizontal)),
+                ("vertical", &|| Ok(Self::Vertical)),
             ],
         )
     }

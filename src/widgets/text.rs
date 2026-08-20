@@ -184,16 +184,16 @@ impl TextProps {
                     crate::parser::values::parse_matches(
                         s,
                         &[
-                            ("thin", || Ok(FontWeight::THIN)),
-                            ("extra_light", || Ok(FontWeight::EXTRA_LIGHT)),
-                            ("light", || Ok(FontWeight::LIGHT)),
-                            ("normal", || Ok(FontWeight::NORMAL)),
-                            ("medium", || Ok(FontWeight::MEDIUM)),
-                            ("semibold", || Ok(FontWeight::SEMIBOLD)),
-                            ("bold", || Ok(FontWeight::BOLD)),
-                            ("extra_bold", || Ok(FontWeight::EXTRA_BOLD)),
-                            ("black", || Ok(FontWeight::BLACK)),
-                            ("extra_black", || Ok(FontWeight::EXTRA_BLACK)),
+                            ("thin", &|| Ok(FontWeight::THIN)),
+                            ("extra_light", &|| Ok(FontWeight::EXTRA_LIGHT)),
+                            ("light", &|| Ok(FontWeight::LIGHT)),
+                            ("normal", &|| Ok(FontWeight::NORMAL)),
+                            ("medium", &|| Ok(FontWeight::MEDIUM)),
+                            ("semibold", &|| Ok(FontWeight::SEMIBOLD)),
+                            ("bold", &|| Ok(FontWeight::BOLD)),
+                            ("extra_bold", &|| Ok(FontWeight::EXTRA_BOLD)),
+                            ("black", &|| Ok(FontWeight::BLACK)),
+                            ("extra_black", &|| Ok(FontWeight::EXTRA_BLACK)),
                         ],
                     )
                 })
@@ -217,9 +217,9 @@ impl TextProps {
             crate::parser::values::parse_matches(
                 s,
                 &[
-                    ("normal", || Ok(FontStyle::Normal)),
-                    ("italic", || Ok(FontStyle::Italic)),
-                    ("oblique", || Ok(FontStyle::Oblique(None))),
+                    ("normal", &|| Ok(FontStyle::Normal)),
+                    ("italic", &|| Ok(FontStyle::Italic)),
+                    ("oblique", &|| Ok(FontStyle::Oblique(None))),
                 ],
             )
         })?

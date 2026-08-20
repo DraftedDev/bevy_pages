@@ -1,7 +1,8 @@
 use crate::parser::color::parse_color;
 use bevy::math::{Rect, Vec2};
 use bevy::prelude::{
-    BorderColor, BorderRadius, FontSize, GridPlacement, GridTrack, RepeatedGridTrack, UiRect, Val,
+    BorderColor, BorderRadius, BorderRect, FontSize, GridPlacement, GridTrack, RepeatedGridTrack,
+    UiRect, Val,
 };
 use roxmltree::Node;
 
@@ -135,6 +136,43 @@ pub(crate) fn parse_border_radius(i: &str) -> Result<BorderRadius, String> {
     }
 }
 
+/// Parses a string into a [BorderRect].
+///
+/// ## Supported Formats
+/// - **1 value**: `"10"`: Uniform inset `(10, 10), (10, 10)`
+/// - **2 values**: `"10 20"`: Axes `(X, Y)` inset `(10, 20), (10, 20)`
+/// - **4 values**: `"5 10 15 20"`: Explicit `min_x, min_y, max_x, max_y`
+pub fn parse_border_rect(s: &str) -> Result<BorderRect, String> {
+    let parts: Vec<&str> = s
+        .trim()
+        .split(|c: char| c.is_whitespace() || c == ',')
+        .filter(|p| !p.is_empty())
+        .collect();
+
+    let numbers: Vec<f32> = parts
+        .into_iter()
+        .map(parse_float)
+        .collect::<Result<_, _>>()?;
+
+    match numbers.as_slice() {
+        [val] => Ok(BorderRect {
+            min_inset: Vec2::splat(*val),
+            max_inset: Vec2::splat(*val),
+        }),
+        [x, y] => Ok(BorderRect {
+            min_inset: Vec2::new(*x, *y),
+            max_inset: Vec2::new(*x, *y),
+        }),
+        [min_x, min_y, max_x, max_y] => Ok(BorderRect {
+            min_inset: Vec2::new(*min_x, *min_y),
+            max_inset: Vec2::new(*max_x, *max_y),
+        }),
+        _ => Err(format!(
+            "Invalid BorderRect format: '{s}'. Expected 1, 2, or 4 float numbers."
+        )),
+    }
+}
+
 pub(crate) fn parse_grid_template(i: &str) -> Result<Vec<GridTrack>, String> {
     if i.trim().is_empty() {
         return Ok(Vec::new());
@@ -259,7 +297,7 @@ pub(crate) fn parse_font_size(i: &str) -> Result<FontSize, String> {
 
 pub(crate) fn parse_matches<T>(
     i: &str,
-    cases: &[(&str, fn() -> Result<T, String>)],
+    cases: &[(&str, &dyn Fn() -> Result<T, String>)],
 ) -> Result<T, String> {
     let i = i.trim().to_lowercase();
 

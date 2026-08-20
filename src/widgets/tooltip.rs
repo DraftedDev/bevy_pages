@@ -116,10 +116,10 @@ impl TooltipAnchor {
         parse_matches(
             s,
             &[
-                ("top", || Ok(Self::Top)),
-                ("bottom", || Ok(Self::Bottom)),
-                ("left", || Ok(Self::Left)),
-                ("right", || Ok(Self::Right)),
+                ("top", &|| Ok(Self::Top)),
+                ("bottom", &|| Ok(Self::Bottom)),
+                ("left", &|| Ok(Self::Left)),
+                ("right", &|| Ok(Self::Right)),
             ],
         )
     }

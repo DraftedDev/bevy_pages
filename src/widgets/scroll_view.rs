@@ -323,9 +323,9 @@ impl ScrollDirection {
         parse_matches(
             s,
             &[
-                ("vertical", || Ok(Self::Vertical)),
-                ("horizontal", || Ok(Self::Horizontal)),
-                ("both", || Ok(Self::Both)),
+                ("vertical", &|| Ok(Self::Vertical)),
+                ("horizontal", &|| Ok(Self::Horizontal)),
+                ("both", &|| Ok(Self::Both)),
             ],
         )
     }

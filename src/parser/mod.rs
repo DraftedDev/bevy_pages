@@ -122,10 +122,10 @@ pub(crate) fn parse_node(
             parse_matches(
                 s,
                 &[
-                    ("flex", || Ok(Display::Flex)),
-                    ("grid", || Ok(Display::Grid)),
-                    ("block", || Ok(Display::Block)),
-                    ("none", || Ok(Display::None)),
+                    ("flex", &|| Ok(Display::Flex)),
+                    ("grid", &|| Ok(Display::Grid)),
+                    ("block", &|| Ok(Display::Block)),
+                    ("none", &|| Ok(Display::None)),
                 ],
             )
         })?
@@ -135,8 +135,8 @@ pub(crate) fn parse_node(
             parse_matches(
                 s,
                 &[
-                    ("border", || Ok(BoxSizing::BorderBox)),
-                    ("content", || Ok(BoxSizing::ContentBox)),
+                    ("border", &|| Ok(BoxSizing::BorderBox)),
+                    ("content", &|| Ok(BoxSizing::ContentBox)),
                 ],
             )
         })?
@@ -146,8 +146,8 @@ pub(crate) fn parse_node(
             parse_matches(
                 s,
                 &[
-                    ("absolute", || Ok(PositionType::Absolute)),
-                    ("relative", || Ok(PositionType::Relative)),
+                    ("absolute", &|| Ok(PositionType::Absolute)),
+                    ("relative", &|| Ok(PositionType::Relative)),
                 ],
             )
         })?
@@ -158,10 +158,10 @@ pub(crate) fn parse_node(
                 parse_matches(
                     s,
                     &[
-                        ("visible", || Ok(OverflowAxis::Visible)),
-                        ("clip", || Ok(OverflowAxis::Clip)),
-                        ("hidden", || Ok(OverflowAxis::Hidden)),
-                        ("scroll", || Ok(OverflowAxis::Scroll)),
+                        ("visible", &|| Ok(OverflowAxis::Visible)),
+                        ("clip", &|| Ok(OverflowAxis::Clip)),
+                        ("hidden", &|| Ok(OverflowAxis::Hidden)),
+                        ("scroll", &|| Ok(OverflowAxis::Scroll)),
                     ],
                 )
             })?
@@ -171,10 +171,10 @@ pub(crate) fn parse_node(
                 parse_matches(
                     s,
                     &[
-                        ("visible", || Ok(OverflowAxis::Visible)),
-                        ("clip", || Ok(OverflowAxis::Clip)),
-                        ("hidden", || Ok(OverflowAxis::Hidden)),
-                        ("scroll", || Ok(OverflowAxis::Scroll)),
+                        ("visible", &|| Ok(OverflowAxis::Visible)),
+                        ("clip", &|| Ok(OverflowAxis::Clip)),
+                        ("hidden", &|| Ok(OverflowAxis::Hidden)),
+                        ("scroll", &|| Ok(OverflowAxis::Scroll)),
                     ],
                 )
             })?
@@ -189,9 +189,9 @@ pub(crate) fn parse_node(
                 parse_matches(
                     s,
                     &[
-                        ("padding", || Ok(VisualBox::PaddingBox)),
-                        ("content", || Ok(VisualBox::ContentBox)),
-                        ("border", || Ok(VisualBox::BorderBox)),
+                        ("padding", &|| Ok(VisualBox::PaddingBox)),
+                        ("content", &|| Ok(VisualBox::ContentBox)),
+                        ("border", &|| Ok(VisualBox::BorderBox)),
                     ],
                 )
             })?
@@ -222,12 +222,12 @@ pub(crate) fn parse_node(
             parse_matches(
                 s,
                 &[
-                    ("default", || Ok(AlignItems::Default)),
-                    ("start", || Ok(AlignItems::Start)),
-                    ("end", || Ok(AlignItems::End)),
-                    ("center", || Ok(AlignItems::Center)),
-                    ("baseline", || Ok(AlignItems::Baseline)),
-                    ("stretch", || Ok(AlignItems::Stretch)),
+                    ("default", &|| Ok(AlignItems::Default)),
+                    ("start", &|| Ok(AlignItems::Start)),
+                    ("end", &|| Ok(AlignItems::End)),
+                    ("center", &|| Ok(AlignItems::Center)),
+                    ("baseline", &|| Ok(AlignItems::Baseline)),
+                    ("stretch", &|| Ok(AlignItems::Stretch)),
                 ],
             )
         })?
@@ -237,11 +237,11 @@ pub(crate) fn parse_node(
             parse_matches(
                 s,
                 &[
-                    ("default", || Ok(JustifyItems::Default)),
-                    ("start", || Ok(JustifyItems::Start)),
-                    ("end", || Ok(JustifyItems::End)),
-                    ("center", || Ok(JustifyItems::Center)),
-                    ("stretch", || Ok(JustifyItems::Stretch)),
+                    ("default", &|| Ok(JustifyItems::Default)),
+                    ("start", &|| Ok(JustifyItems::Start)),
+                    ("end", &|| Ok(JustifyItems::End)),
+                    ("center", &|| Ok(JustifyItems::Center)),
+                    ("stretch", &|| Ok(JustifyItems::Stretch)),
                 ],
             )
         })?
@@ -251,11 +251,11 @@ pub(crate) fn parse_node(
             parse_matches(
                 s,
                 &[
-                    ("auto", || Ok(AlignSelf::Auto)),
-                    ("start", || Ok(AlignSelf::Start)),
-                    ("end", || Ok(AlignSelf::End)),
-                    ("center", || Ok(AlignSelf::Center)),
-                    ("stretch", || Ok(AlignSelf::Stretch)),
+                    ("auto", &|| Ok(AlignSelf::Auto)),
+                    ("start", &|| Ok(AlignSelf::Start)),
+                    ("end", &|| Ok(AlignSelf::End)),
+                    ("center", &|| Ok(AlignSelf::Center)),
+                    ("stretch", &|| Ok(AlignSelf::Stretch)),
                 ],
             )
         })?
@@ -265,11 +265,11 @@ pub(crate) fn parse_node(
             parse_matches(
                 s,
                 &[
-                    ("auto", || Ok(JustifySelf::Auto)),
-                    ("start", || Ok(JustifySelf::Start)),
-                    ("end", || Ok(JustifySelf::End)),
-                    ("center", || Ok(JustifySelf::Center)),
-                    ("stretch", || Ok(JustifySelf::Stretch)),
+                    ("auto", &|| Ok(JustifySelf::Auto)),
+                    ("start", &|| Ok(JustifySelf::Start)),
+                    ("end", &|| Ok(JustifySelf::End)),
+                    ("center", &|| Ok(JustifySelf::Center)),
+                    ("stretch", &|| Ok(JustifySelf::Stretch)),
                 ],
             )
         })?
@@ -279,11 +279,11 @@ pub(crate) fn parse_node(
             parse_matches(
                 s,
                 &[
-                    ("default", || Ok(AlignContent::Default)),
-                    ("start", || Ok(AlignContent::Start)),
-                    ("end", || Ok(AlignContent::End)),
-                    ("center", || Ok(AlignContent::Center)),
-                    ("stretch", || Ok(AlignContent::Stretch)),
+                    ("default", &|| Ok(AlignContent::Default)),
+                    ("start", &|| Ok(AlignContent::Start)),
+                    ("end", &|| Ok(AlignContent::End)),
+                    ("center", &|| Ok(AlignContent::Center)),
+                    ("stretch", &|| Ok(AlignContent::Stretch)),
                 ],
             )
         })?
@@ -293,13 +293,13 @@ pub(crate) fn parse_node(
             parse_matches(
                 s,
                 &[
-                    ("default", || Ok(JustifyContent::Default)),
-                    ("start", || Ok(JustifyContent::Start)),
-                    ("end", || Ok(JustifyContent::End)),
-                    ("center", || Ok(JustifyContent::Center)),
-                    ("space-between", || Ok(JustifyContent::SpaceBetween)),
-                    ("space-around", || Ok(JustifyContent::SpaceAround)),
-                    ("space-evenly", || Ok(JustifyContent::SpaceEvenly)),
+                    ("default", &|| Ok(JustifyContent::Default)),
+                    ("start", &|| Ok(JustifyContent::Start)),
+                    ("end", &|| Ok(JustifyContent::End)),
+                    ("center", &|| Ok(JustifyContent::Center)),
+                    ("space-between", &|| Ok(JustifyContent::SpaceBetween)),
+                    ("space-around", &|| Ok(JustifyContent::SpaceAround)),
+                    ("space-evenly", &|| Ok(JustifyContent::SpaceEvenly)),
                 ],
             )
         })?
@@ -309,8 +309,8 @@ pub(crate) fn parse_node(
             parse_matches(
                 s,
                 &[
-                    ("ltr", || Ok(InlineDirection::Ltr)),
-                    ("rtl", || Ok(InlineDirection::Rtl)),
+                    ("ltr", &|| Ok(InlineDirection::Ltr)),
+                    ("rtl", &|| Ok(InlineDirection::Rtl)),
                 ],
             )
         })?
@@ -326,10 +326,10 @@ pub(crate) fn parse_node(
             parse_matches(
                 s,
                 &[
-                    ("row", || Ok(FlexDirection::Row)),
-                    ("column", || Ok(FlexDirection::Column)),
-                    ("row-reverse", || Ok(FlexDirection::RowReverse)),
-                    ("column-reverse", || Ok(FlexDirection::ColumnReverse)),
+                    ("row", &|| Ok(FlexDirection::Row)),
+                    ("column", &|| Ok(FlexDirection::Column)),
+                    ("row-reverse", &|| Ok(FlexDirection::RowReverse)),
+                    ("column-reverse", &|| Ok(FlexDirection::ColumnReverse)),
                 ],
             )
         })?
@@ -339,9 +339,9 @@ pub(crate) fn parse_node(
             parse_matches(
                 s,
                 &[
-                    ("no-wrap", || Ok(FlexWrap::NoWrap)),
-                    ("wrap", || Ok(FlexWrap::Wrap)),
-                    ("wrap-reverse", || Ok(FlexWrap::WrapReverse)),
+                    ("no-wrap", &|| Ok(FlexWrap::NoWrap)),
+                    ("wrap", &|| Ok(FlexWrap::Wrap)),
+                    ("wrap-reverse", &|| Ok(FlexWrap::WrapReverse)),
                 ],
             )
         })?
@@ -362,10 +362,10 @@ pub(crate) fn parse_node(
             parse_matches(
                 s,
                 &[
-                    ("row", || Ok(GridAutoFlow::Row)),
-                    ("column", || Ok(GridAutoFlow::Column)),
-                    ("row-dense", || Ok(GridAutoFlow::RowDense)),
-                    ("column-dense", || Ok(GridAutoFlow::ColumnDense)),
+                    ("row", &|| Ok(GridAutoFlow::Row)),
+                    ("column", &|| Ok(GridAutoFlow::Column)),
+                    ("row-dense", &|| Ok(GridAutoFlow::RowDense)),
+                    ("column-dense", &|| Ok(GridAutoFlow::ColumnDense)),
                 ],
             )
         })?
