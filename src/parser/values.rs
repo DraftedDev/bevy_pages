@@ -6,7 +6,12 @@ use bevy::prelude::{
 };
 use roxmltree::Node;
 
-pub(crate) fn parse_attribute<T, F>(
+/// Parses an attribute from an XML node.
+/// Applies the given parser to the attribute value or returns [None] if the attribute is not present.
+/// Can also return [Err] if the parser fails.
+///
+/// You can specify an optional prefix for the attribute name (following convention `<prefix>.<name>`).
+pub fn parse_attribute<T, F>(
     node: &Node,
     attr_name: &str,
     prefix: Option<&str>,
@@ -23,7 +28,15 @@ where
     node.attribute(key.as_str()).map(parser).transpose()
 }
 
-pub(crate) fn parse_border_color(
+/// Parses a [BorderColor] from an XML node.
+///
+/// You can specify an optional prefix for all attribute names (following convention `<prefix>.<name>`).
+///
+/// # Format
+///
+/// - Either specify `border-color = "<color>"` for a uniform border color.
+/// - Or specify `border-color-top`, `border-color-right`, `border-color-bottom`, `border-color-left` for explicit border colors.
+pub fn parse_border_color(
     node: &Node,
     prefix: Option<&str>,
 ) -> Result<Option<BorderColor>, String> {
@@ -48,7 +61,14 @@ pub(crate) fn parse_border_color(
     }
 }
 
-pub(crate) fn parse_rect(i: &str) -> Result<Rect, String> {
+/// Parses a [Rect] from a string.
+///
+/// # Format
+///
+/// - `<float>` for a uniform rect.
+/// - `<float> <float>` for explicit width and height.
+/// - `<float> <float> <float> <float>` for explicit left, top, right and bottom.
+pub fn parse_rect(i: &str) -> Result<Rect, String> {
     let values: Vec<f32> = i
         .split_whitespace()
         .map(parse_float)
@@ -76,7 +96,17 @@ pub(crate) fn parse_rect(i: &str) -> Result<Rect, String> {
     }
 }
 
-pub(crate) fn parse_ui_rect(i: &str) -> Result<UiRect, String> {
+/// Parses a [UiRect] from a string.
+///
+/// # Format
+///
+/// - `<val>` for a uniform UI rect.
+/// - `<val> <val>` for specifying vertical and horizontal values.
+/// - `<val> <val> <val>` for specifying top, horizontal and bottom.
+/// - `<val> <val> <val> <val>` for explicit top, right, bottom, left values.
+///
+/// Where `<val>` is a [Val] (see [parse_val]).
+pub fn parse_ui_rect(i: &str) -> Result<UiRect, String> {
     let values: Vec<Val> = i
         .split_whitespace()
         .map(parse_val)
@@ -112,7 +142,15 @@ pub(crate) fn parse_ui_rect(i: &str) -> Result<UiRect, String> {
     }
 }
 
-pub(crate) fn parse_border_radius(i: &str) -> Result<BorderRadius, String> {
+/// Parses a [BorderRadius] from a string.
+///
+/// # Format
+///
+/// - `<val>` for a uniform radius.
+/// - `<val> <val> <val> <val>` for explicit top-left, top-right, bottom-right, bottom-left.
+///
+/// Where `<val>` is a [Val] (see [parse_val]).
+pub fn parse_border_radius(i: &str) -> Result<BorderRadius, String> {
     let values: Vec<Val> = i
         .split_whitespace()
         .map(parse_val)
@@ -138,10 +176,11 @@ pub(crate) fn parse_border_radius(i: &str) -> Result<BorderRadius, String> {
 
 /// Parses a string into a [BorderRect].
 ///
-/// ## Supported Formats
-/// - **1 value**: `"10"`: Uniform inset `(10, 10), (10, 10)`
-/// - **2 values**: `"10 20"`: Axes `(X, Y)` inset `(10, 20), (10, 20)`
-/// - **4 values**: `"5 10 15 20"`: Explicit `min_x, min_y, max_x, max_y`
+/// # Format
+///
+/// - `<float>` for a uniform inset.
+/// - `<float> <float>` to specify X and Y axis.
+/// - `<float> <float> <float> <float>` for explicit min-x, min-y, max-x and max-y.
 pub fn parse_border_rect(s: &str) -> Result<BorderRect, String> {
     let parts: Vec<&str> = s
         .trim()
@@ -173,11 +212,18 @@ pub fn parse_border_rect(s: &str) -> Result<BorderRect, String> {
     }
 }
 
-pub(crate) fn parse_grid_template(i: &str) -> Result<Vec<GridTrack>, String> {
+/// Parses a [GridTemplate] from a string.
+///
+/// # Format
+///
+/// A list of floats with an optional `px` suffix.
+/// For example: `"10px 20px 30px 40 50"`.
+pub fn parse_grid_template(i: &str) -> Result<Vec<GridTrack>, String> {
     if i.trim().is_empty() {
         return Ok(Vec::new());
     }
 
+    // TODO: Support other units
     i.split_whitespace()
         .map(|value| {
             Ok(GridTrack::px(parse_float(
@@ -187,7 +233,13 @@ pub(crate) fn parse_grid_template(i: &str) -> Result<Vec<GridTrack>, String> {
         .collect()
 }
 
-pub(crate) fn parse_grid_track(i: &str) -> Result<Vec<RepeatedGridTrack>, String> {
+/// Parses a [GridTrack] from a string.
+///
+/// # Format
+///
+/// - `<float><unit>` with possible units: `px`, `%`, `fr`.
+/// - `auto` to use the auto unit.
+pub fn parse_grid_track(i: &str) -> Result<Vec<RepeatedGridTrack>, String> {
     let track = if let Some(i) = i.strip_suffix("px") {
         GridTrack::px(parse_float(i)?)
     } else if let Some(i) = i.strip_suffix('%') {
@@ -205,6 +257,12 @@ pub(crate) fn parse_grid_track(i: &str) -> Result<Vec<RepeatedGridTrack>, String
     Ok(vec![track])
 }
 
+/// Parses a [GridPlacement] from a string.
+///
+/// # Format
+///
+/// - `auto` to use the auto placement.
+/// - `<integer>` to specify the starting location.
 pub(crate) fn parse_grid_placement(i: &str) -> Result<GridPlacement, String> {
     let i = i.trim().to_lowercase();
 
@@ -219,6 +277,13 @@ pub(crate) fn parse_grid_placement(i: &str) -> Result<GridPlacement, String> {
     Ok(GridPlacement::start(line))
 }
 
+/// Parses a [Val] from a string.
+///
+/// # Format
+///
+/// - `<float>` to automatically use the pixels unit.
+/// - `<float><unit>` with possible units: `px`, `%`, `vw`, `vh`, `vmin`, `vmax`.
+/// - `auto` to use the auto unit.
 pub(crate) fn parse_val(i: &str) -> Result<Val, String> {
     let i = i.trim().to_lowercase();
 
@@ -259,7 +324,13 @@ pub(crate) fn parse_val(i: &str) -> Result<Val, String> {
     ))
 }
 
-pub(crate) fn parse_font_size(i: &str) -> Result<FontSize, String> {
+/// Parses a font size from a string.
+///
+/// ## Format
+///
+/// - `<float>` to automatically use the pixels unit.
+/// - `<float><unit>` with possible units: `px`, `rem`, `vw`, `vh`, `vmin`, `vmax`.
+pub fn parse_font_size(i: &str) -> Result<FontSize, String> {
     let i = i.trim().to_lowercase();
 
     if let Ok(i) = i.parse::<f32>() {
@@ -295,7 +366,11 @@ pub(crate) fn parse_font_size(i: &str) -> Result<FontSize, String> {
     ))
 }
 
-pub(crate) fn parse_matches<T>(
+/// Parses a string to a value from a list of possible matches.
+///
+/// This function will check if `i` matches any cases specified in the array
+/// and applies the parsing function of the match found.
+pub fn parse_matches<T>(
     i: &str,
     cases: &[(&str, &dyn Fn() -> Result<T, String>)],
 ) -> Result<T, String> {
@@ -315,24 +390,27 @@ pub(crate) fn parse_matches<T>(
     ))
 }
 
+/// Parses a float from a string.
 #[inline(always)]
-pub(crate) fn parse_float(i: &str) -> Result<f32, String> {
+pub fn parse_float(i: &str) -> Result<f32, String> {
     i.to_lowercase()
         .trim()
         .parse::<f32>()
         .map_err(|err| format!("Failed to parse float '{i}': {err}"))
 }
 
+/// Parses an int from a string.
 #[inline(always)]
-pub(crate) fn parse_int(i: &str) -> Result<i32, String> {
+pub fn parse_int(i: &str) -> Result<i32, String> {
     i.to_lowercase()
         .trim()
         .parse::<i32>()
         .map_err(|err| format!("Failed to parse int '{i}': {err}"))
 }
 
+/// Parses a bool from a string.
 #[inline(always)]
-pub(crate) fn parse_bool(i: &str) -> Result<bool, String> {
+pub fn parse_bool(i: &str) -> Result<bool, String> {
     i.to_lowercase()
         .trim()
         .parse::<bool>()

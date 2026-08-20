@@ -1,7 +1,8 @@
 use bevy::color::{Alpha, Color, Srgba};
 
+/// Lightens a color by a given factor.
 #[inline(always)]
-pub(crate) fn lighten_color(color: Color, factor: f32) -> Color {
+pub fn lighten_color(color: Color, factor: f32) -> Color {
     let Srgba {
         red,
         green,
@@ -16,8 +17,9 @@ pub(crate) fn lighten_color(color: Color, factor: f32) -> Color {
     .with_alpha(alpha)
 }
 
+/// Darkens a color by a given factor.
 #[inline(always)]
-pub(crate) fn darken_color(color: Color, factor: f32) -> Color {
+pub fn darken_color(color: Color, factor: f32) -> Color {
     let Srgba {
         red,
         green,
@@ -32,7 +34,16 @@ pub(crate) fn darken_color(color: Color, factor: f32) -> Color {
     .with_alpha(alpha)
 }
 
-pub(crate) fn parse_color(i: &str) -> Result<Color, String> {
+/// Parses a color from a string.
+///
+/// # Format
+///
+/// - `#<hex>` for a hex color.
+/// - `rgb(r, g, b)` for an RGB color.
+/// - `rgba(r, g, b, a)` for an RGB color with alpha.
+/// - `hsl(h, s, l)` for an HSL color.
+/// - `hsla(h, s, l, a)` for an HSL color with alpha.
+pub fn parse_color(i: &str) -> Result<Color, String> {
     let input = i.trim().to_ascii_lowercase();
 
     if let Some(color) = parse_named_color(&input) {

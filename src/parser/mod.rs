@@ -19,8 +19,9 @@ use roxmltree::{Document, Node};
 pub(crate) mod color;
 pub(crate) mod values;
 
+/// Parses a [Page] from the given XML document using the provided [PageLoader].
 #[inline(always)]
-pub(crate) fn parse_page(loader: &PageLoader, doc: Document) -> Result<Page, String> {
+pub fn parse_page(loader: &PageLoader, doc: Document) -> Result<Page, String> {
     let root_xml = doc
         .root()
         .first_child()
@@ -37,7 +38,11 @@ pub(crate) fn parse_page(loader: &PageLoader, doc: Document) -> Result<Page, Str
     Ok(Page::new(root, elements))
 }
 
-pub(crate) fn parse_element(node: &Node, loader: &PageLoader) -> Result<Element, String> {
+/// Parses a UI [Element] from the given XML node and [PageLoader].
+///
+/// This function will match the tag name of the XML node to a [Widget] in the [PageLoader]
+/// and set up the widget with the properties from the XML node.
+pub fn parse_element(node: &Node, loader: &PageLoader) -> Result<Element, String> {
     if !node.is_element() {
         return Err("Expected an XML element".into());
     }
@@ -69,7 +74,10 @@ pub(crate) fn parse_element(node: &Node, loader: &PageLoader) -> Result<Element,
     })
 }
 
-pub(crate) fn parse_props(
+/// Parses [ElementProps] from an XML node with possible base props to fall back to.
+///
+/// You can specify an optional prefix for all attribute names (following convention `<prefix>.<name>`).
+pub fn parse_props(
     node: &Node,
     prefix: Option<&str>,
     base: Option<&ElementProps>,
@@ -89,11 +97,9 @@ pub(crate) fn parse_props(
     })
 }
 
+/// Parses a list of child [Element]s from an XML node using the provided [PageLoader].
 #[inline(always)]
-pub(crate) fn parse_children_elements(
-    node: &Node,
-    loader: &PageLoader,
-) -> Result<Vec<Element>, String> {
+pub fn parse_children_elements(node: &Node, loader: &PageLoader) -> Result<Vec<Element>, String> {
     let mut children = Vec::with_capacity(if node.has_children() { 1 } else { 0 });
 
     for child in node.children().filter(|n| n.is_element()) {
@@ -103,7 +109,11 @@ pub(crate) fn parse_children_elements(
     Ok(children)
 }
 
-pub(crate) fn parse_node(
+/// Parses a [ui::Node] from an XML node and optionally falls back to `base_node`.
+/// You must also specify if the parsed node is the root (the most outer node) of the XML.
+///
+/// You can specify an optional prefix for all attribute names (following convention `<prefix>.<name>`).
+pub fn parse_node(
     node: &Node,
     root: bool,
     prefix: Option<&str>,
