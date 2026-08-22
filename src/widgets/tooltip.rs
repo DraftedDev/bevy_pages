@@ -4,7 +4,6 @@ use crate::parser::values::{parse_attribute, parse_font_size, parse_matches};
 use crate::props::Properties;
 use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
-use bevy::asset::AssetServer;
 use bevy::color::Color;
 use bevy::prelude::*;
 use bevy::ui::{FocusPolicy, PositionType, UiRect, Val, ZIndex};
@@ -188,7 +187,7 @@ impl Widget for TooltipWidget {
         Ok(())
     }
 
-    fn spawn(&self, commands: &mut EntityCommands, _: &AssetServer) -> Entity {
+    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
         let props = &self.props.default;
 
         let mut popup_node = Node {
@@ -214,7 +213,7 @@ impl Widget for TooltipWidget {
             }
             TooltipAnchor::Left => {
                 popup_node.right = Val::Percent(100.0);
-                popup_node.margin = UiRect::right(OFFSET);
+                popup_node.margin = UiRect::left(OFFSET);
             }
             TooltipAnchor::Right => {
                 popup_node.left = Val::Percent(100.0);
@@ -222,32 +221,34 @@ impl Widget for TooltipWidget {
             }
         }
 
-        commands.insert((self.props.clone(), FocusPolicy::Block));
+        world
+            .entity_mut(entity)
+            .insert((self.props.clone(), FocusPolicy::Block));
 
-        commands.with_children(|parent| {
-            parent
-                .spawn((
-                    TooltipPopup,
-                    popup_node,
-                    BackgroundColor(props.bg_color),
-                    ZIndex(100), // Renders above adjacent UI nodes
-                    FocusPolicy::Pass,
-                ))
-                .with_children(|popup| {
-                    popup.spawn((
-                        TooltipText,
-                        Text::new(&props.text),
-                        TextFont {
-                            font_size: props.font_size,
-                            ..default()
-                        },
-                        TextColor(props.text_color),
-                        FocusPolicy::Pass,
-                    ));
-                });
-        });
+        let popup_entity = world
+            .spawn((
+                TooltipPopup,
+                popup_node,
+                BackgroundColor(props.bg_color),
+                ZIndex(100),
+                FocusPolicy::Pass,
+                ChildOf(entity),
+            ))
+            .id();
 
-        commands.id()
+        world.spawn((
+            TooltipText,
+            Text::new(&props.text),
+            TextFont {
+                font_size: props.font_size,
+                ..default()
+            },
+            TextColor(props.text_color),
+            FocusPolicy::Pass,
+            ChildOf(popup_entity),
+        ));
+
+        entity
     }
 
     fn apply_defaults(

@@ -6,12 +6,11 @@ use crate::props::Properties;
 use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
 use bevy::app::{App, Update};
-use bevy::asset::AssetServer;
 use bevy::color::Color;
 use bevy::prelude::{
-    AlignItems, AlignSelf, BorderColor, Changed, Children, Commands, Component, Entity,
-    EntityCommands, FontSize, Interaction, IntoScheduleConfigs, JustifyContent, JustifySelf, Node,
-    On, Or, Query, Text, TextColor, TextFont, UiRect, Val, With,
+    AlignItems, AlignSelf, BorderColor, Changed, ChildOf, Children, Commands, Component, Entity,
+    FontSize, Interaction, IntoScheduleConfigs, JustifyContent, JustifySelf, Node, On, Or, Query,
+    Text, TextColor, TextFont, UiRect, Val, With, World,
 };
 use bevy::ui::Display;
 use roxmltree::Node as XmlNode;
@@ -136,34 +135,35 @@ impl Widget for CheckboxWidget {
         Ok(())
     }
 
-    fn spawn(&self, commands: &mut EntityCommands, _: &AssetServer) -> Entity {
+    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
         let props = &self.props.default;
 
-        commands.insert((self.props.clone(), CheckboxState(props.state)));
+        world
+            .entity_mut(entity)
+            .insert((self.props.clone(), CheckboxState(props.state)));
 
-        commands.with_children(|parent| {
-            parent.spawn((
-                CheckboxCheckmark,
-                Text::new(&props.symbol),
-                TextFont {
-                    font_size: FontSize::Px(14.0),
-                    ..Default::default()
+        world.spawn((
+            CheckboxCheckmark,
+            Text::new(&props.symbol),
+            TextFont {
+                font_size: FontSize::Px(14.0),
+                ..Default::default()
+            },
+            TextColor(props.check_color),
+            Node {
+                display: if props.state {
+                    Display::Flex
+                } else {
+                    Display::None
                 },
-                TextColor(props.check_color),
-                Node {
-                    display: if props.state {
-                        Display::Flex
-                    } else {
-                        Display::None
-                    },
-                    align_self: AlignSelf::Center,
-                    justify_self: JustifySelf::Center,
-                    ..Default::default()
-                },
-            ));
-        });
+                align_self: AlignSelf::Center,
+                justify_self: JustifySelf::Center,
+                ..Default::default()
+            },
+            ChildOf(entity),
+        ));
 
-        commands.id()
+        entity
     }
 
     fn apply_defaults(

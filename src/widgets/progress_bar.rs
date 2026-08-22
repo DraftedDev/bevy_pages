@@ -4,9 +4,7 @@ use crate::parser::values::{parse_attribute, parse_float};
 use crate::props::Properties;
 use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
-use bevy::asset::AssetServer;
 use bevy::color::Color;
-use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
 use bevy::ui::{BackgroundColor, BorderRadius, Node, PositionType, Val};
 use roxmltree::Node as XmlNode;
@@ -176,7 +174,7 @@ impl Widget for ProgressBarWidget {
         Ok(())
     }
 
-    fn spawn(&self, commands: &mut EntityCommands, _: &AssetServer) -> Entity {
+    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
         let props = &self.props.default;
 
         let norm_val = if props.max > props.min {
@@ -187,44 +185,42 @@ impl Widget for ProgressBarWidget {
 
         let pct = norm_val * 100.0;
 
-        commands
-            .insert((
-                self.props.clone(),
-                ProgressBarState {
-                    min: props.min,
-                    max: props.max,
-                    value: props.value,
-                },
-            ))
-            .with_children(|parent| {
-                // Background Track
-                parent.spawn((
-                    ProgressBarTrack,
-                    Node {
-                        width: Val::Percent(100.0),
-                        height: Val::Px(props.track_height),
-                        border_radius: BorderRadius::all(Val::Px(props.track_height / 2.0)),
-                        position_type: PositionType::Absolute,
-                        ..default()
-                    },
-                    BackgroundColor(props.track_color),
-                ));
+        world.entity_mut(entity).insert((
+            self.props.clone(),
+            ProgressBarState {
+                min: props.min,
+                max: props.max,
+                value: props.value,
+            },
+        ));
 
-                // Active Fill Bar
-                parent.spawn((
-                    ProgressBarFill,
-                    Node {
-                        width: Val::Percent(pct),
-                        height: Val::Px(props.track_height),
-                        border_radius: BorderRadius::all(Val::Px(props.track_height / 2.0)),
-                        position_type: PositionType::Absolute,
-                        ..default()
-                    },
-                    BackgroundColor(props.fill_color),
-                ));
-            });
+        world.spawn((
+            ProgressBarTrack,
+            Node {
+                width: Val::Percent(100.0),
+                height: Val::Px(props.track_height),
+                border_radius: BorderRadius::all(Val::Px(props.track_height / 2.0)),
+                position_type: PositionType::Absolute,
+                ..default()
+            },
+            BackgroundColor(props.track_color),
+            ChildOf(entity),
+        ));
 
-        commands.id()
+        world.spawn((
+            ProgressBarFill,
+            Node {
+                width: Val::Percent(pct),
+                height: Val::Px(props.track_height),
+                border_radius: BorderRadius::all(Val::Px(props.track_height / 2.0)),
+                position_type: PositionType::Absolute,
+                ..default()
+            },
+            BackgroundColor(props.fill_color),
+            ChildOf(entity),
+        ));
+
+        entity
     }
 
     fn apply_defaults(

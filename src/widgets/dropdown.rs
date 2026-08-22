@@ -5,7 +5,6 @@ use crate::parser::values::parse_attribute;
 use crate::props::Properties;
 use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
-use bevy::asset::AssetServer;
 use bevy::color::Color;
 use bevy::prelude::*;
 use roxmltree::Node as XmlNode;
@@ -350,11 +349,10 @@ impl Widget for DropdownWidget {
         Ok(())
     }
 
-    fn spawn(&self, commands: &mut EntityCommands, _assets: &AssetServer) -> Entity {
-        let root_entity = commands.id();
+    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
         let props = &self.props.default;
 
-        commands.insert((
+        world.entity_mut(entity).insert((
             self.props.clone(),
             DropdownState {
                 selected_label: props.placeholder.clone(),
@@ -362,54 +360,56 @@ impl Widget for DropdownWidget {
             },
         ));
 
-        let mut menu_entity = None;
+        let trigger_entity = world
+            .spawn((
+                ChildOf(entity),
+                Transform::default(),
+                GlobalTransform::default(),
+                DropdownTrigger,
+                Interaction::None,
+                Node {
+                    width: Val::Percent(100.0),
+                    height: Val::Px(36.0),
+                    padding: UiRect::axes(Val::Px(12.0), Val::Px(8.0)),
+                    justify_content: JustifyContent::SpaceBetween,
+                    align_items: AlignItems::Center,
+                    border: UiRect::all(Val::Px(1.0)),
+                    border_radius: BorderRadius::all(Val::Px(4.0)),
+                    ..default()
+                },
+                BackgroundColor(props.bg_color),
+                BorderColor::all(Color::srgb(0.4, 0.4, 0.4)),
+            ))
+            .id();
 
-        commands.with_children(|parent| {
-            parent
-                .spawn((
-                    Transform::default(),
-                    GlobalTransform::default(),
-                    DropdownTrigger,
-                    Interaction::None,
-                    Node {
-                        width: Val::Percent(100.0),
-                        height: Val::Px(36.0),
-                        padding: UiRect::axes(Val::Px(12.0), Val::Px(8.0)),
-                        justify_content: JustifyContent::SpaceBetween,
-                        align_items: AlignItems::Center,
-                        border: UiRect::all(Val::Px(1.0)),
-                        border_radius: BorderRadius::all(Val::Px(4.0)),
-                        ..default()
-                    },
-                    BackgroundColor(props.bg_color),
-                    BorderColor::all(Color::srgb(0.4, 0.4, 0.4)),
-                ))
-                .with_children(|trigger| {
-                    trigger.spawn((
-                        Transform::default(),
-                        GlobalTransform::default(),
-                        DropdownLabelText,
-                        Text::new(&props.placeholder),
-                        TextFont {
-                            font_size: FontSize::Px(14.0),
-                            ..default()
-                        },
-                        TextColor(Color::srgb(0.9, 0.9, 0.9)),
-                    ));
+        world.spawn((
+            ChildOf(trigger_entity),
+            Transform::default(),
+            GlobalTransform::default(),
+            DropdownLabelText,
+            Text::new(&props.placeholder),
+            TextFont {
+                font_size: FontSize::Px(14.0),
+                ..default()
+            },
+            TextColor(Color::srgb(0.9, 0.9, 0.9)),
+        ));
 
-                    trigger.spawn((
-                        Transform::default(),
-                        GlobalTransform::default(),
-                        Text::new(">"),
-                        TextFont {
-                            font_size: FontSize::Px(10.0),
-                            ..default()
-                        },
-                        TextColor(Color::srgb(0.6, 0.6, 0.6)),
-                    ));
-                });
+        world.spawn((
+            ChildOf(trigger_entity),
+            Transform::default(),
+            GlobalTransform::default(),
+            Text::new(">"),
+            TextFont {
+                font_size: FontSize::Px(10.0),
+                ..default()
+            },
+            TextColor(Color::srgb(0.6, 0.6, 0.6)),
+        ));
 
-            let menu_cmd = parent.spawn((
+        world
+            .spawn((
+                ChildOf(entity),
                 Transform::default(),
                 GlobalTransform::default(),
                 DropdownMenu,
@@ -430,12 +430,8 @@ impl Widget for DropdownWidget {
                 ZIndex(100),
                 BackgroundColor(props.menu_bg_color),
                 BorderColor::all(Color::srgb(0.3, 0.3, 0.3)),
-            ));
-
-            menu_entity = Some(menu_cmd.id());
-        });
-
-        menu_entity.unwrap_or(root_entity)
+            ))
+            .id()
     }
 
     fn apply_defaults(

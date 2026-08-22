@@ -1,11 +1,9 @@
 use crate::events::ElementSpawn;
 use crate::props::Properties;
 use crate::widgets::Widget;
-use bevy::asset::AssetServer;
 use bevy::color::Color;
-use bevy::ecs::relationship::RelatedSpawnerCommands;
 use bevy::prelude::{
-    BorderColor, ChildOf, Component, Entity, GlobalTransform, Interaction, Transform,
+    BorderColor, ChildOf, Component, Entity, GlobalTransform, Interaction, Transform, World,
 };
 use bevy::ui::{BackgroundColor, Node};
 use rustc_hash::FxHashMap;
@@ -27,52 +25,43 @@ pub struct Element {
 impl Element {
     pub(crate) fn spawn(
         &self,
-        parent: &mut RelatedSpawnerCommands<ChildOf>,
-        assets: &AssetServer,
+        world: &mut World,
+        parent: Option<Entity>,
         reg: &mut ElementRegistry,
     ) -> Entity {
         let props = &self.props.default;
 
-        let mut entity_cmd = parent.spawn((
-            self.props.clone(),
-            props.node.clone(),
-            Interaction::None,
-            Transform::default(),
-            GlobalTransform::default(),
-            BackgroundColor(props.bg_color.unwrap_or(Color::NONE)),
-            props.border_color.unwrap_or(BorderColor::DEFAULT),
-        ));
+        let root_entity = world
+            .spawn((
+                self.props.clone(),
+                props.node.clone(),
+                Interaction::None,
+                Transform::default(),
+                GlobalTransform::default(),
+                BackgroundColor(props.bg_color.unwrap_or(Color::NONE)),
+                props.border_color.unwrap_or(BorderColor::DEFAULT),
+            ))
+            .id();
 
-        if let Some(id) = &self.id {
-            entity_cmd.insert(id.clone());
+        if let Some(parent_entity) = parent {
+            world.entity_mut(root_entity).insert(ChildOf(parent_entity));
         }
 
-        let root_entity = entity_cmd.id();
+        if let Some(id) = &self.id {
+            world.entity_mut(root_entity).insert(id.clone());
+        }
 
-        let target_entity = self.widget.spawn(&mut entity_cmd, assets);
+        let target_entity = self.widget.spawn(root_entity, world);
 
-        if target_entity == root_entity {
-            entity_cmd.with_children(|p| {
-                for child in &self.children {
-                    child.spawn(p, assets, reg);
-                }
-            });
-        } else {
-            parent
-                .commands_mut()
-                .entity(target_entity)
-                .with_children(|p| {
-                    for child in &self.children {
-                        child.spawn(p, assets, reg);
-                    }
-                });
+        for child in &self.children {
+            child.spawn(world, Some(target_entity), reg);
         }
 
         if let Some(id) = self.id() {
             reg.register_element(id, root_entity);
         }
 
-        parent.commands_mut().trigger(ElementSpawn {
+        world.trigger(ElementSpawn {
             entity: root_entity,
             id: self.id(),
         });

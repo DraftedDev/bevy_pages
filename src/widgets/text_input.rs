@@ -7,7 +7,6 @@ use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
 use bevy::asset::AssetServer;
 use bevy::color::Color;
-use bevy::ecs::system::EntityCommands;
 use bevy::input_focus::InputFocus;
 use bevy::picking::hover::Hovered;
 use bevy::prelude::*;
@@ -159,7 +158,8 @@ impl Widget for TextInputWidget {
         Ok(())
     }
 
-    fn spawn(&self, commands: &mut EntityCommands, assets: &AssetServer) -> Entity {
+    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
+        let assets = world.resource::<AssetServer>();
         let props = &self.props.default;
 
         let font_handle = props
@@ -168,7 +168,7 @@ impl Widget for TextInputWidget {
             .map(|path| assets.load(path))
             .unwrap_or_default();
 
-        commands.insert((
+        world.entity_mut(entity).insert((
             self.props.clone(),
             TextInputState(props.value.clone()),
             EditableText {
@@ -187,7 +187,7 @@ impl Widget for TextInputWidget {
             Hovered::default(),
         ));
 
-        commands.id()
+        entity
     }
 
     fn apply_defaults(

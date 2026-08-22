@@ -5,7 +5,6 @@ use crate::parser::values::{parse_attribute, parse_bool, parse_float};
 use crate::props::Properties;
 use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
-use bevy::asset::AssetServer;
 use bevy::color::Color;
 use bevy::prelude::*;
 use bevy::ui::{AlignItems, BorderColor, JustifyContent, Node, PositionType, UiRect, Val};
@@ -181,46 +180,47 @@ impl Widget for SwitchWidget {
         Ok(())
     }
 
-    fn spawn(&self, commands: &mut EntityCommands, _: &AssetServer) -> Entity {
+    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
         let props = &self.props.default;
 
-        commands.insert((self.props.clone(), SwitchState(props.state)));
+        let active_thumb_color = if props.state {
+            props.thumb_color_on
+        } else {
+            props.thumb_color
+        };
 
-        commands.with_children(|parent| {
-            let active_thumb_color = if props.state {
-                props.thumb_color_on
-            } else {
-                props.thumb_color
-            };
+        let left = if props.state {
+            Val::Percent(100.0)
+        } else {
+            Val::Px(0.0)
+        };
 
-            let left = if props.state {
-                Val::Percent(100.0)
-            } else {
-                Val::Px(0.0)
-            };
+        let margin = if props.state {
+            UiRect::left(Val::Px(-props.thumb_size))
+        } else {
+            UiRect::ZERO
+        };
 
-            let margin = if props.state {
-                UiRect::left(Val::Px(-props.thumb_size))
-            } else {
-                UiRect::ZERO
-            };
+        world
+            .entity_mut(entity)
+            .insert((self.props.clone(), SwitchState(props.state)));
 
-            parent.spawn((
-                SwitchThumb,
-                Node {
-                    width: Val::Px(props.thumb_size),
-                    height: Val::Px(props.thumb_size),
-                    border_radius: BorderRadius::all(Val::Px(props.thumb_size / 2.0)),
-                    position_type: PositionType::Relative,
-                    left,
-                    margin,
-                    ..Default::default()
-                },
-                BackgroundColor(active_thumb_color),
-            ));
-        });
+        world.spawn((
+            ChildOf(entity),
+            SwitchThumb,
+            Node {
+                width: Val::Px(props.thumb_size),
+                height: Val::Px(props.thumb_size),
+                border_radius: BorderRadius::all(Val::Px(props.thumb_size / 2.0)),
+                position_type: PositionType::Relative,
+                left,
+                margin,
+                ..Default::default()
+            },
+            BackgroundColor(active_thumb_color),
+        ));
 
-        commands.id()
+        entity
     }
 
     fn apply_defaults(

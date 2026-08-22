@@ -5,9 +5,7 @@ use crate::parser::values::{parse_attribute, parse_float};
 use crate::props::Properties;
 use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
-use bevy::asset::AssetServer;
 use bevy::color::Color;
-use bevy::ecs::system::EntityCommands;
 use bevy::picking::hover::Hovered;
 use bevy::prelude::*;
 use bevy::ui::{BackgroundColor, BorderRadius, Display, FlexDirection, Node, PositionType, Val};
@@ -201,10 +199,10 @@ impl Widget for SliderWidget {
         Ok(())
     }
 
-    fn spawn(&self, commands: &mut EntityCommands, _: &AssetServer) -> Entity {
+    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
         let props = &self.props.default;
 
-        commands.insert((
+        world.entity_mut(entity).insert((
             self.props.clone(),
             SliderState(props.value),
             Slider {
@@ -218,36 +216,35 @@ impl Widget for SliderWidget {
             observe(slider_self_update),
         ));
 
-        commands.with_children(|parent| {
-            // Background Track
-            parent.spawn((
-                SliderTrack,
-                Node {
-                    width: Val::Percent(100.0),
-                    height: Val::Px(props.track_height),
-                    border_radius: BorderRadius::all(Val::Px(props.track_height / 2.0)),
-                    position_type: PositionType::Absolute,
-                    ..default()
-                },
-                BackgroundColor(props.track_color),
-            ));
+        world.spawn((
+            SliderTrack,
+            Node {
+                width: Val::Percent(100.0),
+                height: Val::Px(props.track_height),
+                border_radius: BorderRadius::all(Val::Px(props.track_height / 2.0)),
+                position_type: PositionType::Absolute,
+                ..default()
+            },
+            BackgroundColor(props.track_color),
+            ChildOf(entity),
+        ));
 
-            // Active Fill Bar
-            parent.spawn((
-                SliderFill,
-                Node {
-                    width: Val::Percent(0.0),
-                    height: Val::Px(props.track_height),
-                    border_radius: BorderRadius::all(Val::Px(props.track_height / 2.0)),
-                    position_type: PositionType::Absolute,
-                    ..default()
-                },
-                BackgroundColor(props.fill_color),
-            ));
+        world.spawn((
+            SliderFill,
+            Node {
+                width: Val::Percent(0.0),
+                height: Val::Px(props.track_height),
+                border_radius: BorderRadius::all(Val::Px(props.track_height / 2.0)),
+                position_type: PositionType::Absolute,
+                ..default()
+            },
+            BackgroundColor(props.fill_color),
+            ChildOf(entity),
+        ));
 
-            // Slider Thumb
-            parent
-                .spawn(Node {
+        let thumb_container = world
+            .spawn((
+                Node {
                     display: Display::Flex,
                     position_type: PositionType::Absolute,
                     left: Val::Px(0.0),
@@ -256,25 +253,27 @@ impl Widget for SliderWidget {
                     bottom: Val::Px(0.0),
                     align_items: AlignItems::Center,
                     ..default()
-                })
-                .with_children(|thumb_parent| {
-                    thumb_parent.spawn((
-                        SliderThumb,
-                        Node {
-                            display: Display::Flex,
-                            width: Val::Px(props.thumb_size),
-                            height: Val::Px(props.thumb_size),
-                            position_type: PositionType::Absolute,
-                            left: Val::Percent(0.0),
-                            border_radius: BorderRadius::all(Val::Px(props.thumb_size / 2.0)),
-                            ..default()
-                        },
-                        BackgroundColor(props.thumb_color),
-                    ));
-                });
-        });
+                },
+                ChildOf(entity),
+            ))
+            .id();
 
-        commands.id()
+        world.spawn((
+            SliderThumb,
+            Node {
+                display: Display::Flex,
+                width: Val::Px(props.thumb_size),
+                height: Val::Px(props.thumb_size),
+                position_type: PositionType::Absolute,
+                left: Val::Percent(0.0),
+                border_radius: BorderRadius::all(Val::Px(props.thumb_size / 2.0)),
+                ..default()
+            },
+            BackgroundColor(props.thumb_color),
+            ChildOf(thumb_container),
+        ));
+
+        entity
     }
 
     fn apply_defaults(

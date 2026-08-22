@@ -1,7 +1,6 @@
 use crate::element::ElementProps;
 use bevy::app::App;
-use bevy::asset::AssetServer;
-use bevy::prelude::{Entity, EntityCommands};
+use bevy::prelude::{Entity, World};
 use roxmltree::Node;
 use std::fmt::Debug;
 
@@ -62,7 +61,7 @@ pub trait Widget: Debug + Send + Sync + 'static {
     fn parse(&mut self, node: &Node) -> Result<(), String>;
 
     /// Spawns the widget. Called inside [Element::spawn](crate::element::Element::spawn).
-    fn spawn(&self, commands: &mut EntityCommands, assets: &AssetServer) -> Entity;
+    fn spawn(&self, entity: Entity, world: &mut World) -> Entity;
 
     /// Apply this widget's default properties.
     fn apply_defaults(

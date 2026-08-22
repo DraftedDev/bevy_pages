@@ -2,7 +2,6 @@ use crate::element::ElementProps;
 use crate::parser::values::{parse_attribute, parse_matches};
 use crate::props::Properties;
 use crate::widgets::Widget;
-use bevy::asset::AssetServer;
 use bevy::color::Color;
 use bevy::prelude::*;
 use roxmltree::Node as XmlNode;
@@ -78,10 +77,10 @@ impl Widget for DividerWidget {
         Ok(())
     }
 
-    fn spawn(&self, commands: &mut EntityCommands, _: &AssetServer) -> Entity {
-        commands.insert(self.props.clone());
+    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
+        world.entity_mut(entity).insert(self.props.clone());
 
-        commands.id()
+        entity
     }
 
     fn apply_defaults(

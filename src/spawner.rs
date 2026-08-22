@@ -1,23 +1,19 @@
 use crate::page::Page;
 use bevy::asset::{Assets, Handle};
-use bevy::prelude::{AssetServer, Commands, Entity, Event, On, Res, ResMut, Resource};
+use bevy::prelude::{Commands, Entity, Event, On, ResMut, Resource, World};
 
-pub(crate) fn spawn_page(
-    mut commands: Commands,
-    mut spawner: ResMut<PageSpawner>,
-    server: Res<AssetServer>,
-    mut assets: ResMut<Assets<Page>>,
-) {
-    if let Some(handle) = &spawner.handle
-        && let Some(mut page) = assets.remove(handle)
+pub(crate) fn spawn_page(world: &mut World) {
+    let handle = world.resource_mut::<PageSpawner>().handle.take();
+
+    if let Some(handle) = handle
+        && let Some(mut page) = world.resource_mut::<Assets<Page>>().remove(&handle)
     {
-        let entity = page.spawn(&mut commands, &server);
-        commands.insert_resource(page);
+        let entity = page.spawn(world);
 
-        spawner.handle = None;
-        spawner.spawned = Some(entity);
+        world.insert_resource(page);
+        world.resource_mut::<PageSpawner>().spawned = Some(entity);
 
-        commands.trigger(SpawnPage);
+        world.trigger(SpawnPage);
     }
 }
 
@@ -26,11 +22,11 @@ pub(crate) fn despawn_page(
     mut commands: Commands,
     mut spawner: ResMut<PageSpawner>,
 ) {
-    if let Some(entity) = spawner.spawned {
+    let spawned = spawner.spawned.take();
+
+    if let Some(entity) = spawned {
         commands.entity(entity).despawn();
         commands.remove_resource::<Page>();
-
-        spawner.spawned = None;
     }
 }
 

@@ -1,8 +1,7 @@
 use crate::element::ElementProps;
 use crate::widgets::Widget;
 use bevy::app::App;
-use bevy::asset::AssetServer;
-use bevy::prelude::{Entity, EntityCommands};
+use bevy::prelude::{Entity, World};
 use roxmltree::Node;
 
 /// A node widget. Equivalent to `<div></div>` in HTML.
@@ -34,8 +33,8 @@ impl Widget for NodeWidget {
         Ok(())
     }
 
-    fn spawn(&self, commands: &mut EntityCommands, _: &AssetServer) -> Entity {
-        commands.id()
+    fn spawn(&self, entity: Entity, _: &mut World) -> Entity {
+        entity
     }
 
     fn apply_defaults(

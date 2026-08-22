@@ -4,7 +4,6 @@ use crate::parser::values::{parse_attribute, parse_bool, parse_float, parse_matc
 use crate::props::Properties;
 use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
-use bevy::asset::AssetServer;
 use bevy::color::Color;
 use bevy::input::mouse::{MouseScrollUnit, MouseWheel};
 use bevy::picking::hover::Hovered;
@@ -469,10 +468,10 @@ impl Widget for ScrollViewWidget {
         Ok(())
     }
 
-    fn spawn(&self, commands: &mut EntityCommands, _assets: &AssetServer) -> Entity {
+    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
         let props = &self.props.default;
 
-        commands.insert((
+        world.entity_mut(entity).insert((
             self.props.clone(),
             ScrollViewData {
                 direction: props.direction,
@@ -497,58 +496,71 @@ impl Widget for ScrollViewWidget {
             },
         ));
 
-        let mut content_entity = commands.id();
+        let scroll_area_id = world
+            .spawn((
+                ChildOf(entity),
+                Transform::default(),
+                GlobalTransform::default(),
+                ScrollViewArea,
+                Interaction::None,
+                ScrollViewState {
+                    scroll_speed: props.scroll_speed,
+                    ..default()
+                },
+                Node {
+                    display: Display::Flex,
+                    flex_direction: FlexDirection::Column,
+                    width: Val::Percent(100.0),
+                    height: Val::Percent(100.0),
+                    overflow: props.direction.to_overflow(),
+                    grid_row: GridPlacement::start(1),
+                    grid_column: GridPlacement::start(1),
+                    ..default()
+                },
+                BackgroundColor(props.bg_color),
+                ScrollPosition::default(),
+            ))
+            .id();
 
-        commands.with_children(|parent| {
-            let scroll_area_id = parent
+        let content_entity = world
+            .spawn((
+                ChildOf(scroll_area_id),
+                Transform::default(),
+                GlobalTransform::default(),
+                ScrollViewContent,
+                Node {
+                    display: Display::Flex,
+                    flex_direction: match props.direction {
+                        ScrollDirection::Horizontal => FlexDirection::Row,
+                        _ => FlexDirection::Column,
+                    },
+                    min_width: Val::Percent(100.0),
+                    min_height: Val::Percent(100.0),
+                    ..default()
+                },
+            ))
+            .id();
+
+        if matches!(
+            props.direction,
+            ScrollDirection::Vertical | ScrollDirection::Both
+        ) {
+            let v_thumb = world
                 .spawn((
-                    Transform::default(),
-                    GlobalTransform::default(),
-                    ScrollViewArea,
-                    Interaction::None,
-                    ScrollViewState {
-                        scroll_speed: props.scroll_speed,
-                        ..default()
+                    ScrollViewThumb,
+                    Hovered::default(),
+                    BackgroundColor(Color::srgb(0.4, 0.4, 0.4)),
+                    BorderColor::all(Color::srgb(0.6, 0.6, 0.6)),
+                    ScrollbarThumb {
+                        border_radius: BorderRadius::all(Val::Px(4.0)),
+                        border: UiRect::all(Val::Px(1.0)),
                     },
-                    Node {
-                        display: Display::Flex,
-                        flex_direction: FlexDirection::Column,
-                        width: Val::Percent(100.0),
-                        height: Val::Percent(100.0),
-                        overflow: props.direction.to_overflow(),
-                        grid_row: GridPlacement::start(1),
-                        grid_column: GridPlacement::start(1),
-                        ..default()
-                    },
-                    BackgroundColor(props.bg_color),
-                    ScrollPosition::default(),
                 ))
-                .with_children(|area_parent| {
-                    content_entity = area_parent
-                        .spawn((
-                            Transform::default(),
-                            GlobalTransform::default(),
-                            ScrollViewContent,
-                            Node {
-                                display: Display::Flex,
-                                flex_direction: match props.direction {
-                                    ScrollDirection::Horizontal => FlexDirection::Row,
-                                    _ => FlexDirection::Column,
-                                },
-                                min_width: Val::Percent(100.0),
-                                min_height: Val::Percent(100.0),
-                                ..default()
-                            },
-                        ))
-                        .id();
-                })
                 .id();
 
-            if matches!(
-                props.direction,
-                ScrollDirection::Vertical | ScrollDirection::Both
-            ) {
-                parent.spawn((
+            let v_scrollbar = world
+                .spawn((
+                    ChildOf(entity),
                     Transform::default(),
                     GlobalTransform::default(),
                     Node {
@@ -562,24 +574,32 @@ impl Widget for ScrollViewWidget {
                         target: scroll_area_id,
                         min_thumb_length: 3.5,
                     },
-                    Children::spawn(Spawn((
-                        ScrollViewThumb,
-                        Hovered::default(),
-                        BackgroundColor(Color::srgb(0.4, 0.4, 0.4)),
-                        BorderColor::all(Color::srgb(0.6, 0.6, 0.6)),
-                        ScrollbarThumb {
-                            border_radius: BorderRadius::all(Val::Px(4.0)),
-                            border: UiRect::all(Val::Px(1.0)),
-                        },
-                    ))),
-                ));
-            }
+                ))
+                .id();
 
-            if matches!(
-                props.direction,
-                ScrollDirection::Horizontal | ScrollDirection::Both
-            ) {
-                parent.spawn((
+            world.entity_mut(v_thumb).insert(ChildOf(v_scrollbar));
+        }
+
+        if matches!(
+            props.direction,
+            ScrollDirection::Horizontal | ScrollDirection::Both
+        ) {
+            let h_thumb = world
+                .spawn((
+                    ScrollViewThumb,
+                    Hovered::default(),
+                    BackgroundColor(Color::srgb(0.4, 0.4, 0.4)),
+                    BorderColor::all(Color::srgb(0.6, 0.6, 0.6)),
+                    ScrollbarThumb {
+                        border_radius: BorderRadius::all(Val::Px(4.0)),
+                        border: UiRect::all(Val::Px(1.0)),
+                    },
+                ))
+                .id();
+
+            let h_scrollbar = world
+                .spawn((
+                    ChildOf(entity),
                     Transform::default(),
                     GlobalTransform::default(),
                     Node {
@@ -593,19 +613,11 @@ impl Widget for ScrollViewWidget {
                         target: scroll_area_id,
                         min_thumb_length: 3.5,
                     },
-                    Children::spawn(Spawn((
-                        ScrollViewThumb,
-                        Hovered::default(),
-                        BackgroundColor(Color::srgb(0.4, 0.4, 0.4)),
-                        BorderColor::all(Color::srgb(0.6, 0.6, 0.6)),
-                        ScrollbarThumb {
-                            border_radius: BorderRadius::all(Val::Px(4.0)),
-                            border: UiRect::all(Val::Px(1.0)),
-                        },
-                    ))),
-                ));
-            }
-        });
+                ))
+                .id();
+
+            world.entity_mut(h_thumb).insert(ChildOf(h_scrollbar));
+        }
 
         content_entity
     }

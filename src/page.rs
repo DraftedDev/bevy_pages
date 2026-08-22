@@ -1,6 +1,6 @@
 use crate::element::{Element, ElementId, ElementRegistry};
-use bevy::asset::{Asset, AssetServer};
-use bevy::prelude::{Commands, Entity, GlobalTransform, Resource, Transform, TypePath};
+use bevy::asset::Asset;
+use bevy::prelude::{Entity, GlobalTransform, Resource, Transform, TypePath, World};
 use bevy::ui::Node;
 
 /// A UI page loaded from an XML file.
@@ -29,23 +29,21 @@ impl Page {
     }
 
     #[inline(always)]
-    pub(crate) fn spawn(&mut self, commands: &mut Commands, assets: &AssetServer) -> Entity {
-        let entity = commands
+    pub(crate) fn spawn(&mut self, world: &mut World) -> Entity {
+        let root_entity = world
             .spawn((
                 self.root.clone(),
                 Transform::default(),
                 GlobalTransform::default(),
             ))
-            .with_children(|parent| {
-                for element in &self.elements {
-                    element.spawn(parent, assets, &mut self.registry);
-                }
-            })
             .id();
 
-        self.entity = Some(entity);
+        for element in &self.elements {
+            element.spawn(world, Some(root_entity), &mut self.registry);
+        }
 
-        entity
+        self.entity = Some(root_entity);
+        root_entity
     }
 
     /// Retrieves the entity associated with the given element ID.

@@ -10,8 +10,8 @@ use bevy::asset::AssetServer;
 use bevy::color::Color;
 use bevy::math::Rect;
 use bevy::prelude::{
-    BorderRect, Changed, Entity, EntityCommands, ImageNode, Interaction, IntoScheduleConfigs,
-    NodeImageMode, Or, Query, Res, TextureSlicer, VisualBox,
+    BorderRect, Changed, Entity, ImageNode, Interaction, IntoScheduleConfigs, NodeImageMode, Or,
+    Query, Res, TextureSlicer, VisualBox, World,
 };
 use bevy::sprite::SliceScaleMode;
 use bevy::ui::Val;
@@ -109,7 +109,9 @@ impl Widget for ImageWidget {
         Ok(())
     }
 
-    fn spawn(&self, commands: &mut EntityCommands, assets: &AssetServer) -> Entity {
+    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
+        let assets = world.resource::<AssetServer>();
+
         let props = &self.props.default;
         let image = ImageNode {
             color: props.color,
@@ -122,9 +124,9 @@ impl Widget for ImageWidget {
             visual_box: props.visual_box,
         };
 
-        commands.insert(image);
+        world.entity_mut(entity).insert((self.props.clone(), image));
 
-        commands.id()
+        entity
     }
 
     fn apply_defaults(

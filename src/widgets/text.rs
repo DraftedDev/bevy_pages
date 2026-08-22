@@ -7,8 +7,8 @@ use bevy::app::{App, Update};
 use bevy::asset::{AssetServer, Handle};
 use bevy::color::Color;
 use bevy::prelude::{
-    Changed, Entity, EntityCommands, FontSize, FontSource, FontStyle, FontWeight, FontWidth,
-    IntoScheduleConfigs, Or, Query, Res, Text, TextColor, TextFont,
+    Changed, Entity, FontSize, FontSource, FontStyle, FontWeight, FontWidth, IntoScheduleConfigs,
+    Or, Query, Res, Text, TextColor, TextFont, World,
 };
 use bevy::ui::Interaction;
 use roxmltree::Node;
@@ -106,7 +106,8 @@ impl Widget for TextWidget {
         Ok(())
     }
 
-    fn spawn(&self, commands: &mut EntityCommands, assets: &AssetServer) -> Entity {
+    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
+        let assets = world.resource::<AssetServer>();
         let props = &self.props.default;
 
         let text = Text::new(&props.content);
@@ -124,9 +125,11 @@ impl Widget for TextWidget {
         };
         let text_color = TextColor(props.color);
 
-        commands.insert((self.props.clone(), text, text_font, text_color));
+        world
+            .entity_mut(entity)
+            .insert((self.props.clone(), text, text_font, text_color));
 
-        commands.id()
+        entity
     }
 
     fn apply_defaults(

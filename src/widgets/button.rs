@@ -3,9 +3,8 @@ use crate::parser::color::{darken_color, lighten_color};
 use crate::parser::values::parse_ui_rect;
 use crate::widgets::Widget;
 use bevy::app::App;
-use bevy::asset::AssetServer;
 use bevy::color::Color;
-use bevy::prelude::{Entity, EntityCommands};
+use bevy::prelude::{Entity, World};
 use roxmltree::Node;
 
 /// A simple button widget.
@@ -45,8 +44,8 @@ impl Widget for ButtonWidget {
         Ok(())
     }
 
-    fn spawn(&self, commands: &mut EntityCommands, _: &AssetServer) -> Entity {
-        commands.id()
+    fn spawn(&self, entity: Entity, _: &mut World) -> Entity {
+        entity
     }
 
     fn apply_defaults(
