@@ -1,5 +1,7 @@
 # bevy_pages
 
+---
+
 <a href="https://www.buymeacoffee.com/drafteddev" target="_blank">
   <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="180">
 </a>
