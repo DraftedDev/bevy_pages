@@ -6,8 +6,9 @@ use crate::props::Properties;
 use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
 use bevy::app::{App, Update};
-use bevy::asset::AssetServer;
+use bevy::asset::{AssetServer, Handle};
 use bevy::color::Color;
+use bevy::image::Image;
 use bevy::math::Rect;
 use bevy::prelude::{
     BorderRect, Changed, Entity, ImageNode, Interaction, IntoScheduleConfigs, NodeImageMode, Or,
@@ -31,7 +32,7 @@ fn update_props(
             Interaction::None => &props.default,
         };
 
-        let image = assets.load(&props.src);
+        let image = props.src.fetch(&assets);
 
         crate::set_if_changed!(
             image_node.color, props.color;
@@ -42,6 +43,29 @@ fn update_props(
             image_node.visual_box, props.visual_box;
             image_node.image, image;
         );
+    }
+}
+
+/// The source of an [ImageWidget].
+#[derive(Clone, Debug)]
+pub enum ImageSource {
+    /// Load the image from the given path via [AssetServer::load].
+    Path(String),
+    /// Directly use the given image handle.
+    Handle(Handle<Image>),
+}
+
+impl ImageSource {
+    /// Fetch the image handle from this source.
+    ///
+    /// This will load the image from the asset server if the source is a path.
+    ///
+    /// If the source is a handle, it will return the handle directly.
+    pub fn fetch(&self, assets: &AssetServer) -> Handle<Image> {
+        match self {
+            ImageSource::Path(path) => assets.load(path),
+            ImageSource::Handle(image) => image.clone(),
+        }
     }
 }
 
@@ -115,7 +139,7 @@ impl Widget for ImageWidget {
         let props = &self.props.default;
         let image = ImageNode {
             color: props.color,
-            image: assets.load(&props.src),
+            image: props.src.fetch(assets),
             texture_atlas: None,
             flip_x: props.flip_x,
             flip_y: props.flip_y,
@@ -161,8 +185,10 @@ impl Widget for ImageWidget {
 /// The properties of an [ImageWidget].
 #[derive(Clone, Debug)]
 pub struct ImageProps {
-    /// The source path of the image.
-    pub src: String,
+    /// The source of the image.
+    ///
+    /// When the `src` attribute is set, this will equal `ImageSource::Path(src)`.
+    pub src: ImageSource,
     /// The color/tint of the image.
     pub color: Color,
     /// The flip-x attribute.
@@ -219,8 +245,10 @@ impl ImageProps {
         prefix: Option<&str>,
         base: &Self,
     ) -> bevy::prelude::Result<Self, String> {
-        let src = parse_attribute(node, "src", prefix, |s| Ok(s.to_string()))?
-            .unwrap_or_else(|| base.src.clone());
+        let src = parse_attribute(node, "src", prefix, |s| {
+            Ok(ImageSource::Path(s.to_string()))
+        })?
+        .unwrap_or_else(|| base.src.clone());
 
         let color = parse_attribute(node, "color", prefix, parse_color)?.unwrap_or(base.color);
 
@@ -379,7 +407,7 @@ impl Default for ImageProps {
     #[inline(always)]
     fn default() -> Self {
         Self {
-            src: "".to_string(),
+            src: ImageSource::Path("".to_string()),
             color: Color::WHITE,
             flip_x: false,
             flip_y: false,
