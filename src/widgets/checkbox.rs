@@ -92,7 +92,7 @@ pub struct CheckboxCheckmark;
 /// - `check-color = "<color>"`: The color of the checkmark.
 /// - `check-symbol = "<string>"`: The checkmark symbol.
 ///
-/// All the attributes listed support state overrides.
+/// All the attributes listed, except `checked`, support state overrides.
 ///
 /// ## Logic
 ///

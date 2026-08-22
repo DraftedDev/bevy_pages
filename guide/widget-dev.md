@@ -27,7 +27,9 @@ pub trait Widget: Debug + Send + Sync + 'static {
     fn parse(&mut self, node: &Node) -> Result<(), String>;
 
     /// Spawns the widget. Called inside [Element::spawn](crate::element::Element::spawn).
-    fn spawn(&self, commands: &mut EntityCommands, assets: &AssetServer) -> Entity;
+    fn spawn(&self, entity: Entity, world: &mut World) -> Entity;
+    //                                     ^^^^^^^^^^^ 
+    // Notice the `&mut World` here. This gives your widget complete access to the bevy world, so you have full control.
 
     /// Apply this widget's default properties.
     fn apply_defaults(
@@ -65,16 +67,18 @@ The cloned instance of the `Widget` is dropped after spawning.
 To learn more about how to implement a `Widget`, we can take a look at the `CheckboxWidget`:
 
 ```rust
-// Observer to toggle the checkbox state.
+// Observer function for checkbox state changes.
 fn toggle_checkbox(
     trigger: On<ElementClick>,
     mut commands: Commands,
     mut query: Query<(&mut CheckboxState, Option<&ElementId>)>,
 ) {
+    // Check if the clicked entity is even a checkbox.
     if let Ok((mut state, id)) = query.get_mut(trigger.entity) {
+        // Set the new state.
         state.0 = !state.0;
 
-        // Triggers custom toggle event.
+        // Trigger a toggle event.
         commands.trigger(ElementToggle {
             entity: trigger.entity,
             id: id.cloned(),
@@ -83,19 +87,19 @@ fn toggle_checkbox(
     }
 }
 
-// Synchronize visuals based on the inner checkbox state.
+// Synchronize checkbox visuals with state.
 fn sync_visuals(
     query: Query<(&CheckboxState, &Children), Changed<CheckboxState>>,
     mut checkmarks: Query<&mut Node, With<CheckboxCheckmark>>,
 ) {
     for (state, children) in &query {
         for child in children.iter() {
+            // If the child is a checkbox checkmark (is checked), update its display to `Flex`.
+            // Otherwise, set it to `None`, which makes the "checkmark" invisible.
             if let Ok(mut node) = checkmarks.get_mut(*child) {
                 node.display = if state.0 {
-                    // Checkmark visible
                     Display::Flex
                 } else {
-                    // Checkmark not visible
                     Display::None
                 };
             }
@@ -103,7 +107,8 @@ fn sync_visuals(
     }
 }
 
-// Update widget properties: Needed to sync props with actual UI logic.
+// Update changed widget properties.
+// Every widget with custom properties should have this system.
 fn update_props(
     mut query: Query<
         (&Interaction, &Properties<CheckboxProps>, &Children),
@@ -112,7 +117,7 @@ fn update_props(
     mut checkmark_query: Query<(&mut Text, &mut TextColor), With<CheckboxCheckmark>>,
 ) {
     for (interaction, props, children) in &mut query {
-        // The active properties to apply.
+        // Get the active properties based on the interaction state.
         let active_props = match interaction {
             Interaction::Pressed => &props.click,
             Interaction::Hovered => &props.hover,
@@ -121,11 +126,9 @@ fn update_props(
 
         for child in children.iter() {
             if let Ok((mut text, mut color)) = checkmark_query.get_mut(*child) {
-                // We use a util macro (`bevy_pages::set_if_changed!`) to only update the properties if they have actually changed.
+                // This macro sets the original properties to the new values only if original != new.
                 crate::set_if_changed!(
-                    // If `text.0` is not `active_props.symbol` => update `text.0` to `active_props.symbol`.
                     text.0, active_props.symbol => active_props.symbol.clone();
-                    // If `color.0` is not `active_props.check_color` => update `color.0` to `active_props.check_color`.
                     color.0, active_props.check_color;
                 );
             }
@@ -162,20 +165,22 @@ pub struct CheckboxCheckmark;
 /// You may also use generic element events to implement custom behavior.
 #[derive(Clone, Debug, Default)]
 pub struct CheckboxWidget {
+    // Store internal properties.
     props: Properties<CheckboxProps>,
 }
 
 impl Widget for CheckboxWidget {
+    // Translates to `<Checkbox/>` in XML.
+    // You could also technically use `<Checkbox>...</Checkbox>`, but most people dont want children INSIDE a checkbox.
     fn name() -> &'static str
     where
         Self: Sized,
     {
-        // XML: "<Checkbox/>".
         "Checkbox"
     }
 
+    // Add our basic systems and the toggle event observer.
     fn setup(&self, app: &mut App) {
-        // Add systems and observer for interactivity.
         app.add_systems(Update, (update_props, sync_visuals.in_set(PageSystemSet)))
             .add_observer(toggle_checkbox);
     }
@@ -184,7 +189,10 @@ impl Widget for CheckboxWidget {
     where
         Self: Sized,
     {
-        // Parse the different property overrides.
+        // Parse the properties for every possible state override:
+        // - Default (no override)
+        // - On Hover (override)
+        // - On Click (override)
         let default = CheckboxProps::parse(node, None, &CheckboxProps::default())?;
         let hover = CheckboxProps::parse(node, Some("hover"), &default)?;
         let click = CheckboxProps::parse(node, Some("click"), &default)?;
@@ -198,42 +206,42 @@ impl Widget for CheckboxWidget {
         Ok(())
     }
 
-    fn spawn(&self, commands: &mut EntityCommands, _: &AssetServer) -> Entity {
-        // Always use default props for initial spawning.
+    // Spawn the checkbox and its checkmark.
+    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
         let props = &self.props.default;
 
-        // Insert properties and internal state.
-        commands.insert((self.props.clone(), CheckboxState(props.state)));
+        world
+            .entity_mut(entity)
+            .insert((self.props.clone(), CheckboxState(props.state)));
 
-        // Spawn checkmark entity.
-        commands.with_children(|parent| {
-            parent.spawn((
-                CheckboxCheckmark,
-                Text::new(&props.symbol),
-                TextFont {
-                    font_size: FontSize::Px(14.0),
-                    ..Default::default()
+        // !!! IMPORTANT !!!
+        // Direct world access requires you to do most things (like add the `ChildOf` component for children) MANUALLY!!!
+        world.spawn((
+            CheckboxCheckmark,
+            Text::new(&props.symbol),
+            TextFont {
+                font_size: FontSize::Px(14.0),
+                ..Default::default()
+            },
+            TextColor(props.check_color),
+            Node {
+                display: if props.state {
+                    Display::Flex
+                } else {
+                    Display::None
                 },
-                TextColor(props.check_color),
-                Node {
-                    display: if props.state {
-                        Display::Flex
-                    } else {
-                        Display::None
-                    },
-                    align_self: AlignSelf::Center,
-                    justify_self: JustifySelf::Center,
-                    ..Default::default()
-                },
-            ));
-        });
+                align_self: AlignSelf::Center,
+                justify_self: JustifySelf::Center,
+                ..Default::default()
+            },
+            // Make the checkmark entity a child of the root checkbox entity.
+            ChildOf(entity),
+        ));
 
-        // Some widgets like `ScrollViewWidget` return a custom root entity.
-        // Most other widgets are pretty straightforward though and just return the root entity.
-        commands.id()
+        entity
     }
 
-    // Apply default `ElementProps`
+    // Apply default properties to the checkbox.
     fn apply_defaults(
         &self,
         node: &XmlNode,
@@ -245,8 +253,8 @@ impl Widget for CheckboxWidget {
             .bg_color
             .unwrap_or_else(|| Color::srgb(0.18, 0.18, 0.22));
 
-        // We use a util macro again for simplicity.
-        // The macro only sets the attributes if `!node.has_attribute($attr)`.
+        // This macro only sets the attributes if they are missing,
+        // so when specifying something like `width="10px"`, the default doesn't override it.
         crate::set_missing_attrs!(
             node,
 
@@ -280,7 +288,7 @@ impl Widget for CheckboxWidget {
         );
     }
 
-    // Required for `dyn` cloning.
+    // Simply clone the widget to a `Box<dyn Widget>`.
     fn dyn_clone(&self) -> Box<dyn Widget> {
         Box::new(self.clone())
     }
@@ -298,16 +306,18 @@ pub struct CheckboxProps {
 }
 
 impl CheckboxProps {
-    // Parses the props from an XML node.
+    // Parse the properties from an XML node.
+    // `prefix` is a possible prefix (convention: `<prefix>.<attr>`).
+    // `base` are the base properties when values are not specified.
     fn parse(node: &XmlNode, prefix: Option<&str>, base: &Self) -> Result<Self, String> {
-        // `parse_attribute` is a helper function that parses an attribute from an XML node and applies a parse function (in this case `parse_bool`).
-        // You can also specify a prefix (e.g. "hover.checked" has the prefix "hover").
-        // You should also fall back to the base value (`base.state` in this case) if the attribute is not set.
+        // Parse `checked` or use the base value.
         let state = parse_attribute(node, "checked", prefix, parse_bool)?.unwrap_or(base.state);
 
+        // Parse `check-color` or use the base value.
         let check_color =
             parse_attribute(node, "check-color", prefix, parse_color)?.unwrap_or(base.check_color);
 
+        // Parse `check-symbol` or use the base value.
         let symbol = parse_attribute(node, "check-symbol", prefix, |s| Ok(s.to_string()))?
             .unwrap_or_else(|| base.symbol.clone());
 
@@ -325,6 +335,8 @@ impl Default for CheckboxProps {
         Self {
             state: false,
             check_color: Color::WHITE,
+            // Default symbol is "x".
+            // We don't default to "✓" or some fancy Unicodde character because it's not supported by the default bevy font (as of the time of writing).
             symbol: "x".to_string(),
         }
     }
