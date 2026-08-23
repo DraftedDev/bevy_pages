@@ -16,8 +16,11 @@ use bevy::ui::{
 };
 use roxmltree::{Document, Node};
 
-pub(crate) mod color;
-pub(crate) mod values;
+/// Contains color parsing functions.
+pub mod color;
+
+/// Contains value parsing functions.
+pub mod values;
 
 /// Parses a [Page] from the given XML document using the provided [PageLoader].
 #[inline(always)]
