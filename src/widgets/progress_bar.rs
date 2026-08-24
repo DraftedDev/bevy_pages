@@ -1,7 +1,7 @@
 use crate::element::ElementProps;
 use crate::parser::AttributeMap;
 use crate::parser::color::parse_color;
-use crate::parser::values::{parse_attribute, parse_float};
+use crate::parser::values::{parse_attribute, parse_float, parse_val};
 use crate::props::Properties;
 use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
@@ -64,8 +64,8 @@ fn update_props(
             if let Ok((mut track_node, mut track_bg)) = track_query.get_mut(child) {
                 crate::set_if_changed!(
                     track_bg.0, active_props.track_color;
-                    track_node.height, Val::Px(active_props.track_height);
-                    track_node.border_radius, BorderRadius::all(Val::Px(active_props.track_height / 2.0));
+                    track_node.height, active_props.track_height;
+                    track_node.border_radius, BorderRadius::all(active_props.track_height / 2.0);
                 );
             }
 
@@ -73,8 +73,8 @@ fn update_props(
             if let Ok((mut fill_node, mut fill_bg)) = fill_query.get_mut(child) {
                 crate::set_if_changed!(
                     fill_bg.0, active_props.fill_color;
-                    fill_node.height, Val::Px(active_props.track_height);
-                    fill_node.border_radius, BorderRadius::all(Val::Px(active_props.track_height / 2.0));
+                    fill_node.height, active_props.track_height;
+                    fill_node.border_radius, BorderRadius::all(active_props.track_height / 2.0);
                 );
             }
         }
@@ -130,7 +130,7 @@ pub struct ProgressBarFill;
 /// - `value = "<float>"`: The value of the progress bar.
 /// - `track-color = "<color>"`: The background color of the progress bar container track.
 /// - `fill-color = "<color>"`: The color of the inner filled progress indicator bar.
-/// - `track-height = "<float>"`: The height of the track in pixels.
+/// - `track-height = "<size>"`: The height of the track.
 ///
 /// All the attributes listed support state overrides.
 ///
@@ -199,8 +199,8 @@ impl Widget for ProgressBarWidget {
             ProgressBarTrack,
             Node {
                 width: Val::Percent(100.0),
-                height: Val::Px(props.track_height),
-                border_radius: BorderRadius::all(Val::Px(props.track_height / 2.0)),
+                height: props.track_height,
+                border_radius: BorderRadius::all(props.track_height / 2.0),
                 position_type: PositionType::Absolute,
                 ..default()
             },
@@ -212,8 +212,8 @@ impl Widget for ProgressBarWidget {
             ProgressBarFill,
             Node {
                 width: Val::Percent(pct),
-                height: Val::Px(props.track_height),
-                border_radius: BorderRadius::all(Val::Px(props.track_height / 2.0)),
+                height: props.track_height,
+                border_radius: BorderRadius::all(props.track_height / 2.0),
                 position_type: PositionType::Absolute,
                 ..default()
             },
@@ -274,10 +274,8 @@ pub struct ProgressBarProps {
     pub track_color: Color,
     /// Color of the inner filled progress indicator bar.
     pub fill_color: Color,
-    /// Height of the track in pixels.
-    ///
-    /// TODO: Support bevy's [Val].
-    pub track_height: f32,
+    /// Height of the track.
+    pub track_height: Val,
 }
 
 impl ProgressBarProps {
@@ -307,8 +305,8 @@ impl ProgressBarProps {
         let fill_color =
             parse_attribute(attrs, "fill-color", prefix, parse_color)?.unwrap_or(base.fill_color);
 
-        let track_height = parse_attribute(attrs, "track-height", prefix, parse_float)?
-            .unwrap_or(base.track_height);
+        let track_height =
+            parse_attribute(attrs, "track-height", prefix, parse_val)?.unwrap_or(base.track_height);
 
         Ok(Self {
             min,
@@ -330,7 +328,7 @@ impl Default for ProgressBarProps {
             value: 0.0,
             track_color: Color::srgb(0.16, 0.17, 0.20),
             fill_color: Color::srgb(0.38, 0.69, 0.94),
-            track_height: 12.0,
+            track_height: Val::Px(12.0),
         }
     }
 }

@@ -2,7 +2,7 @@ use crate::element::{ElementId, ElementProps};
 use crate::events::ElementSet;
 use crate::parser::AttributeMap;
 use crate::parser::color::parse_color;
-use crate::parser::values::{parse_attribute, parse_float};
+use crate::parser::values::{parse_attribute, parse_float, parse_val};
 use crate::props::Properties;
 use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
@@ -103,25 +103,25 @@ fn update_props(
         for descendant in children_query.iter_descendants(entity) {
             if let Ok((mut track_node, mut track_bg)) = track_query.get_mut(descendant) {
                 crate::set_if_changed!(
-                    track_node.height, Val::Px(active_props.track_height);
-                    track_node.border_radius, BorderRadius::all(Val::Px(active_props.track_height / 2.0));
+                    track_node.height, active_props.track_height;
+                    track_node.border_radius, BorderRadius::all(active_props.track_height / 2.0);
                     track_bg.0, active_props.track_color;
                 );
             }
 
             if let Ok((mut fill_node, mut fill_bg)) = fill_query.get_mut(descendant) {
                 crate::set_if_changed!(
-                    fill_node.height, Val::Px(active_props.track_height);
-                    fill_node.border_radius, BorderRadius::all(Val::Px(active_props.track_height / 2.0));
+                    fill_node.height, active_props.track_height;
+                    fill_node.border_radius, BorderRadius::all(active_props.track_height / 2.0);
                     fill_bg.0, active_props.fill_color;
                 );
             }
 
             if let Ok((mut thumb_node, mut thumb_bg)) = thumb_query.get_mut(descendant) {
                 crate::set_if_changed!(
-                    thumb_node.width, Val::Px(active_props.thumb_size);
-                    thumb_node.height, Val::Px(active_props.thumb_size);
-                    thumb_node.border_radius, BorderRadius::all(Val::Px(active_props.thumb_size / 2.0));
+                    thumb_node.width, active_props.thumb_size;
+                    thumb_node.height, active_props.thumb_size;
+                    thumb_node.border_radius, BorderRadius::all(active_props.thumb_size / 2.0);
                     thumb_bg.0, active_props.thumb_color;
                 );
             }
@@ -155,8 +155,8 @@ pub struct SliderFill;
 /// - `track-color = "<color>"`: The color of the slider track.
 /// - `thumb-color = "<color>"`: The color of the slider thumb.
 /// - `fill-color = "<color>"`: The color of the slider fill.
-/// - `track-height = "<float>"`: The height of the slider track in pixels.
-/// - `thumb-size = "<float>"`: The size of the slider thumb in pixels.
+/// - `track-height = "<size>"`: The height of the slider track.
+/// - `thumb-size = "<size>"`: The size of the slider thumb.
 ///
 /// All the attributes, except `min` and `max`, support state overrides.
 ///
@@ -221,8 +221,8 @@ impl Widget for SliderWidget {
             SliderTrack,
             Node {
                 width: Val::Percent(100.0),
-                height: Val::Px(props.track_height),
-                border_radius: BorderRadius::all(Val::Px(props.track_height / 2.0)),
+                height: props.track_height,
+                border_radius: BorderRadius::all(props.track_height / 2.0),
                 position_type: PositionType::Absolute,
                 ..default()
             },
@@ -234,8 +234,8 @@ impl Widget for SliderWidget {
             SliderFill,
             Node {
                 width: Val::Percent(0.0),
-                height: Val::Px(props.track_height),
-                border_radius: BorderRadius::all(Val::Px(props.track_height / 2.0)),
+                height: props.track_height,
+                border_radius: BorderRadius::all(props.track_height / 2.0),
                 position_type: PositionType::Absolute,
                 ..default()
             },
@@ -249,7 +249,7 @@ impl Widget for SliderWidget {
                     display: Display::Flex,
                     position_type: PositionType::Absolute,
                     left: Val::Px(0.0),
-                    right: Val::Px(props.thumb_size),
+                    right: props.thumb_size,
                     top: Val::Px(0.0),
                     bottom: Val::Px(0.0),
                     align_items: AlignItems::Center,
@@ -263,11 +263,11 @@ impl Widget for SliderWidget {
             SliderThumb,
             Node {
                 display: Display::Flex,
-                width: Val::Px(props.thumb_size),
-                height: Val::Px(props.thumb_size),
+                width: props.thumb_size,
+                height: props.thumb_size,
                 position_type: PositionType::Absolute,
                 left: Val::Percent(0.0),
-                border_radius: BorderRadius::all(Val::Px(props.thumb_size / 2.0)),
+                border_radius: BorderRadius::all(props.thumb_size / 2.0),
                 ..default()
             },
             BackgroundColor(props.thumb_color),
@@ -339,14 +339,10 @@ pub struct SliderProps {
     pub thumb_color: Color,
     /// The slider fill color.
     pub fill_color: Color,
-    /// The slider track height in pixels.
-    ///
-    /// TODO: Support bevy's [Val]
-    pub track_height: f32,
-    /// The slider thumb size in pixels.
-    ///
-    /// TODO: Support bevy's [Val]
-    pub thumb_size: f32,
+    /// The slider track height.
+    pub track_height: Val,
+    /// The slider thumb size.
+    pub thumb_size: Val,
 }
 
 impl SliderProps {
@@ -387,11 +383,11 @@ impl SliderProps {
         let fill_color =
             parse_attribute(attrs, "fill-color", prefix, parse_color)?.unwrap_or(base.fill_color);
 
-        let track_height = parse_attribute(attrs, "track-height", prefix, parse_float)?
-            .unwrap_or(base.track_height);
+        let track_height =
+            parse_attribute(attrs, "track-height", prefix, parse_val)?.unwrap_or(base.track_height);
 
         let thumb_size =
-            parse_attribute(attrs, "thumb-size", prefix, parse_float)?.unwrap_or(base.thumb_size);
+            parse_attribute(attrs, "thumb-size", prefix, parse_val)?.unwrap_or(base.thumb_size);
 
         Ok(Self {
             min,
@@ -418,8 +414,8 @@ impl Default for SliderProps {
             track_color: Color::srgb(0.16, 0.17, 0.20),
             thumb_color: Color::WHITE,
             fill_color: Color::srgb(0.38, 0.69, 0.94),
-            track_height: 6.0,
-            thumb_size: 16.0,
+            track_height: Val::Px(6.0),
+            thumb_size: Val::Px(16.0),
         }
     }
 }

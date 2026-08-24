@@ -278,7 +278,7 @@ Build a switch widget using the `<Switch />` tag.
 - `toggled = "<bool>"`: The state of the switch.
 - `thumb-color = "<color>"`: The color of the thumb when not toggled.
 - `thumb-color-on = "<color>"`: The color of the thumb when toggled.
-- `thumb-size = "<float>"`: The size of the thumb in pixels.
+- `thumb-size = "<size>"`: The size of the thumb.
 
 All the attributes listed support state overrides.
 
@@ -390,7 +390,7 @@ Build a new progress bar using the `<ProgressBar />` tag.
 - `value = "<float>"`: The value of the progress bar.
 - `track-color = "<color>"`: The background color of the progress bar container track.
 - `fill-color = "<color>"`: The color of the inner filled progress indicator bar.
-- `track-height = "<float>"`: The height of the track in pixels.
+- `track-height = "<size>"`: The height of the track.
 
 All the attributes listed support state overrides.
 
@@ -444,8 +444,8 @@ Build a slider widget using the `<Slider />` tag.
 - `track-color = "<color>"`: The color of the slider track.
 - `thumb-color = "<color>"`: The color of the slider thumb.
 - `fill-color = "<color>"`: The color of the slider fill.
-- `track-height = "<float>"`: The height of the slider track in pixels.
-- `thumb-size = "<float>"`: The size of the slider thumb in pixels.
+- `track-height = "<size>"`: The height of the slider track.
+- `thumb-size = "<size>"`: The size of the slider thumb.
 
 All the attributes, except `min` and `max`, support state overrides.
 

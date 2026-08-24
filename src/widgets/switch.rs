@@ -2,7 +2,7 @@ use crate::element::{ElementId, ElementProps};
 use crate::events::{ElementClick, ElementToggle};
 use crate::parser::AttributeMap;
 use crate::parser::color::{darken_color, lighten_color, parse_color};
-use crate::parser::values::{parse_attribute, parse_bool, parse_float};
+use crate::parser::values::{parse_attribute, parse_bool, parse_val};
 use crate::props::Properties;
 use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
@@ -49,7 +49,7 @@ fn sync_visuals(
                 };
 
                 let target_margin = if state.0 {
-                    UiRect::left(Val::Px(-active_props.thumb_size))
+                    UiRect::left(-active_props.thumb_size)
                 } else {
                     UiRect::ZERO
                 };
@@ -98,15 +98,15 @@ fn update_props(
                 };
 
                 let target_margin = if state.0 {
-                    UiRect::left(Val::Px(-active_props.thumb_size))
+                    UiRect::left(-active_props.thumb_size)
                 } else {
                     UiRect::ZERO
                 };
 
                 crate::set_if_changed!(
-                    node.width, Val::Px(active_props.thumb_size);
-                    node.height, Val::Px(active_props.thumb_size);
-                    node.border_radius, BorderRadius::all(Val::Px(active_props.thumb_size / 2.0));
+                    node.width, active_props.thumb_size;
+                    node.height, active_props.thumb_size;
+                    node.border_radius, BorderRadius::all(active_props.thumb_size / 2.0);
                     node.left, target_left;
                     node.margin, target_margin;
                     bg_color.0, active_thumb_color;
@@ -136,7 +136,7 @@ pub struct SwitchThumb;
 /// - `toggled = "<bool>"`: The state of the switch.
 /// - `thumb-color = "<color>"`: The color of the thumb when not toggled.
 /// - `thumb-color-on = "<color>"`: The color of the thumb when toggled.
-/// - `thumb-size = "<float>"`: The size of the thumb in pixels.
+/// - `thumb-size = "<size>"`: The size of the thumb.
 ///
 /// All the attributes listed support state overrides.
 ///
@@ -197,7 +197,7 @@ impl Widget for SwitchWidget {
         };
 
         let margin = if props.state {
-            UiRect::left(Val::Px(-props.thumb_size))
+            UiRect::left(-props.thumb_size)
         } else {
             UiRect::ZERO
         };
@@ -210,9 +210,9 @@ impl Widget for SwitchWidget {
             ChildOf(entity),
             SwitchThumb,
             Node {
-                width: Val::Px(props.thumb_size),
-                height: Val::Px(props.thumb_size),
-                border_radius: BorderRadius::all(Val::Px(props.thumb_size / 2.0)),
+                width: props.thumb_size,
+                height: props.thumb_size,
+                border_radius: BorderRadius::all(props.thumb_size / 2.0),
                 position_type: PositionType::Relative,
                 left,
                 margin,
@@ -290,8 +290,8 @@ pub struct SwitchProps {
     pub thumb_color: Color,
     /// Color of the thumb when on.
     pub thumb_color_on: Color,
-    /// Size of the thumb indicator in pixels.
-    pub thumb_size: f32,
+    /// Size of the thumb indicator.
+    pub thumb_size: Val,
 }
 
 impl SwitchProps {
@@ -305,7 +305,7 @@ impl SwitchProps {
             .unwrap_or(base.thumb_color_on);
 
         let thumb_size =
-            parse_attribute(attrs, "thumb-size", prefix, parse_float)?.unwrap_or(base.thumb_size);
+            parse_attribute(attrs, "thumb-size", prefix, parse_val)?.unwrap_or(base.thumb_size);
 
         Ok(Self {
             state,
@@ -323,7 +323,7 @@ impl Default for SwitchProps {
             state: false,
             thumb_color: Color::srgb(0.6, 0.6, 0.65),
             thumb_color_on: Color::srgb(0.38, 0.69, 0.94),
-            thumb_size: 16.0,
+            thumb_size: Val::Px(16.0),
         }
     }
 }
