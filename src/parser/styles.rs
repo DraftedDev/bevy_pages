@@ -13,55 +13,52 @@ pub type StyleMap = FxHashMap<String, String>;
 /// Every node inside a `<Styles></Styles>` node must be a `<Style/>` element.
 ///
 /// Every attribute inside a `<Style/>` element is added to the style.
+#[inline(always)]
 pub fn parse_styles(root: &Node) -> Styles {
-    // TODO: better way to initialize hash map capacity
-    let mut styles = FxHashMap::with_capacity_and_hasher(1, Default::default());
+    root.children()
+        .filter(|n| n.is_element())
+        .map(|child| {
+            debug_assert!(
+                child.has_tag_name("Style"),
+                "Every node inside <Styles></Styles> must be a <Style> element"
+            );
 
-    for child in root.children().filter(|n| n.is_element()) {
-        debug_assert!(
-            child.has_tag_name("Style"),
-            "Every node inside <Styles></Styles> must be a <Style> element"
-        );
+            let name = child
+                .attribute("name")
+                .expect("<Style> element must have a name attribute")
+                .to_string();
 
-        let name = child
-            .attribute("name")
-            .expect("<Style> element must have a name attribute")
-            .to_string();
-
-        styles.insert(name, parse_style(&child));
-    }
-
-    styles
+            (name, parse_style(&child))
+        })
+        .collect::<Styles>()
 }
 
 /// Parses a `<Style/>` node and collects all attributes.
+#[inline(always)]
 pub fn parse_style(node: &Node) -> StyleMap {
-    // TODO: better way to initialize hash map capacity
-    let mut attrs = StyleMap::with_capacity_and_hasher(1, Default::default());
-
-    for attr in node.attributes() {
-        attrs.insert(attr.name().to_string(), attr.value().to_string());
-    }
-
-    attrs
+    node.attributes()
+        .map(|attr| (attr.name().to_string(), attr.value().to_string()))
+        .collect::<StyleMap>()
 }
 
 /// Fetch an [AttributeMap] by parsing the `styles` attribute and collecting all style attributes.
+#[inline(always)]
 pub fn fetch_style_attrs(node: &Node, styles: &Styles) -> Result<AttributeMap, String> {
-    if let Some(names) = node.attribute("styles").map(|s| s.split(" ")) {
-        // TODO: better way to initialize hash map capacity
-        let mut attrs = AttributeMap::with_capacity_and_hasher(1, Default::default());
+    let Some(styles_attr) = node.attribute("styles") else {
+        return Ok(AttributeMap::default());
+    };
 
-        for name in names {
-            let style = styles
+    styles_attr
+        .split_whitespace()
+        .map(|name| {
+            styles
                 .get(name)
-                .ok_or_else(|| format!("Style '{}' not found", name))?;
-
-            attrs.extend(style.clone());
-        }
-
-        Ok(attrs)
-    } else {
-        Ok(AttributeMap::default())
-    }
+                .cloned()
+                .ok_or_else(|| format!("Style '{name}' not found"))
+        })
+        .flat_map(|res| match res {
+            Ok(map) => map.into_iter().map(Ok).collect::<Vec<_>>(),
+            Err(e) => vec![Err(e)],
+        })
+        .collect()
 }
