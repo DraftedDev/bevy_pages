@@ -185,6 +185,9 @@ impl Widget for CheckboxWidget {
             .add_observer(toggle_checkbox);
     }
 
+    // Parse the checkbox XML attributes.
+    // You should ALWAYS use the attribute map provided by the framework,
+    // instead of the XML Node, since the attribute map contains all the styling attributes too (which the XML node lacks).
     fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
     where
         Self: Sized,
