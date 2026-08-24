@@ -2,16 +2,16 @@ use crate::element::{ElementId, ElementProps};
 use crate::events::{ElementClick, ElementToggle};
 use crate::parser::AttributeMap;
 use crate::parser::color::{darken_color, lighten_color, parse_color};
-use crate::parser::values::{parse_attribute, parse_bool};
+use crate::parser::values::{parse_attribute, parse_bool, parse_val};
 use crate::props::Properties;
 use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
 use bevy::app::{App, Update};
 use bevy::color::Color;
 use bevy::prelude::{
-    AlignItems, AlignSelf, BorderColor, Changed, ChildOf, Children, Commands, Component, Entity,
-    FontSize, Interaction, IntoScheduleConfigs, JustifyContent, JustifySelf, Node, On, Or, Query,
-    Text, TextColor, TextFont, UiRect, Val, With, World,
+    AlignItems, AlignSelf, BackgroundColor, BorderColor, BorderRadius, Changed, ChildOf, Children,
+    Commands, Component, Entity, Interaction, IntoScheduleConfigs, JustifyContent, JustifySelf,
+    Node, On, Or, Query, UiRect, Val, With, World,
 };
 use bevy::ui::Display;
 use roxmltree::Node as XmlNode;
@@ -54,7 +54,7 @@ fn update_props(
         (&Interaction, &Properties<CheckboxProps>, &Children),
         Or<(Changed<Interaction>, Changed<Properties<CheckboxProps>>)>,
     >,
-    mut checkmark_query: Query<(&mut Text, &mut TextColor), With<CheckboxCheckmark>>,
+    mut checkmark_query: Query<(&mut Node, &mut BackgroundColor), With<CheckboxCheckmark>>,
 ) {
     for (interaction, props, children) in &mut query {
         let active_props = match interaction {
@@ -64,10 +64,12 @@ fn update_props(
         };
 
         for child in children.iter() {
-            if let Ok((mut text, mut color)) = checkmark_query.get_mut(*child) {
+            if let Ok((mut node, mut bg)) = checkmark_query.get_mut(*child) {
                 crate::set_if_changed!(
-                    text.0, active_props.symbol => active_props.symbol.clone();
-                    color.0, active_props.check_color;
+                    node.width, active_props.check_width => active_props.check_width;
+                    node.height, active_props.check_height => active_props.check_height;
+                    bg.0, active_props.check_color => active_props.check_color;
+                    node.border_radius, active_props.check_radius => active_props.check_radius;
                 );
             }
         }
@@ -78,11 +80,11 @@ fn update_props(
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Component)]
 pub struct CheckboxState(pub bool);
 
-/// Marker component for the inner checkmark visual entity.
+/// Marker component for the inner checkmark rectangle entity.
 #[derive(Component, Debug, Clone, Copy)]
 pub struct CheckboxCheckmark;
 
-/// A checkbox widget.
+/// A checkbox widget using an inner rounded rectangle indicator.
 ///
 /// ## XML Usage
 ///
@@ -90,8 +92,10 @@ pub struct CheckboxCheckmark;
 ///
 /// ### Attributes
 /// - `checked = "<bool>"`: The state of the checkbox.
-/// - `check-color = "<color>"`: The color of the checkmark.
-/// - `check-symbol = "<string>"`: The checkmark symbol.
+/// - `check-color = "<color>"`: The background color of the inner marker.
+/// - `check-width = "<size>"`: The width of the inner marker.
+/// - `check-height = "<size>"`: The height of the inner marker.
+/// - `check-radius = "<size>"`: The border radius of the inner marker.
 ///
 /// All the attributes listed, except `checked`, support state overrides.
 ///
@@ -115,7 +119,7 @@ impl Widget for CheckboxWidget {
     }
 
     fn setup(&self, app: &mut App) {
-        app.add_systems(Update, (update_props, sync_visuals.in_set(PageSystemSet)))
+        app.add_systems(Update, (update_props, sync_visuals).in_set(PageSystemSet))
             .add_observer(toggle_checkbox);
     }
 
@@ -145,13 +149,10 @@ impl Widget for CheckboxWidget {
 
         world.spawn((
             CheckboxCheckmark,
-            Text::new(&props.symbol),
-            TextFont {
-                font_size: FontSize::Px(14.0),
-                ..Default::default()
-            },
-            TextColor(props.check_color),
+            BackgroundColor(props.check_color),
             Node {
+                width: props.check_width,
+                height: props.check_height,
                 display: if props.state {
                     Display::Flex
                 } else {
@@ -159,6 +160,7 @@ impl Widget for CheckboxWidget {
                 },
                 align_self: AlignSelf::Center,
                 justify_self: JustifySelf::Center,
+                border_radius: props.check_radius,
                 ..Default::default()
             },
             ChildOf(entity),
@@ -208,6 +210,10 @@ impl Widget for CheckboxWidget {
             "border" => default.node.border = UiRect::all(Val::Px(1.5)),
             "hover.border" => hover.node.border = default.node.border,
             "click.border" => click.node.border = default.node.border,
+
+            "border-radius" => default.node.border_radius = BorderRadius::all(Val::Px(5.0)),
+            "hover.border-radius" => hover.node.border_radius = default.node.border_radius,
+            "click.border-radius" => click.node.border_radius = default.node.border_radius,
         );
     }
 
@@ -219,12 +225,16 @@ impl Widget for CheckboxWidget {
 /// The properties of a [CheckboxWidget].
 #[derive(Clone, Debug)]
 pub struct CheckboxProps {
-    /// The state of the checkbox.
+    /// The initial state of the checkbox.
     pub state: bool,
-    /// Color of the checkmark.
+    /// Color of the inner marker rectangle.
     pub check_color: Color,
-    /// Symbol used for the check indicator (defaults to "x").
-    pub symbol: String,
+    /// Width of the inner marker rectangle.
+    pub check_width: Val,
+    /// Height of the inner marker rectangle.
+    pub check_height: Val,
+    /// Border radius of the inner marker rectangle.
+    pub check_radius: BorderRadius,
 }
 
 impl CheckboxProps {
@@ -234,13 +244,22 @@ impl CheckboxProps {
         let check_color =
             parse_attribute(attrs, "check-color", prefix, parse_color)?.unwrap_or(base.check_color);
 
-        let symbol = parse_attribute(attrs, "check-symbol", prefix, |s| Ok(s.to_string()))?
-            .unwrap_or_else(|| base.symbol.clone());
+        let check_width =
+            parse_attribute(attrs, "check-width", prefix, parse_val)?.unwrap_or(base.check_width);
+
+        let check_height =
+            parse_attribute(attrs, "check-height", prefix, parse_val)?.unwrap_or(base.check_height);
+
+        let check_radius = parse_attribute(attrs, "check-radius", prefix, parse_val)?
+            .map(BorderRadius::all)
+            .unwrap_or(base.check_radius);
 
         Ok(Self {
             state,
             check_color,
-            symbol,
+            check_width,
+            check_height,
+            check_radius,
         })
     }
 }
@@ -250,8 +269,10 @@ impl Default for CheckboxProps {
     fn default() -> Self {
         Self {
             state: false,
-            check_color: Color::WHITE,
-            symbol: "x".to_string(),
+            check_color: Color::srgb(1.0, 1.0, 1.0),
+            check_width: Val::Px(10.0),
+            check_height: Val::Px(10.0),
+            check_radius: BorderRadius::all(Val::Px(2.5)),
         }
     }
 }

@@ -238,9 +238,9 @@ You may use generic element events to implement custom behavior.
 
 ---
 
-## Checkbox Widget
+### Checkbox Widget
 
-A checkbox widget.
+A checkbox widget using an inner rounded rectangle indicator.
 
 ### XML Usage
 
@@ -249,10 +249,12 @@ Build a checkbox widget using the `<Checkbox />` tag.
 #### Attributes
 
 - `checked = "<bool>"`: The state of the checkbox.
-- `check-color = "<color>"`: The color of the checkmark.
-- `check-symbol = "<string>"`: The checkmark symbol.
+- `check-color = "<color>"`: The background color of the inner marker.
+- `check-width = "<size>"`: The width of the inner marker.
+- `check-height = "<size>"`: The height of the inner marker.
+- `check-radius = "<size>"`: The border radius of the inner marker.
 
-All the attributes listed support state overrides.
+All the attributes listed, except `checked`, support state overrides.
 
 ### Logic
 
