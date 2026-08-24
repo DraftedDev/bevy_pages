@@ -51,7 +51,7 @@ widget's attributes.
         <Style name="otherStyle" padding="10px" thisAttrDoesntExist="123"/>
     </Styles>
 
-    <!-- Apply multiple styles to a widget using a comma separated list. -->
+    <!-- Apply multiple styles to a widget using a space separated list. -->
     <!-- The widget will now have following attributes:
             - width="200px"
             - height="50px"
@@ -69,7 +69,7 @@ widget's attributes.
 There are a few things to note:
 
 1. Styles **must** have a `name` attribute.
-2. Elements can specify `styles` with a comma separated list.
+2. Elements can specify `styles` with a space separated list.
 3. Even attributes that don't exist are valid.
 4. You can even use `hover.` or `click.` to define attributes that are only applied when the widget is hovered or
    clicked.

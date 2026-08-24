@@ -24,6 +24,7 @@ the [schema.xsd](../schema.xsd).**
     - [Slider Widget](#slider-widget)
     - [Text Input Widget](#text-input-widget)
     - [Tooltip Widget](#tooltip-widget)
+- [Styles](#styles)
 
 ---
 
@@ -69,59 +70,76 @@ Every element inside a page, including the page element itself, has common attri
 used and are completely optional. Note that different widgets may override default attributes if they aren't set
 manually.
 
-| Attribute                | Description                                                       | Type                                                                                 |
-|--------------------------|-------------------------------------------------------------------|--------------------------------------------------------------------------------------|
-| id                       | The unique identifier of an element                               | Any String                                                                           |
-| bg-color                 | The background color of the element                               | Color                                                                                |
-| border-color             | The general border color                                          | Color                                                                                |
-| border-color-top         | The top border color                                              | Color                                                                                |
-| border-color-right       | The right border color                                            | Color                                                                                |
-| border-color-bottom      | The bottom border color                                           | Color                                                                                |
-| border-color-left        | The left border color                                             | Color                                                                                |
-| display                  | The display mode of the element                                   | `flex`, `grid`, `block`, `none`                                                      |
-| box-sizing               | The box sizing of the element                                     | `border`, `content`                                                                  |
-| position                 | The positioning of the element                                    | `absolute`, `relative`                                                               |
-| left                     | The concrete position to the left                                 | Size                                                                                 |
-| right                    | The concrete position to the right                                | Size                                                                                 |
-| top                      | The concrete position to the top                                  | Size                                                                                 |
-| bottom                   | The concrete position to the bottom                               | Size                                                                                 |
-| width                    | The preferred element width                                       | Size                                                                                 |
-| height                   | The preferred element height                                      | Size                                                                                 |
-| min-width                | The minimum element width                                         | Size                                                                                 |
-| min-height               | The minimum element height                                        | Size                                                                                 |
-| max-width                | The maximum element width                                         | Size                                                                                 |
-| max-height               | The maximum element height                                        | Size                                                                                 |
-| aspect-ratio             | The element aspect ratio                                          | Float                                                                                |
-| overflow-x               | The overflow behavior on the X-Axis                               | `visible`, `clip`, `hidden`, `scroll`                                                |
-| overflow-y               | The overflow behavior on the Y-Axis                               | `visible`, `clip`, `hidden`, `scroll`                                                |
-| scrollbar-width          | How much space should be reserved for a scroll bar (on overflow)  | Float                                                                                |
-| overflow-clip-visual-box | The clipped visual box                                            | `padding`, `content`, `border`                                                       |
-| overflow-clip-margin     | Margin on each edge of the visual box in pixels                   | Float                                                                                |
-| align-items              | Where to align the element items                                  | `default`, `start`, `end`, `center`, `baseline`, `stretch`                           |
-| justify-items            | How to justify the element item layouts                           | `default`, `start`, `end`, `center`, `stretch`                                       |
-| align-self               | Where to align the element                                        | `auto`, `start`, `end`, `center`, `stretch`                                          |
-| justify-self             | How to justify the element layout                                 | `auto`, `start`, `end`, `center`, `stretch`                                          |
-| align-content            | Where to align the element content                                | `default`, `start`, `end`, `center`, `stretch`                                       |
-| justify-content          | How to justify the element content layouts                        | `default`, `start`, `end`, `center`, `space-between`, `space-around`, `space-evenly` |
-| direction                | The element inline-axis direction                                 | `ltr`, `rtl`                                                                         |
-| margin                   | The element margin                                                | UI Rect                                                                              |
-| padding                  | The element padding                                               | UI Rect                                                                              |
-| border                   | The element border UI-Rect                                        | UI Rect                                                                              |
-| border-radius            | The element border-radius                                         | Radius                                                                               |
-| row-gap                  | The size between rows in a grid layout or horizontal flex layout  | Size                                                                                 |
-| column-gap               | The size between columns in a grid layout or vertical flex layout | Size                                                                                 |
-| flex-direction           | If a flexboy layout should be a row or column                     | `row`, `column`, `row-reverse`, `column-reverse`                                     |
-| flex-wrap                | The wrapping mechanics of overflowing flexboxes                   | `no-wrap`, `wrap`, `wrap-reverse`                                                    |
-| flex-grow                | Defines flexbox growth in layouts with enough space               | Float                                                                                |
-| flex-shrink              | Defines flexbox shrinking in layouts without enough space         | Float                                                                                |
-| flex-basis               | The initial length of a flexbox before shrinking/growing          | Size                                                                                 |
-| grid-auto-flow           | Controls how automatically placed grid items are placed           | `row`, `column`, `row-dense`, `column-dense`                                         |
-| grid-template-rows       | Defines the number and size of rows inside a grid layout          | Grid Track                                                                           |
-| grid-template-columns    | Defines the number and size of columns in a grid layout           | Grid Track                                                                           |
-| grid-auto-rows           | Defines the size of implicitly created grid rows                  | Grid Template                                                                        |
-| grid-auto-columns        | Defines the size of implicitly created grid columns               | Grid Template                                                                        |
-| grid-row                 | The row in a grid layout in which an item starts                  | Grid Placement                                                                       |
-| grid-column              | The column in a grid layout in which an item starts               | Grid Placement                                                                       |
+| Attribute                      | Description                                                       | Type                                                  |
+|--------------------------------|-------------------------------------------------------------------|-------------------------------------------------------|
+| id                             | The unique identifier of an element                               | Any String                                            |
+| styles                         | A space separated list of styles                                  | List of Strings                                       |
+| bg-color                       | The background color of the element                               | Color                                                 |
+| border-color                   | The general border color                                          | Color                                                 |
+| border-color-top               | The top border color                                              | Color                                                 |
+| border-color-right             | The right border color                                            | Color                                                 |
+| border-color-bottom            | The bottom border color                                           | Color                                                 |
+| border-color-left              | The left border color                                             | Color                                                 |
+| display                        | The display mode of the element                                   | `flex`, `grid`, `block`,                              |
+| `none`                         |                                                                   |                                                       |
+| box-sizing                     | The box sizing of the element                                     | `border`,                                             |
+| `content`                      |                                                                   |                                                       |
+| position                       | The positioning of the element                                    | `absolute`,                                           |
+| `relative`                     |                                                                   |                                                       |
+| left                           | The concrete position to the left                                 | Size                                                  |
+| right                          | The concrete position to the right                                | Size                                                  |
+| top                            | The concrete position to the top                                  | Size                                                  |
+| bottom                         | The concrete position to the bottom                               | Size                                                  |
+| width                          | The preferred element width                                       | Size                                                  |
+| height                         | The preferred element height                                      | Size                                                  |
+| min-width                      | The minimum element width                                         | Size                                                  |
+| min-height                     | The minimum element height                                        | Size                                                  |
+| max-width                      | The maximum element width                                         | Size                                                  |
+| max-height                     | The maximum element height                                        | Size                                                  |
+| aspect-ratio                   | The element aspect ratio                                          | Float                                                 |
+| overflow-x                     | The overflow behavior on the X-Axis                               | `visible`, `clip`, `hidden`,                          |
+| `scroll`                       |                                                                   |                                                       |
+| overflow-y                     | The overflow behavior on the Y-Axis                               | `visible`, `clip`, `hidden`,                          |
+| `scroll`                       |                                                                   |                                                       |
+| scrollbar-width                | How much space should be reserved for a scroll bar (on overflow)  | Float                                                 |
+| overflow-clip-visual-box       | The clipped visual box                                            | `padding`, `content`,                                 |
+| `border`                       |                                                                   |                                                       |
+| overflow-clip-margin           | Margin on each edge of the visual box in pixels                   | Float                                                 |
+| align-items                    | Where to align the element items                                  | `default`, `start`, `end`, `center`, `baseline`,      |
+| `stretch`                      |                                                                   |                                                       |
+| justify-items                  | How to justify the element item layouts                           | `default`, `start`, `end`, `center`,                  |
+| `stretch`                      |                                                                   |                                                       |
+| align-self                     | Where to align the element                                        | `auto`, `start`, `end`, `center`,                     |
+| `stretch`                      |                                                                   |                                                       |
+| justify-self                   | How to justify the element layout                                 | `auto`, `start`, `end`, `center`,                     |
+| `stretch`                      |                                                                   |                                                       |
+| align-content                  | Where to align the element content                                | `default`, `start`, `end`, `center`,                  |
+| `stretch`                      |                                                                   |                                                       |
+| justify-content                | How to justify the element content layouts                        | `default`, `start`, `end`, `center`, `space-between`, |
+| `space-around`, `space-evenly` |                                                                   |                                                       |
+| direction                      | The element inline-axis direction                                 | `ltr`,                                                |
+| `rtl`                          |                                                                   |                                                       |
+| margin                         | The element margin                                                | UI Rect                                               |
+| padding                        | The element padding                                               | UI Rect                                               |
+| border                         | The element border UI-Rect                                        | UI Rect                                               |
+| border-radius                  | The element border-radius                                         | Radius                                                |
+| row-gap                        | The size between rows in a grid layout or horizontal flex layout  | Size                                                  |
+| column-gap                     | The size between columns in a grid layout or vertical flex layout | Size                                                  |
+| flex-direction                 | If a flexboy layout should be a row or column                     | `row`, `column`, `row-reverse`,                       |
+| `column-reverse`               |                                                                   |                                                       |
+| flex-wrap                      | The wrapping mechanics of overflowing flexboxes                   | `no-wrap`, `wrap`,                                    |
+| `wrap-reverse`                 |                                                                   |                                                       |
+| flex-grow                      | Defines flexbox growth in layouts with enough space               | Float                                                 |
+| flex-shrink                    | Defines flexbox shrinking in layouts without enough space         | Float                                                 |
+| flex-basis                     | The initial length of a flexbox before shrinking/growing          | Size                                                  |
+| grid-auto-flow                 | Controls how automatically placed grid items are placed           | `row`, `column`, `row-dense`,                         |
+| `column-dense`                 |                                                                   |                                                       |
+| grid-template-rows             | Defines the number and size of rows inside a grid layout          | Grid Track                                            |
+| grid-template-columns          | Defines the number and size of columns in a grid layout           | Grid Track                                            |
+| grid-auto-rows                 | Defines the size of implicitly created grid rows                  | Grid Template                                         |
+| grid-auto-columns              | Defines the size of implicitly created grid columns               | Grid Template                                         |
+| grid-row                       | The row in a grid layout in which an item starts                  | Grid Placement                                        |
+| grid-column                    | The column in a grid layout in which an item starts               | Grid Placement                                        |
 
 ---
 
@@ -493,3 +511,15 @@ All the attributes listed support state overrides.
 
 Use `TooltipProps` to control the text.
 You can use generic element events to implement custom behavior.
+
+# Styles
+
+The `<Styles>...</Styles>` tag must always come first inside the root `<Page></Page>` element.
+
+Every style is defined inside the `<Styles>...</Styles>` tag as `<Style attr1="abc" attr2="def"/>`.
+
+A `<Style/>` must have a `name` attribute and can have any number of attributes and may use prefixes (like
+`hover.color="..."` or `click.width="..."`).
+
+Every attribute specified inside a style is forwarded to the widget parsing method, which means that you can even
+specify attributes that are totally unused and ignored.
