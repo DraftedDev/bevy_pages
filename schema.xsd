@@ -513,6 +513,8 @@
     <!-- ELEMENT ATTRIBUTES -->
 
     <xs:attributeGroup name="elementAttrs">
+        <xs:attribute name="styles" type="StyleList"/>
+
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="bg-color" type="ColorType"/>
         <xs:attribute name="border-color" type="ColorType"/>
@@ -1056,11 +1058,46 @@
     <xs:element name="Page">
         <xs:complexType>
             <xs:sequence>
+                <xs:element ref="Styles" minOccurs="0"/>
                 <xs:group ref="AnyElementGroup" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
             <xs:attributeGroup ref="elementAttrs"/>
             <xs:attributeGroup ref="hoverElementAttrs"/>
             <xs:attributeGroup ref="clickElementAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- STYLES -->
+
+    <xs:simpleType name="StyleList">
+        <xs:list itemType="xs:NCName"/>
+    </xs:simpleType>
+
+    <xs:element name="Style">
+        <xs:complexType>
+            <xs:attribute name="name" type="xs:NCName" use="required"/>
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+            <xs:attributeGroup ref="checkboxAttrs"/>
+            <xs:attributeGroup ref="dividerAttrs"/>
+            <xs:attributeGroup ref="dropdownAttrs"/>
+            <xs:attributeGroup ref="imageAttrs"/>
+            <xs:attributeGroup ref="progressBarAttrs"/>
+            <xs:attributeGroup ref="scrollViewAttrs"/>
+            <xs:attributeGroup ref="sliderAttrs"/>
+            <xs:attributeGroup ref="switchAttrs"/>
+            <xs:attributeGroup ref="textAttrs"/>
+            <xs:attributeGroup ref="textInputAttrs"/>
+            <xs:attributeGroup ref="tooltipAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Styles">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Style" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
         </xs:complexType>
     </xs:element>
 </xs:schema>

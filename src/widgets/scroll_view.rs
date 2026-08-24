@@ -1,4 +1,5 @@
 use crate::element::ElementProps;
+use crate::parser::AttributeMap;
 use crate::parser::color::parse_color;
 use crate::parser::values::{parse_attribute, parse_bool, parse_float, parse_matches};
 use crate::props::Properties;
@@ -451,13 +452,13 @@ impl Widget for ScrollViewWidget {
         );
     }
 
-    fn parse(&mut self, node: &XmlNode) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = ScrollViewProps::parse(node, None, &ScrollViewProps::default())?;
-        let hover = ScrollViewProps::parse(node, Some("hover"), &default)?;
-        let click = ScrollViewProps::parse(node, Some("click"), &default)?;
+        let default = ScrollViewProps::parse(&attrs, None, &ScrollViewProps::default())?;
+        let hover = ScrollViewProps::parse(&attrs, Some("hover"), &default)?;
+        let click = ScrollViewProps::parse(&attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -662,20 +663,20 @@ pub struct ScrollViewProps {
 
 impl ScrollViewProps {
     fn parse(
-        node: &XmlNode,
+        attrs: &AttributeMap,
         prefix: Option<&str>,
         base: &Self,
     ) -> std::result::Result<Self, String> {
-        let direction = parse_attribute(node, "scroll-direction", prefix, ScrollDirection::parse)?
+        let direction = parse_attribute(attrs, "scroll-direction", prefix, ScrollDirection::parse)?
             .unwrap_or(base.direction);
 
-        let scroll_speed = parse_attribute(node, "scroll-speed", prefix, parse_float)?
+        let scroll_speed = parse_attribute(attrs, "scroll-speed", prefix, parse_float)?
             .unwrap_or(base.scroll_speed);
 
         let bg_color =
-            parse_attribute(node, "color", prefix, parse_color)?.unwrap_or(base.bg_color);
+            parse_attribute(attrs, "color", prefix, parse_color)?.unwrap_or(base.bg_color);
 
-        let smooth = parse_attribute(node, "smooth", prefix, parse_bool)?.unwrap_or(base.smooth);
+        let smooth = parse_attribute(attrs, "smooth", prefix, parse_bool)?.unwrap_or(base.smooth);
 
         Ok(Self {
             direction,

@@ -1,4 +1,5 @@
 use crate::element::ElementProps;
+use crate::parser::AttributeMap;
 use crate::parser::color::{darken_color, lighten_color};
 use crate::parser::values::parse_ui_rect;
 use crate::widgets::Widget;
@@ -37,7 +38,7 @@ impl Widget for ButtonWidget {
 
     fn setup(&self, _: &mut App) {}
 
-    fn parse(&mut self, _: &Node) -> Result<(), String>
+    fn parse(&mut self, _: &Node, _: AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {

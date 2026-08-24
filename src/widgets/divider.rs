@@ -1,4 +1,5 @@
 use crate::element::ElementProps;
+use crate::parser::AttributeMap;
 use crate::parser::values::{parse_attribute, parse_matches};
 use crate::props::Properties;
 use crate::widgets::Widget;
@@ -60,13 +61,13 @@ impl Widget for DividerWidget {
 
     fn setup(&self, _: &mut App) {}
 
-    fn parse(&mut self, node: &XmlNode) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = DividerProps::parse(node, None, &DividerProps::default())?;
-        let hover = DividerProps::parse(node, Some("hover"), &default)?;
-        let click = DividerProps::parse(node, Some("click"), &default)?;
+        let default = DividerProps::parse(&attrs, None, &DividerProps::default())?;
+        let hover = DividerProps::parse(&attrs, Some("hover"), &default)?;
+        let click = DividerProps::parse(&attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -150,8 +151,8 @@ pub struct DividerProps {
 
 impl DividerProps {
     #[inline(always)]
-    fn parse(node: &XmlNode, prefix: Option<&str>, base: &Self) -> Result<Self, String> {
-        let orientation = parse_attribute(node, "orientation", prefix, DividerOrientation::parse)?
+    fn parse(attrs: &AttributeMap, prefix: Option<&str>, base: &Self) -> Result<Self, String> {
+        let orientation = parse_attribute(attrs, "orientation", prefix, DividerOrientation::parse)?
             .unwrap_or(base.orientation);
 
         Ok(Self { orientation })

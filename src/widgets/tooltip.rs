@@ -1,4 +1,5 @@
 use crate::element::ElementProps;
+use crate::parser::AttributeMap;
 use crate::parser::color::parse_color;
 use crate::parser::values::{parse_attribute, parse_font_size, parse_matches};
 use crate::props::Properties;
@@ -170,13 +171,13 @@ impl Widget for TooltipWidget {
         app.add_systems(Update, (update_props, sync_visuals).in_set(PageSystemSet));
     }
 
-    fn parse(&mut self, node: &XmlNode) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = TooltipProps::parse(node, None, &TooltipProps::default())?;
-        let hover = TooltipProps::parse(node, Some("hover"), &default)?;
-        let click = TooltipProps::parse(node, Some("click"), &default)?;
+        let default = TooltipProps::parse(&attrs, None, &TooltipProps::default())?;
+        let hover = TooltipProps::parse(&attrs, Some("hover"), &default)?;
+        let click = TooltipProps::parse(&attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -301,24 +302,24 @@ pub struct TooltipProps {
 
 impl TooltipProps {
     fn parse(
-        node: &roxmltree::Node,
+        attrs: &AttributeMap,
         prefix: Option<&str>,
         base: &Self,
     ) -> std::result::Result<Self, String> {
-        let text = parse_attribute(node, "text", prefix, |s| Ok(s.to_string()))?
+        let text = parse_attribute(attrs, "text", prefix, |s| Ok(s.to_string()))?
             .unwrap_or_else(|| base.text.clone());
 
         let anchor =
-            parse_attribute(node, "anchor", prefix, TooltipAnchor::parse)?.unwrap_or(base.anchor);
+            parse_attribute(attrs, "anchor", prefix, TooltipAnchor::parse)?.unwrap_or(base.anchor);
 
-        let bg_color = parse_attribute(node, "tooltip-bg-color", prefix, parse_color)?
+        let bg_color = parse_attribute(attrs, "tooltip-bg-color", prefix, parse_color)?
             .unwrap_or(base.bg_color);
 
         let text_color =
-            parse_attribute(node, "text-color", prefix, parse_color)?.unwrap_or(base.text_color);
+            parse_attribute(attrs, "text-color", prefix, parse_color)?.unwrap_or(base.text_color);
 
         let font_size =
-            parse_attribute(node, "font-size", prefix, parse_font_size)?.unwrap_or(base.font_size);
+            parse_attribute(attrs, "font-size", prefix, parse_font_size)?.unwrap_or(base.font_size);
 
         Ok(Self {
             text,

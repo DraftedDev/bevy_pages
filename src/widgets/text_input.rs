@@ -1,5 +1,6 @@
 use crate::element::{ElementId, ElementProps};
 use crate::events::ElementSet;
+use crate::parser::AttributeMap;
 use crate::parser::color::{darken_color, lighten_color, parse_color};
 use crate::parser::values::{parse_attribute, parse_bool, parse_float, parse_font_size};
 use crate::props::Properties;
@@ -141,13 +142,13 @@ impl Widget for TextInputWidget {
         .add_observer(unfocus_on_outside_click);
     }
 
-    fn parse(&mut self, node: &XmlNode) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = TextInputProps::parse(node, None, &TextInputProps::default())?;
-        let hover = TextInputProps::parse(node, Some("hover"), &default)?;
-        let click = TextInputProps::parse(node, Some("click"), &default)?;
+        let default = TextInputProps::parse(&attrs, None, &TextInputProps::default())?;
+        let hover = TextInputProps::parse(&attrs, Some("hover"), &default)?;
+        let click = TextInputProps::parse(&attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -266,26 +267,26 @@ pub struct TextInputProps {
 
 impl TextInputProps {
     fn parse(
-        node: &XmlNode,
+        attrs: &AttributeMap,
         prefix: Option<&str>,
         base: &Self,
     ) -> std::result::Result<Self, String> {
-        let value = parse_attribute(node, "value", prefix, |s| Ok(s.to_string()))?
+        let value = parse_attribute(attrs, "value", prefix, |s| Ok(s.to_string()))?
             .unwrap_or_else(|| base.value.clone());
 
         let font_size =
-            parse_attribute(node, "font-size", prefix, parse_font_size)?.unwrap_or(base.font_size);
+            parse_attribute(attrs, "font-size", prefix, parse_font_size)?.unwrap_or(base.font_size);
 
         let font =
-            parse_attribute(node, "font", prefix, |s| Ok(s.to_string()))?.or(base.font.clone());
+            parse_attribute(attrs, "font", prefix, |s| Ok(s.to_string()))?.or(base.font.clone());
 
         let visible_width =
-            parse_attribute(node, "visible-width", prefix, parse_float)?.or(base.visible_width);
+            parse_attribute(attrs, "visible-width", prefix, parse_float)?.or(base.visible_width);
 
-        let allow_newlines = parse_attribute(node, "allow-newlines", prefix, parse_bool)?
+        let allow_newlines = parse_attribute(attrs, "allow-newlines", prefix, parse_bool)?
             .unwrap_or(base.allow_newlines);
 
-        let color = parse_attribute(node, "color", prefix, parse_color)?.unwrap_or(base.color);
+        let color = parse_attribute(attrs, "color", prefix, parse_color)?.unwrap_or(base.color);
 
         Ok(Self {
             value,

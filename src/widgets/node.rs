@@ -1,4 +1,5 @@
 use crate::element::ElementProps;
+use crate::parser::AttributeMap;
 use crate::widgets::Widget;
 use bevy::app::App;
 use bevy::prelude::{Entity, World};
@@ -29,7 +30,7 @@ impl Widget for NodeWidget {
 
     fn setup(&self, _: &mut App) {}
 
-    fn parse(&mut self, _: &Node) -> Result<(), String> {
+    fn parse(&mut self, _: &Node, _: AttributeMap) -> Result<(), String> {
         Ok(())
     }
 

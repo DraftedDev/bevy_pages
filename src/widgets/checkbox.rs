@@ -1,5 +1,6 @@
 use crate::element::{ElementId, ElementProps};
 use crate::events::{ElementClick, ElementToggle};
+use crate::parser::AttributeMap;
 use crate::parser::color::{darken_color, lighten_color, parse_color};
 use crate::parser::values::{parse_attribute, parse_bool};
 use crate::props::Properties;
@@ -118,13 +119,13 @@ impl Widget for CheckboxWidget {
             .add_observer(toggle_checkbox);
     }
 
-    fn parse(&mut self, node: &XmlNode) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = CheckboxProps::parse(node, None, &CheckboxProps::default())?;
-        let hover = CheckboxProps::parse(node, Some("hover"), &default)?;
-        let click = CheckboxProps::parse(node, Some("click"), &default)?;
+        let default = CheckboxProps::parse(&attrs, None, &CheckboxProps::default())?;
+        let hover = CheckboxProps::parse(&attrs, Some("hover"), &default)?;
+        let click = CheckboxProps::parse(&attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -227,13 +228,13 @@ pub struct CheckboxProps {
 }
 
 impl CheckboxProps {
-    fn parse(node: &XmlNode, prefix: Option<&str>, base: &Self) -> Result<Self, String> {
-        let state = parse_attribute(node, "checked", prefix, parse_bool)?.unwrap_or(base.state);
+    fn parse(attrs: &AttributeMap, prefix: Option<&str>, base: &Self) -> Result<Self, String> {
+        let state = parse_attribute(attrs, "checked", prefix, parse_bool)?.unwrap_or(base.state);
 
         let check_color =
-            parse_attribute(node, "check-color", prefix, parse_color)?.unwrap_or(base.check_color);
+            parse_attribute(attrs, "check-color", prefix, parse_color)?.unwrap_or(base.check_color);
 
-        let symbol = parse_attribute(node, "check-symbol", prefix, |s| Ok(s.to_string()))?
+        let symbol = parse_attribute(attrs, "check-symbol", prefix, |s| Ok(s.to_string()))?
             .unwrap_or_else(|| base.symbol.clone());
 
         Ok(Self {

@@ -1,4 +1,5 @@
 use crate::element::ElementProps;
+use crate::parser::AttributeMap;
 use crate::parser::values::parse_attribute;
 use crate::props::Properties;
 use crate::systems::PageSystemSet;
@@ -92,10 +93,10 @@ impl Widget for TextWidget {
         app.add_systems(Update, update_props.in_set(PageSystemSet));
     }
 
-    fn parse(&mut self, node: &Node) -> Result<(), String> {
-        let default = TextProps::parse(node, None, &TextProps::default())?;
-        let hover = TextProps::parse(node, Some("hover"), &default)?;
-        let click = TextProps::parse(node, Some("click"), &default)?;
+    fn parse(&mut self, node: &Node, attrs: AttributeMap) -> Result<(), String> {
+        let default = TextProps::parse(node, &attrs, None, &TextProps::default())?;
+        let hover = TextProps::parse(node, &attrs, Some("hover"), &default)?;
+        let click = TextProps::parse(node, &attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -166,8 +167,13 @@ pub struct TextProps {
 }
 
 impl TextProps {
-    fn parse(node: &Node, prefix: Option<&str>, base: &Self) -> Result<Self, String> {
-        let content = parse_attribute(node, "content", prefix, |s| Ok(s.to_string()))?
+    fn parse(
+        node: &Node,
+        attrs: &AttributeMap,
+        prefix: Option<&str>,
+        base: &Self,
+    ) -> Result<Self, String> {
+        let content = parse_attribute(attrs, "content", prefix, |s| Ok(s.to_string()))?
             .or_else(|| {
                 if prefix.is_none() {
                     node.text().map(str::trim).map(str::to_string)
@@ -177,10 +183,10 @@ impl TextProps {
             })
             .unwrap_or_else(|| base.content.clone());
 
-        let font = parse_attribute(node, "font", prefix, |s| Ok(s.to_string()))?
+        let font = parse_attribute(attrs, "font", prefix, |s| Ok(s.to_string()))?
             .or_else(|| base.font.clone());
 
-        let font_weight = parse_attribute(node, "font-weight", prefix, |s| {
+        let font_weight = parse_attribute(attrs, "font-weight", prefix, |s| {
             crate::parser::values::parse_int(s)
                 .map(|i| Ok(FontWeight(i as u16)))
                 .unwrap_or_else(|_| {
@@ -203,20 +209,20 @@ impl TextProps {
         })?
         .unwrap_or(base.font_weight);
 
-        let font_width = parse_attribute(node, "font-width", prefix, |s| {
+        let font_width = parse_attribute(attrs, "font-width", prefix, |s| {
             crate::parser::values::parse_float(s).map(FontWidth)
         })?
         .unwrap_or(base.font_width);
 
         let font_size = parse_attribute(
-            node,
+            attrs,
             "font-size",
             prefix,
             crate::parser::values::parse_font_size,
         )?
         .unwrap_or(base.font_size);
 
-        let font_style = parse_attribute(node, "font-style", prefix, |s| {
+        let font_style = parse_attribute(attrs, "font-style", prefix, |s| {
             crate::parser::values::parse_matches(
                 s,
                 &[
@@ -228,7 +234,7 @@ impl TextProps {
         })?
         .unwrap_or(base.font_style);
 
-        let color = parse_attribute(node, "color", prefix, crate::parser::color::parse_color)?
+        let color = parse_attribute(attrs, "color", prefix, crate::parser::color::parse_color)?
             .unwrap_or(base.color);
 
         Ok(Self {

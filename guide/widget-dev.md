@@ -171,7 +171,7 @@ pub struct CheckboxWidget {
 
 impl Widget for CheckboxWidget {
     // Translates to `<Checkbox/>` in XML.
-    // You could also technically use `<Checkbox>...</Checkbox>`, but most people dont want children INSIDE a checkbox.
+    // You could also technically use `<Checkbox>...</Checkbox>`, but most people don't want children INSIDE a checkbox.
     fn name() -> &'static str
     where
         Self: Sized,
@@ -185,17 +185,13 @@ impl Widget for CheckboxWidget {
             .add_observer(toggle_checkbox);
     }
 
-    fn parse(&mut self, node: &XmlNode) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        // Parse the properties for every possible state override:
-        // - Default (no override)
-        // - On Hover (override)
-        // - On Click (override)
-        let default = CheckboxProps::parse(node, None, &CheckboxProps::default())?;
-        let hover = CheckboxProps::parse(node, Some("hover"), &default)?;
-        let click = CheckboxProps::parse(node, Some("click"), &default)?;
+        let default = CheckboxProps::parse(&attrs, None, &CheckboxProps::default())?;
+        let hover = CheckboxProps::parse(&attrs, Some("hover"), &default)?;
+        let click = CheckboxProps::parse(&attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -306,19 +302,16 @@ pub struct CheckboxProps {
 }
 
 impl CheckboxProps {
-    // Parse the properties from an XML node.
-    // `prefix` is a possible prefix (convention: `<prefix>.<attr>`).
-    // `base` are the base properties when values are not specified.
-    fn parse(node: &XmlNode, prefix: Option<&str>, base: &Self) -> Result<Self, String> {
+    fn parse(attrs: &AttributeMap, prefix: Option<&str>, base: &Self) -> Result<Self, String> {
         // Parse `checked` or use the base value.
-        let state = parse_attribute(node, "checked", prefix, parse_bool)?.unwrap_or(base.state);
+        let state = parse_attribute(attrs, "checked", prefix, parse_bool)?.unwrap_or(base.state);
 
         // Parse `check-color` or use the base value.
         let check_color =
-            parse_attribute(node, "check-color", prefix, parse_color)?.unwrap_or(base.check_color);
+            parse_attribute(attrs, "check-color", prefix, parse_color)?.unwrap_or(base.check_color);
 
         // Parse `check-symbol` or use the base value.
-        let symbol = parse_attribute(node, "check-symbol", prefix, |s| Ok(s.to_string()))?
+        let symbol = parse_attribute(attrs, "check-symbol", prefix, |s| Ok(s.to_string()))?
             .unwrap_or_else(|| base.symbol.clone());
 
         Ok(Self {

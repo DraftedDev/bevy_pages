@@ -1,4 +1,5 @@
 use crate::element::ElementProps;
+use crate::parser::AttributeMap;
 use crate::parser::color::parse_color;
 use crate::parser::values::{parse_attribute, parse_border_rect, parse_float};
 use crate::parser::values::{parse_bool, parse_matches, parse_rect};
@@ -116,13 +117,13 @@ impl Widget for ImageWidget {
         app.add_systems(Update, update_props.in_set(PageSystemSet));
     }
 
-    fn parse(&mut self, node: &Node) -> Result<(), String>
+    fn parse(&mut self, _: &Node, attrs: AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = ImageProps::parse(node, None, &ImageProps::default())?;
-        let hover = ImageProps::parse(node, Some("hover"), &default)?;
-        let click = ImageProps::parse(node, Some("click"), &default)?;
+        let default = ImageProps::parse(&attrs, None, &ImageProps::default())?;
+        let hover = ImageProps::parse(&attrs, Some("hover"), &default)?;
+        let click = ImageProps::parse(&attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -241,31 +242,31 @@ pub struct ImageProps {
 
 impl ImageProps {
     fn parse(
-        node: &Node,
+        attrs: &AttributeMap,
         prefix: Option<&str>,
         base: &Self,
     ) -> bevy::prelude::Result<Self, String> {
-        let src = parse_attribute(node, "src", prefix, |s| {
+        let src = parse_attribute(attrs, "src", prefix, |s| {
             Ok(ImageSource::Path(s.to_string()))
         })?
         .unwrap_or_else(|| base.src.clone());
 
-        let color = parse_attribute(node, "color", prefix, parse_color)?.unwrap_or(base.color);
+        let color = parse_attribute(attrs, "color", prefix, parse_color)?.unwrap_or(base.color);
 
-        let flip_x = parse_attribute(node, "flip-x", prefix, parse_bool)?.unwrap_or(base.flip_x);
+        let flip_x = parse_attribute(attrs, "flip-x", prefix, parse_bool)?.unwrap_or(base.flip_x);
 
-        let flip_y = parse_attribute(node, "flip-y", prefix, parse_bool)?.unwrap_or(base.flip_y);
+        let flip_y = parse_attribute(attrs, "flip-y", prefix, parse_bool)?.unwrap_or(base.flip_y);
 
-        let rect = parse_attribute(node, "rect", prefix, parse_rect)?.or(base.rect);
+        let rect = parse_attribute(attrs, "rect", prefix, parse_rect)?.or(base.rect);
 
-        let sliced_border = parse_attribute(node, "sliced-border", prefix, parse_border_rect)?
+        let sliced_border = parse_attribute(attrs, "sliced-border", prefix, parse_border_rect)?
             .unwrap_or(base.sliced_border);
 
         let sliced_center_scale_stretch =
-            parse_attribute(node, "sliced-center-scale-stretch", prefix, parse_float)?
+            parse_attribute(attrs, "sliced-center-scale-stretch", prefix, parse_float)?
                 .unwrap_or(base.sliced_center_scale_stretch);
 
-        let sliced_center_scale = parse_attribute(node, "sliced-center-scale", prefix, |s| {
+        let sliced_center_scale = parse_attribute(attrs, "sliced-center-scale", prefix, |s| {
             parse_matches(
                 s,
                 &[
@@ -281,10 +282,10 @@ impl ImageProps {
         .unwrap_or(base.sliced_center_scale);
 
         let sliced_sides_scale_stretch =
-            parse_attribute(node, "sliced-sides-scale-stretch", prefix, parse_float)?
+            parse_attribute(attrs, "sliced-sides-scale-stretch", prefix, parse_float)?
                 .unwrap_or(base.sliced_sides_scale_stretch);
 
-        let sliced_sides_scale = parse_attribute(node, "sliced-sides-scale", prefix, |s| {
+        let sliced_sides_scale = parse_attribute(attrs, "sliced-sides-scale", prefix, |s| {
             parse_matches(
                 s,
                 &[
@@ -300,17 +301,19 @@ impl ImageProps {
         .unwrap_or(base.sliced_sides_scale);
 
         let sliced_max_corner_scale =
-            parse_attribute(node, "sliced-max-corner-scale", prefix, parse_float)?
+            parse_attribute(attrs, "sliced-max-corner-scale", prefix, parse_float)?
                 .unwrap_or(base.sliced_max_corner_scale);
 
-        let tiled_x = parse_attribute(node, "tiled-x", prefix, parse_bool)?.unwrap_or(base.tiled_x);
+        let tiled_x =
+            parse_attribute(attrs, "tiled-x", prefix, parse_bool)?.unwrap_or(base.tiled_x);
 
-        let tiled_y = parse_attribute(node, "tiled-y", prefix, parse_bool)?.unwrap_or(base.tiled_y);
+        let tiled_y =
+            parse_attribute(attrs, "tiled-y", prefix, parse_bool)?.unwrap_or(base.tiled_y);
 
-        let tiled_stretch = parse_attribute(node, "tiled-stretch", prefix, parse_float)?
+        let tiled_stretch = parse_attribute(attrs, "tiled-stretch", prefix, parse_float)?
             .unwrap_or(base.tiled_stretch);
 
-        let mode = parse_attribute(node, "mode", prefix, |s| {
+        let mode = parse_attribute(attrs, "mode", prefix, |s| {
             parse_matches(
                 s,
                 &[
@@ -331,7 +334,7 @@ impl ImageProps {
         })?
         .unwrap_or_else(|| base.mode.clone());
 
-        let visual_box = parse_attribute(node, "visual-box", prefix, |s| {
+        let visual_box = parse_attribute(attrs, "visual-box", prefix, |s| {
             parse_matches(
                 s,
                 &[

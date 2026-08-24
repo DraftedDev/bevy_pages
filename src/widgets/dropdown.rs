@@ -1,5 +1,6 @@
 use crate::element::{ElementId, ElementProps};
 use crate::events::ElementSet;
+use crate::parser::AttributeMap;
 use crate::parser::color::parse_color;
 use crate::parser::values::parse_attribute;
 use crate::props::Properties;
@@ -335,10 +336,10 @@ impl Widget for DropdownWidget {
         );
     }
 
-    fn parse(&mut self, node: &XmlNode) -> Result<(), String> {
-        let default = DropdownProps::parse(node, None, &DropdownProps::default())?;
-        let hover = DropdownProps::parse(node, Some("hover"), &default)?;
-        let click = DropdownProps::parse(node, Some("click"), &default)?;
+    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String> {
+        let default = DropdownProps::parse(&attrs, None, &DropdownProps::default())?;
+        let hover = DropdownProps::parse(&attrs, Some("hover"), &default)?;
+        let click = DropdownProps::parse(&attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -466,14 +467,14 @@ pub struct DropdownProps {
 }
 
 impl DropdownProps {
-    fn parse(node: &XmlNode, prefix: Option<&str>, base: &Self) -> Result<Self, String> {
-        let placeholder = parse_attribute(node, "placeholder", prefix, |s| Ok(s.to_string()))?
+    fn parse(attrs: &AttributeMap, prefix: Option<&str>, base: &Self) -> Result<Self, String> {
+        let placeholder = parse_attribute(attrs, "placeholder", prefix, |s| Ok(s.to_string()))?
             .unwrap_or_else(|| base.placeholder.clone());
 
-        let bg_color = parse_attribute(node, "dropdown-bg-color", prefix, parse_color)?
+        let bg_color = parse_attribute(attrs, "dropdown-bg-color", prefix, parse_color)?
             .unwrap_or(base.bg_color);
 
-        let menu_bg_color = parse_attribute(node, "menu-bg-color", prefix, parse_color)?
+        let menu_bg_color = parse_attribute(attrs, "menu-bg-color", prefix, parse_color)?
             .unwrap_or(base.menu_bg_color);
 
         Ok(Self {

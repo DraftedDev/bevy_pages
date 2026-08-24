@@ -1,4 +1,5 @@
 use crate::element::ElementProps;
+use crate::parser::AttributeMap;
 use crate::parser::color::parse_color;
 use crate::parser::values::{parse_attribute, parse_float};
 use crate::props::Properties;
@@ -157,13 +158,13 @@ impl Widget for ProgressBarWidget {
         );
     }
 
-    fn parse(&mut self, node: &XmlNode) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = ProgressBarProps::parse(node, None, &ProgressBarProps::default())?;
-        let hover = ProgressBarProps::parse(node, Some("hover"), &default)?;
-        let click = ProgressBarProps::parse(node, Some("click"), &default)?;
+        let default = ProgressBarProps::parse(&attrs, None, &ProgressBarProps::default())?;
+        let hover = ProgressBarProps::parse(&attrs, Some("hover"), &default)?;
+        let click = ProgressBarProps::parse(&attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -281,13 +282,13 @@ pub struct ProgressBarProps {
 
 impl ProgressBarProps {
     fn parse(
-        node: &XmlNode,
+        attrs: &AttributeMap,
         prefix: Option<&str>,
         base: &Self,
     ) -> std::result::Result<Self, String> {
-        let min = parse_attribute(node, "min", prefix, parse_float)?.unwrap_or(base.min);
+        let min = parse_attribute(attrs, "min", prefix, parse_float)?.unwrap_or(base.min);
 
-        let max = parse_attribute(node, "max", prefix, parse_float)?.unwrap_or(base.max);
+        let max = parse_attribute(attrs, "max", prefix, parse_float)?.unwrap_or(base.max);
 
         if min >= max {
             return Err(format!(
@@ -296,17 +297,17 @@ impl ProgressBarProps {
             ));
         }
 
-        let value = parse_attribute(node, "value", prefix, parse_float)?
+        let value = parse_attribute(attrs, "value", prefix, parse_float)?
             .unwrap_or(base.min)
             .clamp(min, max);
 
         let track_color =
-            parse_attribute(node, "track-color", prefix, parse_color)?.unwrap_or(base.track_color);
+            parse_attribute(attrs, "track-color", prefix, parse_color)?.unwrap_or(base.track_color);
 
         let fill_color =
-            parse_attribute(node, "fill-color", prefix, parse_color)?.unwrap_or(base.fill_color);
+            parse_attribute(attrs, "fill-color", prefix, parse_color)?.unwrap_or(base.fill_color);
 
-        let track_height = parse_attribute(node, "track-height", prefix, parse_float)?
+        let track_height = parse_attribute(attrs, "track-height", prefix, parse_float)?
             .unwrap_or(base.track_height);
 
         Ok(Self {

@@ -1,5 +1,6 @@
 use crate::element::{ElementId, ElementProps};
 use crate::events::ElementSet;
+use crate::parser::AttributeMap;
 use crate::parser::color::parse_color;
 use crate::parser::values::{parse_attribute, parse_float};
 use crate::props::Properties;
@@ -182,13 +183,13 @@ impl Widget for SliderWidget {
         app.add_systems(Update, (update_props, sync_visuals).in_set(PageSystemSet));
     }
 
-    fn parse(&mut self, node: &XmlNode) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = SliderProps::parse(node, None, &SliderProps::default())?;
-        let hover = SliderProps::parse(node, Some("hover"), &default)?;
-        let click = SliderProps::parse(node, Some("click"), &default)?;
+        let default = SliderProps::parse(&attrs, None, &SliderProps::default())?;
+        let hover = SliderProps::parse(&attrs, Some("hover"), &default)?;
+        let click = SliderProps::parse(&attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -350,13 +351,13 @@ pub struct SliderProps {
 
 impl SliderProps {
     fn parse(
-        node: &XmlNode,
+        attrs: &AttributeMap,
         prefix: Option<&str>,
         base: &Self,
     ) -> std::result::Result<Self, String> {
-        let min = parse_attribute(node, "min", prefix, parse_float)?.unwrap_or(base.min);
+        let min = parse_attribute(attrs, "min", prefix, parse_float)?.unwrap_or(base.min);
 
-        let max = parse_attribute(node, "max", prefix, parse_float)?.unwrap_or(base.max);
+        let max = parse_attribute(attrs, "max", prefix, parse_float)?.unwrap_or(base.max);
 
         if min >= max {
             return Err(format!(
@@ -365,9 +366,9 @@ impl SliderProps {
             ));
         }
 
-        let step = parse_attribute(node, "step", prefix, parse_float)?.or(base.step);
+        let step = parse_attribute(attrs, "step", prefix, parse_float)?.or(base.step);
 
-        let mut value = parse_attribute(node, "value", prefix, parse_float)?.unwrap_or(base.value);
+        let mut value = parse_attribute(attrs, "value", prefix, parse_float)?.unwrap_or(base.value);
 
         if let Some(step_val) = step
             && step_val > 0.0
@@ -378,19 +379,19 @@ impl SliderProps {
         value = value.clamp(min, max);
 
         let track_color =
-            parse_attribute(node, "track-color", prefix, parse_color)?.unwrap_or(base.track_color);
+            parse_attribute(attrs, "track-color", prefix, parse_color)?.unwrap_or(base.track_color);
 
         let thumb_color =
-            parse_attribute(node, "thumb-color", prefix, parse_color)?.unwrap_or(base.thumb_color);
+            parse_attribute(attrs, "thumb-color", prefix, parse_color)?.unwrap_or(base.thumb_color);
 
         let fill_color =
-            parse_attribute(node, "fill-color", prefix, parse_color)?.unwrap_or(base.fill_color);
+            parse_attribute(attrs, "fill-color", prefix, parse_color)?.unwrap_or(base.fill_color);
 
-        let track_height = parse_attribute(node, "track-height", prefix, parse_float)?
+        let track_height = parse_attribute(attrs, "track-height", prefix, parse_float)?
             .unwrap_or(base.track_height);
 
         let thumb_size =
-            parse_attribute(node, "thumb-size", prefix, parse_float)?.unwrap_or(base.thumb_size);
+            parse_attribute(attrs, "thumb-size", prefix, parse_float)?.unwrap_or(base.thumb_size);
 
         Ok(Self {
             min,

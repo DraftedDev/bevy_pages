@@ -1,4 +1,5 @@
 use crate::element::ElementProps;
+use crate::parser::AttributeMap;
 use bevy::app::App;
 use bevy::prelude::{Entity, World};
 use roxmltree::Node;
@@ -57,8 +58,8 @@ pub trait Widget: Debug + Send + Sync + 'static {
     /// This is where widgets should add systems and observers to the bevy app.
     fn setup(&self, app: &mut App);
 
-    /// Parses the widget from an XML node.
-    fn parse(&mut self, node: &Node) -> Result<(), String>;
+    /// Parses the widget from an XML node and an [AttributeMap].
+    fn parse(&mut self, node: &Node, attrs: AttributeMap) -> Result<(), String>;
 
     /// Spawns the widget. Called inside [Element::spawn](crate::element::Element::spawn).
     fn spawn(&self, entity: Entity, world: &mut World) -> Entity;

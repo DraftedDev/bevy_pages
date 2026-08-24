@@ -1,18 +1,18 @@
+use crate::parser::AttributeMap;
 use crate::parser::color::parse_color;
 use bevy::math::{Rect, Vec2};
 use bevy::prelude::{
     BorderColor, BorderRadius, BorderRect, FontSize, GridPlacement, GridTrack, RepeatedGridTrack,
     UiRect, Val,
 };
-use roxmltree::Node;
 
-/// Parses an attribute from an XML node.
+/// Parses an attribute from an [AttributeMap].
 /// Applies the given parser to the attribute value or returns [None] if the attribute is not present.
 /// Can also return [Err] if the parser fails.
 ///
 /// You can specify an optional prefix for the attribute name (following convention `<prefix>.<name>`).
 pub fn parse_attribute<T, F>(
-    node: &Node,
+    attrs: &AttributeMap,
     attr_name: &str,
     prefix: Option<&str>,
     parser: F,
@@ -25,10 +25,10 @@ where
         None => attr_name.to_string(),
     };
 
-    node.attribute(key.as_str()).map(parser).transpose()
+    attrs.get(&key).map(|s| parser(s)).transpose()
 }
 
-/// Parses a [BorderColor] from an XML node.
+/// Parses a [BorderColor] from an [AttributeMap].
 ///
 /// You can specify an optional prefix for all attribute names (following convention `<prefix>.<name>`).
 ///
@@ -37,17 +37,17 @@ where
 /// - Either specify `border-color = "<color>"` for a uniform border color.
 /// - Or specify `border-color-top`, `border-color-right`, `border-color-bottom`, `border-color-left` for explicit border colors.
 pub fn parse_border_color(
-    node: &Node,
+    attrs: &AttributeMap,
     prefix: Option<&str>,
 ) -> Result<Option<BorderColor>, String> {
-    if let Some(color) = parse_attribute(node, "border-color", prefix, parse_color)? {
+    if let Some(color) = parse_attribute(attrs, "border-color", prefix, parse_color)? {
         return Ok(Some(BorderColor::all(color)));
     }
 
-    let top = parse_attribute(node, "border-color-top", prefix, parse_color)?;
-    let right = parse_attribute(node, "border-color-right", prefix, parse_color)?;
-    let bottom = parse_attribute(node, "border-color-bottom", prefix, parse_color)?;
-    let left = parse_attribute(node, "border-color-left", prefix, parse_color)?;
+    let top = parse_attribute(attrs, "border-color-top", prefix, parse_color)?;
+    let right = parse_attribute(attrs, "border-color-right", prefix, parse_color)?;
+    let bottom = parse_attribute(attrs, "border-color-bottom", prefix, parse_color)?;
+    let left = parse_attribute(attrs, "border-color-left", prefix, parse_color)?;
 
     if top.is_some() || right.is_some() || bottom.is_some() || left.is_some() {
         Ok(Some(BorderColor {

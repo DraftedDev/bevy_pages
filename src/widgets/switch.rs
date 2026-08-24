@@ -1,5 +1,6 @@
 use crate::element::{ElementId, ElementProps};
 use crate::events::{ElementClick, ElementToggle};
+use crate::parser::AttributeMap;
 use crate::parser::color::{darken_color, lighten_color, parse_color};
 use crate::parser::values::{parse_attribute, parse_bool, parse_float};
 use crate::props::Properties;
@@ -163,13 +164,13 @@ impl Widget for SwitchWidget {
             .add_observer(toggle_switch);
     }
 
-    fn parse(&mut self, node: &XmlNode) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = SwitchProps::parse(node, None, &SwitchProps::default())?;
-        let hover = SwitchProps::parse(node, Some("hover"), &default)?;
-        let click = SwitchProps::parse(node, Some("click"), &default)?;
+        let default = SwitchProps::parse(&attrs, None, &SwitchProps::default())?;
+        let hover = SwitchProps::parse(&attrs, Some("hover"), &default)?;
+        let click = SwitchProps::parse(&attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -294,17 +295,17 @@ pub struct SwitchProps {
 }
 
 impl SwitchProps {
-    fn parse(node: &XmlNode, prefix: Option<&str>, base: &Self) -> Result<Self, String> {
-        let state = parse_attribute(node, "toggled", prefix, parse_bool)?.unwrap_or(base.state);
+    fn parse(attrs: &AttributeMap, prefix: Option<&str>, base: &Self) -> Result<Self, String> {
+        let state = parse_attribute(attrs, "toggled", prefix, parse_bool)?.unwrap_or(base.state);
 
         let thumb_color =
-            parse_attribute(node, "thumb-color", prefix, parse_color)?.unwrap_or(base.thumb_color);
+            parse_attribute(attrs, "thumb-color", prefix, parse_color)?.unwrap_or(base.thumb_color);
 
-        let thumb_color_on = parse_attribute(node, "thumb-color-on", prefix, parse_color)?
+        let thumb_color_on = parse_attribute(attrs, "thumb-color-on", prefix, parse_color)?
             .unwrap_or(base.thumb_color_on);
 
         let thumb_size =
-            parse_attribute(node, "thumb-size", prefix, parse_float)?.unwrap_or(base.thumb_size);
+            parse_attribute(attrs, "thumb-size", prefix, parse_float)?.unwrap_or(base.thumb_size);
 
         Ok(Self {
             state,
