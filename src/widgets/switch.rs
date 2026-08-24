@@ -233,7 +233,7 @@ impl Widget for SwitchWidget {
     ) {
         let base_bg = default
             .bg_color
-            .unwrap_or_else(|| Color::srgb(0.18, 0.18, 0.22));
+            .unwrap_or_else(|| Color::srgb(0.18, 0.18, 0.18));
 
         crate::set_missing_attrs!(
             node,
@@ -266,8 +266,8 @@ impl Widget for SwitchWidget {
             "hover.bg-color" => hover.bg_color = Some(lighten_color(base_bg, 0.12)),
             "click.bg-color" => click.bg_color = Some(darken_color(base_bg, 0.08)),
 
-            "border-color" => default.border_color = Some(BorderColor::all(Color::srgb(0.4, 0.4, 0.45))),
-            "hover.border-color" => hover.border_color = Some(BorderColor::all(Color::srgb(0.6, 0.6, 0.7))),
+            "border-color" => default.border_color = Some(BorderColor::all(Color::srgb(0.4, 0.4, 0.4))),
+            "hover.border-color" => hover.border_color = Some(BorderColor::all(Color::srgb(0.65, 0.65, 0.65))),
             "click.border-color" => click.border_color = default.border_color,
 
             "border" => default.node.border = UiRect::all(Val::Px(1.0)),
@@ -321,8 +321,8 @@ impl Default for SwitchProps {
     fn default() -> Self {
         Self {
             state: false,
-            thumb_color: Color::srgb(0.6, 0.6, 0.65),
-            thumb_color_on: Color::srgb(0.38, 0.69, 0.94),
+            thumb_color: Color::srgb(0.4, 0.4, 0.4),
+            thumb_color_on: Color::srgb(0.9, 0.9, 0.9),
             thumb_size: Val::Px(16.0),
         }
     }

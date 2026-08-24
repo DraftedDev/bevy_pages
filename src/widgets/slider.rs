@@ -411,9 +411,9 @@ impl Default for SliderProps {
             max: 1.0,
             step: None,
             value: 0.0,
-            track_color: Color::srgb(0.16, 0.17, 0.20),
+            track_color: Color::srgb(0.4, 0.4, 0.4),
             thumb_color: Color::WHITE,
-            fill_color: Color::srgb(0.38, 0.69, 0.94),
+            fill_color: Color::srgb(0.9, 0.9, 0.9),
             track_height: Val::Px(6.0),
             thumb_size: Val::Px(16.0),
         }

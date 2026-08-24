@@ -326,8 +326,8 @@ impl Default for ProgressBarProps {
             min: 0.0,
             max: 1.0,
             value: 0.0,
-            track_color: Color::srgb(0.16, 0.17, 0.20),
-            fill_color: Color::srgb(0.38, 0.69, 0.94),
+            track_color: Color::srgb(0.4, 0.4, 0.4),
+            fill_color: Color::srgb(0.9, 0.9, 0.9),
             track_height: Val::Px(12.0),
         }
     }
