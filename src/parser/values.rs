@@ -216,19 +216,52 @@ pub fn parse_border_rect(s: &str) -> Result<BorderRect, String> {
 ///
 /// # Format
 ///
-/// A list of floats with an optional `px` suffix.
-/// For example: `"10px 20px 30px 40 50"`.
+/// - `<float><unit>` with units: `px`, `%`, `fr`, `flex`, `vw`, `vh`, `vmin`, `vmax`.
+/// - `<float>` to fall back to pixels.
+/// - `auto` to use the auto track size.
 pub fn parse_grid_template(i: &str) -> Result<Vec<GridTrack>, String> {
-    if i.trim().is_empty() {
+    let input = i.trim();
+    if input.is_empty() {
         return Ok(Vec::new());
     }
 
-    // TODO: Support other units
-    i.split_whitespace()
+    input
+        .split_whitespace()
         .map(|value| {
-            Ok(GridTrack::px(parse_float(
-                value.strip_suffix("px").unwrap_or(value),
-            )?))
+            let val_lower = value.to_lowercase();
+
+            if val_lower == "auto" {
+                return Ok(GridTrack::auto());
+            }
+
+            if let Some(num_str) = val_lower.strip_suffix("px") {
+                let val = parse_float(num_str)?;
+                Ok(GridTrack::px(val))
+            } else if let Some(num_str) = val_lower.strip_suffix('%') {
+                let val = parse_float(num_str)?;
+                Ok(GridTrack::percent(val))
+            } else if let Some(num_str) = val_lower.strip_suffix("fr") {
+                let val = parse_float(num_str)?;
+                Ok(GridTrack::fr(val))
+            } else if let Some(num_str) = val_lower.strip_suffix("flex") {
+                let val = parse_float(num_str)?;
+                Ok(GridTrack::flex(val))
+            } else if let Some(num_str) = val_lower.strip_suffix("vw") {
+                let val = parse_float(num_str)?;
+                Ok(GridTrack::vw(val))
+            } else if let Some(num_str) = val_lower.strip_suffix("vh") {
+                let val = parse_float(num_str)?;
+                Ok(GridTrack::vh(val))
+            } else if let Some(num_str) = val_lower.strip_suffix("vmin") {
+                let val = parse_float(num_str)?;
+                Ok(GridTrack::vmin(val))
+            } else if let Some(num_str) = val_lower.strip_suffix("vmax") {
+                let val = parse_float(num_str)?;
+                Ok(GridTrack::vmax(val))
+            } else {
+                let val = parse_float(&val_lower)?;
+                Ok(GridTrack::px(val))
+            }
         })
         .collect()
 }

@@ -129,7 +129,7 @@
     <xs:simpleType name="GridTemplateType">
         <xs:restriction base="xs:string">
             <xs:pattern
-                    value="\s*([-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px)?(\s+[-+]?((([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?)(px)?)*)?\s*"/>
+                    value="\s*((([+-]?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][+-]?[0-9]+)?(px|%|fr|flex|vw|vh|vmin|vmax)?)|auto)(\s+((([+-]?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))([eE][+-]?[0-9]+)?(px|%|fr|flex|vw|vh|vmin|vmax)?)|auto)))*)?\s*"/>
         </xs:restriction>
     </xs:simpleType>
 

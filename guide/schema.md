@@ -48,18 +48,18 @@ Example:
 Different attributes use different types. While strings, ints and floats are self-explanatory, there are some more
 complex type definitions:
 
-| Type           | Format                                                                                                                                                            | Example                                      |
-|----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------|
-| Color          | CSS-like colors. Available: `rgb(...)`, `rgba(...)`, `hsl(...)`, `hsla(...)`, `#<hex>`, named colors.                                                             | `rgb(255, 20, 20)`, `#FFFFFF`, `lightblue`   |
-| Size           | CSS-like size. Syntax: `auto`, `<float><unit>` or just `<float>` to default to pixel unit. Available units: `px`, `%`, `vw`, `vh`, `vmin`, `vmax`.                | `auto`, `10`, `35.5vw`                       |
-| Font Size      | CSS-like font size values. Syntax: `<float><unit>` or just `<float>` to default to pixel unit. Available units: `px`, `rem`, `vw`, `vh`, `vmin`, `vmax`.          | `10.5`, `3rem`                               |
-| Rect           | Available: empty for empty rect, `<float>` for uniform, `<float> <size>` for vertical + horizontal, `<float> <float> <float> <float>` for X, Y, Width and Height. | `10`, `10 15`, `10 15 10.5 15.5`             |
-| UI Rect        | Available: empty for empty rect, `<size>` for uniform, `<size> <size>` for vertical + horizontal, `<size> <size> <size> <size>` for X, Y, Width and Height.       | `10px`, `10% 15%`, `10 15 10vw 15vh`         |
-| Radius         | Available: empty for no radius, `<size>` for uniform, `<size> <size> <size> <size>` for Top-Left, Top-Right, Bottom-Right, Bottom-Left.                           | `8px`, `10.5 10.5 1% 1%`                     |
-| Grid Track     | Syntax: `auto`, `<float><unit>`. Available units: `px`, `%`, `fr`.                                                                                                | `auto`, `1fr`, `10%`                         |
-| Grid Template  | Space seperated list of track sized. Optionally with `px` suffix.                                                                                                 | `100px`, `10px 20px 30px`,  `50 100 150 200` |
-| Grid Placement | Either an integer or `auto`.                                                                                                                                      | `1`, `2`, `auto`                             |
-| Border Rect    | Available: `<float>` for uniform, `<float> <float>` for X & Y axis, `<float> <float> <float> <float>` for min X, min Y, max X, max Y.                             | `100.0`, `20.0 10.0`, `5.0 10.0 15.0 20.0`   |
+| Type           | Format                                                                                                                                                                          | Example                                      |
+|----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------|
+| Color          | CSS-like colors. Available: `rgb(...)`, `rgba(...)`, `hsl(...)`, `hsla(...)`, `#<hex>`, named colors.                                                                           | `rgb(255, 20, 20)`, `#FFFFFF`, `lightblue`   |
+| Size           | CSS-like size. Syntax: `auto`, `<float><unit>` or just `<float>` to default to pixel unit. Available units: `px`, `%`, `vw`, `vh`, `vmin`, `vmax`.                              | `auto`, `10`, `35.5vw`                       |
+| Font Size      | CSS-like font size values. Syntax: `<float><unit>` or just `<float>` to default to pixel unit. Available units: `px`, `rem`, `vw`, `vh`, `vmin`, `vmax`.                        | `10.5`, `3rem`                               |
+| Rect           | Available: empty for empty rect, `<float>` for uniform, `<float> <size>` for vertical + horizontal, `<float> <float> <float> <float>` for X, Y, Width and Height.               | `10`, `10 15`, `10 15 10.5 15.5`             |
+| UI Rect        | Available: empty for empty rect, `<size>` for uniform, `<size> <size>` for vertical + horizontal, `<size> <size> <size> <size>` for X, Y, Width and Height.                     | `10px`, `10% 15%`, `10 15 10vw 15vh`         |
+| Radius         | Available: empty for no radius, `<size>` for uniform, `<size> <size> <size> <size>` for Top-Left, Top-Right, Bottom-Right, Bottom-Left.                                         | `8px`, `10.5 10.5 1% 1%`                     |
+| Grid Track     | Syntax: `auto`, `<float><unit>`. Available units: `px`, `%`, `fr`.                                                                                                              | `auto`, `1fr`, `10%`                         |
+| Grid Template  | Space seperated list of track sizes. Track sizes are either `auto`, `<float>` (pixels unit) or `<float><unit>` with units: `px`, `%`, `fr`, `flex`, `vw`, `vh`, `vmin`, `vmax`. | `100px`, `10px 20px 30px`,  `50 100 150 200` |
+| Grid Placement | Either an integer or `auto`.                                                                                                                                                    | `1`, `2`, `auto`                             |
+| Border Rect    | Available: `<float>` for uniform, `<float> <float>` for X & Y axis, `<float> <float> <float> <float>` for min X, min Y, max X, max Y.                                           | `100.0`, `20.0 10.0`, `5.0 10.0 15.0 20.0`   |
 
 ---
 
