@@ -48,7 +48,7 @@ An XML page roughly looks like this:
 <Page
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/DraftedDev/bevy_pages/master/schema.xsd">
-    <!-- Your page content here -->
+    <Text>Hello World!</Text>
 </Page>
 ```
 
