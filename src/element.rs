@@ -27,7 +27,7 @@ impl Element {
         &self,
         world: &mut World,
         parent: Option<Entity>,
-        reg: &mut ElementRegistry,
+        reg: &mut FxHashMap<ElementId, Entity>,
     ) -> Entity {
         let props = &self.props.default;
 
@@ -58,7 +58,7 @@ impl Element {
         }
 
         if let Some(id) = self.id() {
-            reg.register_element(id, root_entity);
+            reg.insert(id, root_entity);
         }
 
         world.trigger(ElementSpawn {
@@ -109,29 +109,5 @@ impl From<&'static str> for ElementId {
     #[inline(always)]
     fn from(s: &'static str) -> Self {
         Self::new_static(s)
-    }
-}
-
-#[derive(Clone, Debug)]
-pub(crate) struct ElementRegistry {
-    ids: FxHashMap<ElementId, Entity>,
-}
-
-impl ElementRegistry {
-    #[inline(always)]
-    pub(crate) fn new(cap: usize) -> Self {
-        Self {
-            ids: FxHashMap::with_capacity_and_hasher(cap, Default::default()),
-        }
-    }
-
-    #[inline(always)]
-    pub(crate) fn register_element(&mut self, id: ElementId, entity: Entity) {
-        self.ids.insert(id, entity);
-    }
-
-    #[inline(always)]
-    pub(crate) fn get_element(&self, id: ElementId) -> Option<Entity> {
-        self.ids.get(&id).cloned()
     }
 }

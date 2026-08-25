@@ -1,7 +1,8 @@
-use crate::element::{Element, ElementId, ElementRegistry};
+use crate::element::{Element, ElementId};
 use bevy::asset::Asset;
 use bevy::prelude::{Entity, GlobalTransform, Resource, Transform, TypePath, World};
 use bevy::ui::Node;
+use rustc_hash::FxHashMap;
 
 /// A UI page loaded from an XML file.
 ///
@@ -10,7 +11,7 @@ use bevy::ui::Node;
 pub struct Page {
     root: Node,
     entity: Option<Entity>,
-    registry: ElementRegistry,
+    registry: FxHashMap<ElementId, Entity>,
     elements: Vec<Element>,
 }
 
@@ -23,7 +24,7 @@ impl Page {
         Self {
             root,
             entity: None,
-            registry: ElementRegistry::new(elements.len()),
+            registry: FxHashMap::with_capacity_and_hasher(elements.len(), Default::default()),
             elements,
         }
     }
@@ -59,7 +60,7 @@ impl Page {
     /// Returns `None` if the element ID is not found.
     #[inline(always)]
     pub fn try_get(&self, id: impl Into<ElementId>) -> Option<Entity> {
-        self.registry.get_element(id.into())
+        self.registry.get(&id.into()).copied()
     }
 
     /// Returns the root entity of the page.
