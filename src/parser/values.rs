@@ -5,6 +5,7 @@ use bevy::prelude::{
     BorderColor, BorderRadius, BorderRect, FontSize, GridPlacement, GridTrack, RepeatedGridTrack,
     UiRect, Val,
 };
+use smol_str::{ToSmolStr, format_smolstr};
 
 /// Parses an attribute from an [AttributeMap].
 /// Applies the given parser to the attribute value or returns [None] if the attribute is not present.
@@ -21,8 +22,8 @@ where
     F: FnOnce(&str) -> Result<T, String>,
 {
     let key = match prefix {
-        Some(p) => format!("{}.{}", p, attr_name),
-        None => attr_name.to_string(),
+        Some(p) => format_smolstr!("{}.{}", p, attr_name),
+        None => attr_name.to_smolstr(),
     };
 
     attrs.get(&key).map(|s| parser(s)).transpose()

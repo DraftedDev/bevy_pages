@@ -1,12 +1,13 @@
 use crate::parser::AttributeMap;
 use roxmltree::Node;
 use rustc_hash::FxHashMap;
+use smol_str::{SmolStr, ToSmolStr};
 
 /// A map of styles.
-pub type Styles = FxHashMap<String, StyleMap>;
+pub type Styles = FxHashMap<SmolStr, StyleMap>;
 
 /// A map of style attributes.
-pub type StyleMap = FxHashMap<String, String>;
+pub type StyleMap = FxHashMap<SmolStr, SmolStr>;
 
 /// Parses a `<Styles></Styles>` node and returns a map of style names with style attributes.
 ///
@@ -26,7 +27,7 @@ pub fn parse_styles(root: &Node) -> Styles {
             let name = child
                 .attribute("name")
                 .expect("<Style> element must have a name attribute")
-                .to_string();
+                .to_smolstr();
 
             (name, parse_style(&child))
         })
@@ -37,7 +38,7 @@ pub fn parse_styles(root: &Node) -> Styles {
 #[inline(always)]
 pub fn parse_style(node: &Node) -> StyleMap {
     node.attributes()
-        .map(|attr| (attr.name().to_string(), attr.value().to_string()))
+        .map(|attr| (attr.name().to_smolstr(), attr.value().to_smolstr()))
         .collect::<StyleMap>()
 }
 

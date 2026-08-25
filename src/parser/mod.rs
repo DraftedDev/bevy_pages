@@ -17,6 +17,7 @@ use bevy::ui::{
 };
 use roxmltree::{Document, Node};
 use rustc_hash::FxHashMap;
+use smol_str::{SmolStr, ToSmolStr};
 
 /// Contains color parsing functions.
 pub mod color;
@@ -28,7 +29,7 @@ pub mod values;
 pub mod styles;
 
 /// A map of XML node attributes.
-pub type AttributeMap = FxHashMap<String, String>;
+pub type AttributeMap = FxHashMap<SmolStr, SmolStr>;
 
 /// Parses a [Page] from the given XML document using the provided [PageLoader].
 #[inline(always)]
@@ -45,7 +46,7 @@ pub fn parse_page(loader: &PageLoader, doc: Document) -> Result<Page, String> {
 
     let attrs = root_xml
         .attributes()
-        .map(|attr| (attr.name().to_string(), attr.value().to_string()))
+        .map(|attr| (attr.name().to_smolstr(), attr.value().to_smolstr()))
         .collect::<AttributeMap>();
 
     let styles = if let Some(first) = root_xml.children().find(|n| n.has_tag_name("Styles")) {
@@ -70,17 +71,17 @@ pub fn parse_element(node: &Node, loader: &PageLoader, styles: &Styles) -> Resul
         return Err("Expected an XML element".into());
     }
 
-    let tag = node.tag_name().name().to_string();
+    let tag = node.tag_name().name();
 
     let mut widget = loader
-        .get_widget(&tag)
+        .get_widget(tag)
         .ok_or_else(|| format!("Unknown Element: '{tag}'"))?
         .dyn_clone();
 
     let style_attrs = fetch_style_attrs(node, styles)?;
     let mut attrs = node
         .attributes()
-        .map(|attr| (attr.name().to_string(), attr.value().to_string()))
+        .map(|attr| (attr.name().to_smolstr(), attr.value().to_smolstr()))
         .collect::<AttributeMap>();
 
     attrs.extend(style_attrs);
