@@ -23,8 +23,8 @@ pub trait Widget: Debug + Send + Sync + 'static {
     /// This is where widgets should add systems and observers to the bevy app.
     fn setup(&self, app: &mut App);
 
-    /// Parses the widget from an XML node.
-    fn parse(&mut self, node: &Node) -> Result<(), String>;
+    /// Parses the widget from an XML node and an [AttributeMap].
+    fn parse(&mut self, node: &Node, attrs: AttributeMap) -> Result<(), String>;
 
     /// Spawns the widget. Called inside [Element::spawn](crate::element::Element::spawn).
     fn spawn(&self, entity: Entity, world: &mut World) -> Entity;
@@ -114,7 +114,7 @@ fn update_props(
         (&Interaction, &Properties<CheckboxProps>, &Children),
         Or<(Changed<Interaction>, Changed<Properties<CheckboxProps>>)>,
     >,
-    mut checkmark_query: Query<(&mut Text, &mut TextColor), With<CheckboxCheckmark>>,
+    mut checkmark_query: Query<(&mut Node, &mut BackgroundColor), With<CheckboxCheckmark>>,
 ) {
     for (interaction, props, children) in &mut query {
         // Get the active properties based on the interaction state.
@@ -125,11 +125,12 @@ fn update_props(
         };
 
         for child in children.iter() {
-            if let Ok((mut text, mut color)) = checkmark_query.get_mut(*child) {
-                // This macro sets the original properties to the new values only if original != new.
+            if let Ok((mut node, mut bg)) = checkmark_query.get_mut(*child) {
                 crate::set_if_changed!(
-                    text.0, active_props.symbol => active_props.symbol.clone();
-                    color.0, active_props.check_color;
+                    node.width, active_props.check_width => active_props.check_width;
+                    node.height, active_props.check_height => active_props.check_height;
+                    bg.0, active_props.check_color => active_props.check_color;
+                    node.border_radius, active_props.check_radius => active_props.check_radius;
                 );
             }
         }
@@ -140,7 +141,7 @@ fn update_props(
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Component)]
 pub struct CheckboxState(pub bool);
 
-/// Marker component for the inner checkmark visual entity.
+/// Marker component for the inner checkmark rectangle entity.
 #[derive(Component, Debug, Clone, Copy)]
 pub struct CheckboxCheckmark;
 
@@ -284,7 +285,7 @@ impl Widget for CheckboxWidget {
             "border" => default.node.border = UiRect::all(Val::Px(1.5)),
             "hover.border" => hover.node.border = default.node.border,
             "click.border" => click.node.border = default.node.border,
-            
+
             "border-radius" => default.node.border_radius = BorderRadius::all(Val::Px(5.0)),
             "hover.border-radius" => hover.node.border_radius = default.node.border_radius,
             "click.border-radius" => click.node.border_radius = default.node.border_radius,
