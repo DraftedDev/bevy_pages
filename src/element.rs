@@ -111,3 +111,38 @@ impl From<&'static str> for ElementId {
         Self::new_static(s)
     }
 }
+
+impl PartialEq<str> for ElementId {
+    #[inline(always)]
+    fn eq(&self, other: &str) -> bool {
+        self.0.as_str() == other
+    }
+}
+
+impl PartialEq<&str> for ElementId {
+    #[inline(always)]
+    fn eq(&self, other: &&str) -> bool {
+        self.0.as_str() == *other
+    }
+}
+
+impl PartialEq<ElementId> for &str {
+    #[inline(always)]
+    fn eq(&self, other: &ElementId) -> bool {
+        *self == other.0.as_str()
+    }
+}
+
+impl PartialEq<String> for ElementId {
+    #[inline(always)]
+    fn eq(&self, other: &String) -> bool {
+        self.0.as_str() == other.as_str()
+    }
+}
+
+impl PartialEq<ElementId> for String {
+    #[inline(always)]
+    fn eq(&self, other: &ElementId) -> bool {
+        self.as_str() == other.0.as_str()
+    }
+}

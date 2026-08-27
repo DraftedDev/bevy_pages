@@ -18,8 +18,12 @@ pub struct ElementClick {
 impl ElementClick {
     /// Returns [true] if the target element ID matches the given ID.
     #[inline(always)]
-    pub fn matches_id(&self, id: impl Into<ElementId>) -> bool {
-        self.id.as_ref().map(|i| *i == id.into()).unwrap_or(false)
+    pub fn matches_id<Q>(&self, id: &Q) -> bool
+    where
+        Q: ?Sized,
+        ElementId: PartialEq<Q>,
+    {
+        self.id.as_ref().is_some_and(|i| i == id)
     }
 }
 
@@ -38,8 +42,12 @@ pub struct ElementHover {
 impl ElementHover {
     /// Returns [true] if the target element ID matches the given ID.
     #[inline(always)]
-    pub fn matches_id(&self, id: impl Into<ElementId>) -> bool {
-        self.id.as_ref().map(|i| *i == id.into()).unwrap_or(false)
+    pub fn matches_id<Q>(&self, id: &Q) -> bool
+    where
+        Q: ?Sized,
+        ElementId: PartialEq<Q>,
+    {
+        self.id.as_ref().is_some_and(|i| i == id)
     }
 }
 
@@ -58,8 +66,12 @@ pub struct ElementSpawn {
 impl ElementSpawn {
     /// Returns [true] if the target element ID matches the given ID.
     #[inline(always)]
-    pub fn matches_id(&self, id: impl Into<ElementId>) -> bool {
-        self.id.as_ref().map(|i| *i == id.into()).unwrap_or(false)
+    pub fn matches_id<Q>(&self, id: &Q) -> bool
+    where
+        Q: ?Sized,
+        ElementId: PartialEq<Q>,
+    {
+        self.id.as_ref().is_some_and(|i| i == id)
     }
 }
 
@@ -81,8 +93,12 @@ pub struct ElementToggle {
 impl ElementToggle {
     /// Returns [true] if the target element ID matches the given ID.
     #[inline(always)]
-    pub fn matches_id(&self, id: impl Into<ElementId>) -> bool {
-        self.id.as_ref().map(|i| *i == id.into()).unwrap_or(false)
+    pub fn matches_id<Q>(&self, id: &Q) -> bool
+    where
+        Q: ?Sized,
+        ElementId: PartialEq<Q>,
+    {
+        self.id.as_ref().is_some_and(|i| i == id)
     }
 }
 
@@ -106,8 +122,12 @@ pub struct ElementSet<T> {
 impl<T> ElementSet<T> {
     /// Returns [true] if the target element ID matches the given ID.
     #[inline(always)]
-    pub fn matches_id(&self, id: impl Into<ElementId>) -> bool {
-        self.id.as_ref().map(|i| *i == id.into()).unwrap_or(false)
+    pub fn matches_id<Q>(&self, id: &Q) -> bool
+    where
+        Q: ?Sized,
+        ElementId: PartialEq<Q>,
+    {
+        self.id.as_ref().is_some_and(|i| i == id)
     }
 }
 
