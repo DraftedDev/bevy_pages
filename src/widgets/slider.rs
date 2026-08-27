@@ -183,13 +183,13 @@ impl Widget for SliderWidget {
         app.add_systems(Update, (update_props, sync_visuals).in_set(PageSystemSet));
     }
 
-    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: &AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = SliderProps::parse(&attrs, None, &SliderProps::default())?;
-        let hover = SliderProps::parse(&attrs, Some("hover"), &default)?;
-        let click = SliderProps::parse(&attrs, Some("click"), &default)?;
+        let default = SliderProps::parse(attrs, None, &SliderProps::default())?;
+        let hover = SliderProps::parse(attrs, Some("hover"), &default)?;
+        let click = SliderProps::parse(attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -279,13 +279,13 @@ impl Widget for SliderWidget {
 
     fn apply_defaults(
         &self,
-        node: &XmlNode,
+        attrs: &AttributeMap,
         default: &mut ElementProps,
         hover: &mut ElementProps,
         click: &mut ElementProps,
     ) {
         crate::set_missing_attrs!(
-            node,
+            attrs,
 
             "width" => default.node.width = Val::Px(200.0),
             "hover.width" => hover.node.width = default.node.width,

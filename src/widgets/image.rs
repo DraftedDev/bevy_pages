@@ -117,13 +117,13 @@ impl Widget for ImageWidget {
         app.add_systems(Update, update_props.in_set(PageSystemSet));
     }
 
-    fn parse(&mut self, _: &Node, attrs: AttributeMap) -> Result<(), String>
+    fn parse(&mut self, _: &Node, attrs: &AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = ImageProps::parse(&attrs, None, &ImageProps::default())?;
-        let hover = ImageProps::parse(&attrs, Some("hover"), &default)?;
-        let click = ImageProps::parse(&attrs, Some("click"), &default)?;
+        let default = ImageProps::parse(attrs, None, &ImageProps::default())?;
+        let hover = ImageProps::parse(attrs, Some("hover"), &default)?;
+        let click = ImageProps::parse(attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -156,13 +156,13 @@ impl Widget for ImageWidget {
 
     fn apply_defaults(
         &self,
-        node: &Node,
+        attrs: &AttributeMap,
         default: &mut ElementProps,
         hover: &mut ElementProps,
         click: &mut ElementProps,
     ) {
         crate::set_missing_attrs!(
-            node,
+            attrs,
 
             "width" => default.node.width = Val::Px(250.0),
             "hover.width" => hover.node.width = default.node.width,

@@ -164,13 +164,13 @@ impl Widget for SwitchWidget {
             .add_observer(toggle_switch);
     }
 
-    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: &AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = SwitchProps::parse(&attrs, None, &SwitchProps::default())?;
-        let hover = SwitchProps::parse(&attrs, Some("hover"), &default)?;
-        let click = SwitchProps::parse(&attrs, Some("click"), &default)?;
+        let default = SwitchProps::parse(attrs, None, &SwitchProps::default())?;
+        let hover = SwitchProps::parse(attrs, Some("hover"), &default)?;
+        let click = SwitchProps::parse(attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -226,7 +226,7 @@ impl Widget for SwitchWidget {
 
     fn apply_defaults(
         &self,
-        node: &XmlNode,
+        attrs: &AttributeMap,
         default: &mut ElementProps,
         hover: &mut ElementProps,
         click: &mut ElementProps,
@@ -236,7 +236,7 @@ impl Widget for SwitchWidget {
             .unwrap_or_else(|| Color::srgb(0.18, 0.18, 0.18));
 
         crate::set_missing_attrs!(
-            node,
+            attrs,
 
             "width" => default.node.width = Val::Px(40.0),
             "hover.width" => hover.node.width = default.node.width,

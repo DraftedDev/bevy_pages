@@ -30,7 +30,7 @@ impl Widget for NodeWidget {
 
     fn setup(&self, _: &mut App) {}
 
-    fn parse(&mut self, _: &Node, _: AttributeMap) -> Result<(), String> {
+    fn parse(&mut self, _: &Node, _: &AttributeMap) -> Result<(), String> {
         Ok(())
     }
 
@@ -40,7 +40,7 @@ impl Widget for NodeWidget {
 
     fn apply_defaults(
         &self,
-        _: &Node,
+        _: &AttributeMap,
         _: &mut ElementProps,
         _: &mut ElementProps,
         _: &mut ElementProps,

@@ -93,10 +93,10 @@ impl Widget for TextWidget {
         app.add_systems(Update, update_props.in_set(PageSystemSet));
     }
 
-    fn parse(&mut self, node: &Node, attrs: AttributeMap) -> Result<(), String> {
-        let default = TextProps::parse(node, &attrs, None, &TextProps::default())?;
-        let hover = TextProps::parse(node, &attrs, Some("hover"), &default)?;
-        let click = TextProps::parse(node, &attrs, Some("click"), &default)?;
+    fn parse(&mut self, node: &Node, attrs: &AttributeMap) -> Result<(), String> {
+        let default = TextProps::parse(node, attrs, None, &TextProps::default())?;
+        let hover = TextProps::parse(node, attrs, Some("hover"), &default)?;
+        let click = TextProps::parse(node, attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -135,7 +135,7 @@ impl Widget for TextWidget {
 
     fn apply_defaults(
         &self,
-        _: &Node,
+        _: &AttributeMap,
         _: &mut ElementProps,
         _: &mut ElementProps,
         _: &mut ElementProps,

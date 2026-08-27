@@ -92,9 +92,9 @@ pub fn parse_element(node: &Node, loader: &PageLoader, styles: &Styles) -> Resul
 
     let id = parse_attribute(&attrs, "id", None, |s| Ok(ElementId::new(s)))?;
 
-    widget.parse(node, attrs)?;
+    widget.parse(node, &attrs)?;
 
-    widget.apply_defaults(node, &mut default, &mut hover, &mut click);
+    widget.apply_defaults(&attrs, &mut default, &mut hover, &mut click);
 
     Ok(Element {
         widget,

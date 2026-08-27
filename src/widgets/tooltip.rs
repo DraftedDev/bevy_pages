@@ -171,13 +171,13 @@ impl Widget for TooltipWidget {
         app.add_systems(Update, (update_props, sync_visuals).in_set(PageSystemSet));
     }
 
-    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: &AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = TooltipProps::parse(&attrs, None, &TooltipProps::default())?;
-        let hover = TooltipProps::parse(&attrs, Some("hover"), &default)?;
-        let click = TooltipProps::parse(&attrs, Some("click"), &default)?;
+        let default = TooltipProps::parse(attrs, None, &TooltipProps::default())?;
+        let hover = TooltipProps::parse(attrs, Some("hover"), &default)?;
+        let click = TooltipProps::parse(attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -254,13 +254,13 @@ impl Widget for TooltipWidget {
 
     fn apply_defaults(
         &self,
-        node: &XmlNode,
+        attrs: &AttributeMap,
         default: &mut ElementProps,
         hover: &mut ElementProps,
         click: &mut ElementProps,
     ) {
         crate::set_missing_attrs!(
-            node,
+            attrs,
 
             "position" => default.node.position_type = PositionType::Relative,
             "hover.position" => hover.node.position_type = default.node.position_type,

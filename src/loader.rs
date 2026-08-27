@@ -45,7 +45,7 @@ impl AssetLoader for PageLoader {
                 .map_err(PageLoaderError::Io)?;
 
             let doc = Document::parse_with_options(
-                str::from_utf8(&buf).map_err(|err| PageLoaderError::Utf8(err))?,
+                str::from_utf8(&buf).map_err(PageLoaderError::Utf8)?,
                 ParsingOptions {
                     allow_dtd: true,
                     nodes_limit: u32::MAX,

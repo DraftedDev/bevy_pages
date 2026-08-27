@@ -38,7 +38,7 @@ impl Widget for ButtonWidget {
 
     fn setup(&self, _: &mut App) {}
 
-    fn parse(&mut self, _: &Node, _: AttributeMap) -> Result<(), String>
+    fn parse(&mut self, _: &Node, _: &AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
@@ -51,7 +51,7 @@ impl Widget for ButtonWidget {
 
     fn apply_defaults(
         &self,
-        node: &Node,
+        attrs: &AttributeMap,
         default: &mut ElementProps,
         hover: &mut ElementProps,
         click: &mut ElementProps,
@@ -61,7 +61,7 @@ impl Widget for ButtonWidget {
             .unwrap_or_else(|| Color::srgb(0.2, 0.2, 0.2));
 
         crate::set_missing_attrs!(
-            node,
+            attrs,
 
             "bg-color" => default.bg_color = Some(base_bg),
             "hover.bg-color" => hover.bg_color = Some(lighten_color(base_bg, 0.15)),

@@ -336,10 +336,10 @@ impl Widget for DropdownWidget {
         );
     }
 
-    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String> {
-        let default = DropdownProps::parse(&attrs, None, &DropdownProps::default())?;
-        let hover = DropdownProps::parse(&attrs, Some("hover"), &default)?;
-        let click = DropdownProps::parse(&attrs, Some("click"), &default)?;
+    fn parse(&mut self, _: &XmlNode, attrs: &AttributeMap) -> Result<(), String> {
+        let default = DropdownProps::parse(attrs, None, &DropdownProps::default())?;
+        let hover = DropdownProps::parse(attrs, Some("hover"), &default)?;
+        let click = DropdownProps::parse(attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -437,13 +437,13 @@ impl Widget for DropdownWidget {
 
     fn apply_defaults(
         &self,
-        node: &XmlNode,
+        attrs: &AttributeMap,
         default: &mut ElementProps,
         hover: &mut ElementProps,
         click: &mut ElementProps,
     ) {
         crate::set_missing_attrs!(
-            node,
+            attrs,
             "width" => default.node.width = Val::Px(200.0),
             "hover.width" => hover.node.width = default.node.width,
             "click.width" => click.node.width = default.node.width,

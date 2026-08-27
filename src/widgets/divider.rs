@@ -61,13 +61,13 @@ impl Widget for DividerWidget {
 
     fn setup(&self, _: &mut App) {}
 
-    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: &AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = DividerProps::parse(&attrs, None, &DividerProps::default())?;
-        let hover = DividerProps::parse(&attrs, Some("hover"), &default)?;
-        let click = DividerProps::parse(&attrs, Some("click"), &default)?;
+        let default = DividerProps::parse(attrs, None, &DividerProps::default())?;
+        let hover = DividerProps::parse(attrs, Some("hover"), &default)?;
+        let click = DividerProps::parse(attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -86,13 +86,13 @@ impl Widget for DividerWidget {
 
     fn apply_defaults(
         &self,
-        node: &XmlNode,
+        attrs: &AttributeMap,
         default: &mut ElementProps,
         hover: &mut ElementProps,
         click: &mut ElementProps,
     ) {
-        let is_vertical = node
-            .attribute("orientation")
+        let is_vertical = attrs
+            .get("orientation")
             .map(|s| s.trim() == "vertical")
             .unwrap_or(false);
 
@@ -117,7 +117,7 @@ impl Widget for DividerWidget {
         };
 
         crate::set_missing_attrs!(
-            node,
+            attrs,
 
             "width" => default.node.width = width,
             "hover.width" => hover.node.width = default.node.width,

@@ -158,13 +158,13 @@ impl Widget for ProgressBarWidget {
         );
     }
 
-    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: &AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = ProgressBarProps::parse(&attrs, None, &ProgressBarProps::default())?;
-        let hover = ProgressBarProps::parse(&attrs, Some("hover"), &default)?;
-        let click = ProgressBarProps::parse(&attrs, Some("click"), &default)?;
+        let default = ProgressBarProps::parse(attrs, None, &ProgressBarProps::default())?;
+        let hover = ProgressBarProps::parse(attrs, Some("hover"), &default)?;
+        let click = ProgressBarProps::parse(attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -226,13 +226,13 @@ impl Widget for ProgressBarWidget {
 
     fn apply_defaults(
         &self,
-        node: &XmlNode,
+        attrs: &AttributeMap,
         default: &mut ElementProps,
         hover: &mut ElementProps,
         click: &mut ElementProps,
     ) {
         crate::set_missing_attrs!(
-            node,
+            attrs,
 
             "width" => default.node.width = Val::Px(200.0),
             "hover.width" => hover.node.width = default.node.width,

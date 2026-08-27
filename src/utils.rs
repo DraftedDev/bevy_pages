@@ -16,9 +16,9 @@
 /// ```
 #[macro_export]
 macro_rules! set_missing_attrs {
-    ($node:expr, $( $attr:expr => $assignment:expr ),* $(,)?) => {
+    ($attrs:expr, $( $attr:expr => $assignment:expr ),* $(,)?) => {
         $(
-            if !$node.has_attribute($attr) {
+            if !$attrs.contains_key($attr) {
                 $assignment;
             }
         )*

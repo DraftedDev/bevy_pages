@@ -123,13 +123,13 @@ impl Widget for CheckboxWidget {
             .add_observer(toggle_checkbox);
     }
 
-    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: &AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = CheckboxProps::parse(&attrs, None, &CheckboxProps::default())?;
-        let hover = CheckboxProps::parse(&attrs, Some("hover"), &default)?;
-        let click = CheckboxProps::parse(&attrs, Some("click"), &default)?;
+        let default = CheckboxProps::parse(attrs, None, &CheckboxProps::default())?;
+        let hover = CheckboxProps::parse(attrs, Some("hover"), &default)?;
+        let click = CheckboxProps::parse(attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -171,7 +171,7 @@ impl Widget for CheckboxWidget {
 
     fn apply_defaults(
         &self,
-        node: &XmlNode,
+        attrs: &AttributeMap,
         default: &mut ElementProps,
         hover: &mut ElementProps,
         click: &mut ElementProps,
@@ -181,7 +181,7 @@ impl Widget for CheckboxWidget {
             .unwrap_or_else(|| Color::srgb(0.18, 0.18, 0.22));
 
         crate::set_missing_attrs!(
-            node,
+            attrs,
 
             "width" => default.node.width = Val::Px(20.0),
             "hover.width" => hover.node.width = default.node.width,

@@ -191,13 +191,13 @@ impl Widget for CheckboxWidget {
     // Parse the checkbox XML attributes.
     // You should ALWAYS use the attribute map provided by the framework,
     // instead of the XML Node, since the attribute map contains all the styling attributes too (which the XML node lacks).
-    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: &AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = CheckboxProps::parse(&attrs, None, &CheckboxProps::default())?;
-        let hover = CheckboxProps::parse(&attrs, Some("hover"), &default)?;
-        let click = CheckboxProps::parse(&attrs, Some("click"), &default)?;
+        let default = CheckboxProps::parse(attrs, None, &CheckboxProps::default())?;
+        let hover = CheckboxProps::parse(attrs, Some("hover"), &default)?;
+        let click = CheckboxProps::parse(attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -244,7 +244,7 @@ impl Widget for CheckboxWidget {
     // Apply default properties to the checkbox.
     fn apply_defaults(
         &self,
-        node: &XmlNode,
+        attrs: &AttributeMap,
         default: &mut ElementProps,
         hover: &mut ElementProps,
         click: &mut ElementProps,
@@ -256,7 +256,7 @@ impl Widget for CheckboxWidget {
         // This macro only sets the attributes if they are missing,
         // so when specifying something like `width="10px"`, the default doesn't override it.
         crate::set_missing_attrs!(
-            node,
+            attrs,
 
             "width" => default.node.width = Val::Px(20.0),
             "hover.width" => hover.node.width = default.node.width,

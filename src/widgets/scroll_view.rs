@@ -452,13 +452,13 @@ impl Widget for ScrollViewWidget {
         );
     }
 
-    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: &AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = ScrollViewProps::parse(&attrs, None, &ScrollViewProps::default())?;
-        let hover = ScrollViewProps::parse(&attrs, Some("hover"), &default)?;
-        let click = ScrollViewProps::parse(&attrs, Some("click"), &default)?;
+        let default = ScrollViewProps::parse(attrs, None, &ScrollViewProps::default())?;
+        let hover = ScrollViewProps::parse(attrs, Some("hover"), &default)?;
+        let click = ScrollViewProps::parse(attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -625,13 +625,13 @@ impl Widget for ScrollViewWidget {
 
     fn apply_defaults(
         &self,
-        node: &XmlNode,
+        attrs: &AttributeMap,
         default: &mut ElementProps,
         hover: &mut ElementProps,
         click: &mut ElementProps,
     ) {
         crate::set_missing_attrs!(
-            node,
+            attrs,
 
             "width" => default.node.width = Val::Percent(100.0),
             "hover.width" => hover.node.width = default.node.width,

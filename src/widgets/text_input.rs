@@ -142,13 +142,13 @@ impl Widget for TextInputWidget {
         .add_observer(unfocus_on_outside_click);
     }
 
-    fn parse(&mut self, _: &XmlNode, attrs: AttributeMap) -> Result<(), String>
+    fn parse(&mut self, _: &XmlNode, attrs: &AttributeMap) -> Result<(), String>
     where
         Self: Sized,
     {
-        let default = TextInputProps::parse(&attrs, None, &TextInputProps::default())?;
-        let hover = TextInputProps::parse(&attrs, Some("hover"), &default)?;
-        let click = TextInputProps::parse(&attrs, Some("click"), &default)?;
+        let default = TextInputProps::parse(attrs, None, &TextInputProps::default())?;
+        let hover = TextInputProps::parse(attrs, Some("hover"), &default)?;
+        let click = TextInputProps::parse(attrs, Some("click"), &default)?;
 
         self.props = Properties {
             default,
@@ -193,7 +193,7 @@ impl Widget for TextInputWidget {
 
     fn apply_defaults(
         &self,
-        node: &XmlNode,
+        attrs: &AttributeMap,
         default: &mut ElementProps,
         hover: &mut ElementProps,
         click: &mut ElementProps,
@@ -203,7 +203,7 @@ impl Widget for TextInputWidget {
             .unwrap_or_else(|| Color::srgb(0.12, 0.12, 0.14));
 
         crate::set_missing_attrs!(
-            node,
+            attrs,
 
             "width" => default.node.width = Val::Px(200.0),
             "hover.width" => hover.node.width = default.node.width,
