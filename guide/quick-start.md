@@ -71,10 +71,7 @@ You can create UI nodes just like you would in HTML. For our counter app we will
             </Button>
 
             <Button>
-                <Text
-                        font-size="20px"
-                        color="white"
-                >
+                <Text>
                     Reset
                 </Text>
             </Button>
@@ -94,19 +91,26 @@ different attributes.
 
 Also note the `id` attribute which uniquely identifies an element.
 
+You may also use extra `<Style/>` elements to define style presets which can be applied using the `styles` attribute of
+elements.
+
 The resulting XML page becomes:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <Page
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../schema.xsd"
         justify-content="center"
         align-items="center"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/DraftedDev/bevy_pages/master/schema.xsd"
 >
+    <Styles>
+        <Style name="centerNode" justify-content="center" align-items="center" padding="10px"/>
+    </Styles>
+
     <Node
+            styles="centerNode"
             flex-direction="column"
-            align-items="center"
             row-gap="24px"
             padding="32px"
     >
@@ -126,17 +130,15 @@ The resulting XML page becomes:
         </Text>
 
         <Node
+                styles="centerNode"
                 flex-direction="row"
                 column-gap="16px"
-                justify-content="center"
-                align-items="center"
         >
             <Button
+                    styles="centerNode"
                     id="decrement"
                     width="64px"
                     height="64px"
-                    justify-content="center"
-                    align-items="center"
             >
                 <Text
                         font-size="32px"
@@ -147,11 +149,10 @@ The resulting XML page becomes:
             </Button>
 
             <Button
+                    styles="centerNode"
                     id="reset"
                     width="120px"
                     height="64px"
-                    justify-content="center"
-                    align-items="center"
             >
                 <Text
                         font-size="20px"
@@ -162,11 +163,10 @@ The resulting XML page becomes:
             </Button>
 
             <Button
+                    styles="centerNode"
                     id="increment"
                     width="64px"
                     height="64px"
-                    justify-content="center"
-                    align-items="center"
             >
                 <Text
                         font-size="32px"
@@ -178,6 +178,11 @@ The resulting XML page becomes:
     </Node>
 </Page>
 ```
+
+For more on attributes and styling, see:
+
+- [The Schema Reference](./schema.md)
+- [The Styles Guide](./styles.md)
 
 ## Spawning the page
 
