@@ -2,7 +2,7 @@ use crate::page::Page;
 use crate::parser::parse_page;
 use crate::widgets::Widget;
 use bevy::asset::io::Reader;
-use bevy::asset::{AssetLoader, AsyncReadExt, LoadContext};
+use bevy::asset::{AssetLoader, LoadContext};
 use bevy::prelude::TypePath;
 use bevy::tasks::ConditionalSendFuture;
 use roxmltree::{Document, ParsingOptions};
@@ -37,15 +37,15 @@ impl AssetLoader for PageLoader {
         _: &mut LoadContext,
     ) -> impl ConditionalSendFuture<Output = Result<Self::Asset, Self::Error>> {
         Box::pin(async move {
-            let mut string = String::with_capacity(self.initial_read_capacity);
+            let mut buf = Vec::with_capacity(self.initial_read_capacity);
 
             reader
-                .read_to_string(&mut string)
+                .read_to_end(&mut buf)
                 .await
                 .map_err(PageLoaderError::Io)?;
 
             let doc = Document::parse_with_options(
-                &string,
+                str::from_utf8(&buf).map_err(|err| PageLoaderError::Utf8(err))?,
                 ParsingOptions {
                     allow_dtd: true,
                     nodes_limit: u32::MAX,
@@ -68,6 +68,8 @@ impl AssetLoader for PageLoader {
 /// The error type for [PageLoader].
 #[derive(Debug)]
 pub enum PageLoaderError {
+    /// A UTF-8 error.
+    Utf8(std::str::Utf8Error),
     /// An IO-related error.
     Io(std::io::Error),
     /// An XML-related error.
@@ -80,6 +82,7 @@ impl Display for PageLoaderError {
     #[cold]
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
+            PageLoaderError::Utf8(e) => write!(f, "UTF-8 Error: {e}"),
             PageLoaderError::Io(e) => write!(f, "IO Error: {e}"),
             PageLoaderError::Xml(e) => write!(f, "XML Error: {e}"),
             PageLoaderError::Parse(e) => write!(f, "Parse Error: {e}"),
