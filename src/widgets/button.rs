@@ -1,11 +1,11 @@
 use crate::element::ElementProps;
 use crate::parser::AttributeMap;
 use crate::parser::color::{darken_color, lighten_color};
-use crate::parser::values::parse_ui_rect;
 use crate::widgets::Widget;
 use bevy::app::App;
 use bevy::color::Color;
 use bevy::prelude::{Entity, World};
+use bevy::ui::{UiRect, Val};
 use roxmltree::Node;
 
 /// A simple button widget.
@@ -60,29 +60,17 @@ impl Widget for ButtonWidget {
             .bg_color
             .unwrap_or_else(|| Color::srgb(0.2, 0.2, 0.2));
 
-        if !node.has_attribute("padding") {
-            default.node.padding = parse_ui_rect("15px 20px").unwrap();
-        }
+        crate::set_missing_attrs!(
+            node,
 
-        if !node.has_attribute("hover.padding") {
-            hover.node.padding = default.node.padding;
-        }
+            "bg-color" => default.bg_color = Some(base_bg),
+            "hover.bg-color" => hover.bg_color = Some(lighten_color(base_bg, 0.15)),
+            "click.bg-color" => click.bg_color = Some(darken_color(base_bg, 0.15)),
 
-        if node.has_attribute("click.padding") {
-            click.node.padding = default.node.padding;
-        }
-
-        if default.bg_color.is_none() {
-            default.bg_color = Some(base_bg);
-        }
-
-        if !node.has_attribute("hover.bg-color") {
-            hover.bg_color = Some(lighten_color(base_bg, 0.15));
-        }
-
-        if !node.has_attribute("click.bg-color") {
-            click.bg_color = Some(darken_color(base_bg, 0.15));
-        }
+            "padding" => default.node.padding = UiRect::axes(Val::Px(20.0), Val::Px(15.0)),
+            "hover.padding" => hover.node.padding = default.node.padding,
+            "click.padding" => click.node.padding = default.node.padding,
+        );
     }
 
     fn dyn_clone(&self) -> Box<dyn Widget> {
