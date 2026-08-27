@@ -5,9 +5,13 @@
         justify-content="center"
         align-items="center"
 >
+    <Styles>
+        <Style name="centerNode" justify-content="center" align-items="center" padding="10px"/>
+    </Styles>
+
     <Node
+            styles="centerNode"
             flex-direction="column"
-            align-items="center"
             row-gap="24px"
             padding="32px"
     >
@@ -27,17 +31,15 @@
         </Text>
 
         <Node
+                styles="centerNode"
                 flex-direction="row"
                 column-gap="16px"
-                justify-content="center"
-                align-items="center"
         >
             <Button
+                    styles="centerNode"
                     id="decrement"
                     width="64px"
                     height="64px"
-                    justify-content="center"
-                    align-items="center"
             >
                 <Text
                         font-size="32px"
@@ -48,11 +50,10 @@
             </Button>
 
             <Button
+                    styles="centerNode"
                     id="reset"
                     width="120px"
                     height="64px"
-                    justify-content="center"
-                    align-items="center"
             >
                 <Text
                         font-size="20px"
@@ -63,11 +64,10 @@
             </Button>
 
             <Button
+                    styles="centerNode"
                     id="increment"
                     width="64px"
                     height="64px"
-                    justify-content="center"
-                    align-items="center"
             >
                 <Text
                         font-size="32px"
