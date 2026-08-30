@@ -23,7 +23,8 @@ pub struct Element {
 }
 
 impl Element {
-    pub(crate) fn spawn(
+    /// Spawn the element into the world.
+    pub fn spawn(
         &self,
         world: &mut World,
         parent: Option<Entity>,
@@ -40,6 +41,7 @@ impl Element {
                 GlobalTransform::default(),
                 BackgroundColor(props.bg_color.unwrap_or(Color::NONE)),
                 props.border_color.unwrap_or(BorderColor::DEFAULT),
+                ElementState::Inactive,
             ))
             .id();
 
@@ -146,3 +148,22 @@ impl PartialEq<ElementId> for String {
         self.as_str() == other.0.as_str()
     }
 }
+
+/// The state of an element.
+///
+/// Elements can either be active or inactive.
+///
+/// Active elements have the [ElementActive] component.
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Component)]
+pub enum ElementState {
+    /// The element is active.
+    Active,
+    /// The element is inactive (hidden).
+    Inactive,
+}
+
+/// A marker component for active elements.
+///
+/// This component is added to an element if [ElementState] is `Active`.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Component)]
+pub struct ElementActive;

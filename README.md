@@ -54,13 +54,15 @@ An XML page roughly looks like this:
 
 **NOTE:** If you have issues with the remote `schema.xsd`, you are free to download it locally and link it in your XML.
 
-You will also need to add the `PagesPlugin` to your app and use the `PageSpawner` to spawn your page:
+You will also need to add the `PagesPlugin` to your app and use the `PageManager` to spawn and manage your page:
 
 ```rust
-fn spawn_my_page(assets: Res<AssetServer>, mut spawner: ResMut<PageSpawner>) {
-    let page = assets.load("my_page.xml");
+fn spawn_my_page(mut commands: Commands, assets: Res<AssetServer>, mut manager: ResMut<PageManager>) {
+    let handle = assets.load("my_page.xml");
 
-    spawner.spawn(page);
+    manager.spawn("my_page", handle);
+    // Pages are inactive by default
+    manager.set_active("my_page", true);
 }
 ```
 

@@ -188,7 +188,7 @@ For more on attributes and styling, see:
 
 Now that our page is complete, we need to integrate it into our app.
 Since a `Page` is just a loaded asset, we would need to create an asset-loaded callback to spawn the loaded page.
-Fortunately, `PageSpawner` handles all of this:
+Fortunately, `PageManager` handles all of this:
 
 ```rust
 fn main() {
@@ -199,18 +199,14 @@ fn main() {
     app.run();
 }
 
-fn setup(mut commands: Commands, assets: Res<AssetServer>, mut spawner: ResMut<PageSpawner>) {
+fn setup(mut commands: Commands, assets: Res<AssetServer>, mut manager: ResMut<PageManager>) {
     /*
-    Spawn necessary components for 2d rendering:
-    
     commands.spawn((Camera2d::default(), Camera::default(), Transform::default()));
+    let handle = assets.load("counter.xml");
     */
 
-    // Directly load the page asset
-    let handle = assets.load("counter.xml");
-
-    // Spawn the page
-    spawner.spawn(handle);
+    manager.spawn("counter", handle);
+    manager.set_active("counter", true);
 }
 ```
 
@@ -232,29 +228,32 @@ fn main() {
 // This function is called whenever an element is clicked.
 fn on_click(
     click: On<ElementClick>,
-    page: Res<Page>,
-    mut text_query: Query<&mut Properties<TextProps>>,
+    manager: Res<PageManager>,
+    mut query: Query<&mut Properties<TextProps>>,
 ) {
-    // Get the entity with the element ID "counter"
-    let counter_entity = page.get("counter");
-    // Get the "counter" entity from the text query
-    let mut counter_text = text_query.get_mut(counter_entity).unwrap();
-    // Parse the content of the counter entity into an integer
-    let counter = counter_text.default.content.parse::<i32>().unwrap();
+    // Get the page with the ID "counter"
+    if let Some(page) = manager.get("counter") {
+        // Get the entity with the ID "counter"
+        let counter_entity = page.get("counter");
 
-    // If button has ID "increment" => increment counter
-    if click.matches_id("increment") {
-        counter_text.mutate(|props| props.content = (counter + 1).to_string());
-    }
+        // Get the properties of the counter text
+        let mut counter_text = query.get_mut(counter_entity).unwrap();
+        let counter = counter_text.default.content.parse::<i32>().unwrap();
 
-    // If button has ID "decrement" => decrement counter
-    if click.matches_id("decrement") {
-        counter_text.mutate(|props| props.content = (counter - 1).to_string());
-    }
+        // 'increment' button pressed => counter + 1
+        if click.matches_id("increment") {
+            counter_text.mutate(|props| props.content = (counter + 1).to_string());
+        }
 
-    // If button has ID "reset" => reset counter
-    if click.matches_id("reset") {
-        counter_text.mutate(|props| props.content = "0".to_string());
+        // 'decrement' button pressed => counter - 1
+        if click.matches_id("decrement") {
+            counter_text.mutate(|props| props.content = (counter - 1).to_string());
+        }
+
+        // 'reset' button pressed => counter = 0
+        if click.matches_id("reset") {
+            counter_text.mutate(|props| props.content = "0".to_string());
+        }
     }
 }
 ```
@@ -266,15 +265,13 @@ Using `props.mutate(|props| ...)` mutates **all** the property states.
 
 ## Despawning the Page
 
-If you switch to a new scene, you may want to despawn the page. You can use the `PageSpawner` to do so:
+If you switch to a new scene, you may want to despawn the page. You can use the `PageManager` to do so:
 
 ```rust
-fn despawn_page(mut commands: Commands, mut spawner: ResMut<PageSpawner>) {
-    spawner.despawn(&mut commands);
+fn despawn_page(mut commands: Commands, mut manager: ResMut<PageManager>) {
+    manager.despawn(&mut commands, "counter");
 }
 ```
-
-This will despawn the currently active page.
 
 ## Summary
 

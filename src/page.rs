@@ -1,24 +1,26 @@
-use crate::element::{Element, ElementId};
+use crate::element::{Element, ElementId, ElementState};
 use bevy::asset::Asset;
-use bevy::prelude::{Entity, GlobalTransform, Resource, Transform, TypePath, World};
+use bevy::prelude::{Commands, Entity, GlobalTransform, Transform, TypePath, Visibility, World};
 use bevy::ui::Node;
 use rustc_hash::FxHashMap;
 
 /// A UI page loaded from an XML file.
 ///
-/// Spawn pages into the world using the [PageSpawner](crate::spawner::PageSpawner).
-#[derive(Debug, Resource, Asset, TypePath)]
+/// Spawn pages into the world using the [PageManager](crate::manager::PageManager).
+/// Don't forget to activate the page using [PageManager::set_active](crate::manager::PageManager::set_active).
+#[derive(Debug, Asset, TypePath)]
 pub struct Page {
     root: Node,
     entity: Option<Entity>,
     registry: FxHashMap<ElementId, Entity>,
     elements: Vec<Element>,
+    active: bool,
 }
 
 impl Page {
     /// Creates a new page.
     ///
-    /// You should use the [AssetServer] to load UI pages instead of this function.
+    /// You should use the [AssetServer] to load UI pages.
     #[inline(always)]
     pub fn new(root: Node, elements: Vec<Element>) -> Self {
         Self {
@@ -26,16 +28,18 @@ impl Page {
             entity: None,
             registry: FxHashMap::with_capacity_and_hasher(elements.len(), Default::default()),
             elements,
+            active: false,
         }
     }
 
-    #[inline(always)]
-    pub(crate) fn spawn(&mut self, world: &mut World) -> Entity {
+    /// Spawn the page into the world.
+    pub fn spawn(&mut self, world: &mut World) {
         let root_entity = world
             .spawn((
                 self.root.clone(),
                 Transform::default(),
                 GlobalTransform::default(),
+                Visibility::Hidden,
             ))
             .id();
 
@@ -44,7 +48,6 @@ impl Page {
         }
 
         self.entity = Some(root_entity);
-        root_entity
     }
 
     /// Retrieves the entity associated with the given element ID.
@@ -69,5 +72,25 @@ impl Page {
     #[inline(always)]
     pub fn entity(&self) -> Option<Entity> {
         self.entity
+    }
+
+    /// Returns if the page is active.
+    pub fn is_active(&self) -> bool {
+        self.active
+    }
+
+    /// Sets the active state of the page.
+    ///
+    /// Inactive pages are hidden and cannot be interacted with.
+    pub fn set_active(&mut self, commands: &mut Commands, active: bool) {
+        let mut entity = commands.entity(self.entity.expect("Page not spawned yet"));
+
+        if active {
+            entity.insert((Visibility::Visible, ElementState::Active));
+        } else {
+            entity.insert((Visibility::Hidden, ElementState::Inactive));
+        }
+
+        self.active = active;
     }
 }

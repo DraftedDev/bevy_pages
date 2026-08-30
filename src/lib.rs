@@ -3,13 +3,13 @@
 #![allow(clippy::type_complexity)]
 #![allow(clippy::too_many_arguments)]
 
+use crate::manager::PageManager;
 use crate::page::Page;
-use crate::spawner::PageSpawner;
 use crate::systems::PageSystemSet;
 use crate::widgets::Widget;
 use bevy::app::{App, Plugin, Update};
 use bevy::asset::{AssetApp, AssetEvent};
-use bevy::prelude::{IntoScheduleConfigs, on_message, resource_exists};
+use bevy::prelude::{IntoScheduleConfigs, Res, on_message};
 use rustc_hash::FxHashMap;
 
 /// Contains the basic element structures for a clean UI.
@@ -24,8 +24,8 @@ pub mod loader;
 /// Contains the [Page] struct for core UI work.
 pub mod page;
 
-/// Contains the [PageSpawner] resource and related systems to spawn UI pages.
-pub mod spawner;
+/// Contains the [PageManager] resource and related systems to manage UI pages.
+pub mod manager;
 
 /// Contains custom widget functionality.
 pub mod widgets;
@@ -107,16 +107,23 @@ impl Plugin for PagesPlugin {
                 initial_read_capacity: self.initial_read_capacity,
                 widgets: self.widgets.clone(),
             })
-            .insert_resource(PageSpawner::new())
-            .configure_sets(Update, PageSystemSet.run_if(resource_exists::<Page>))
+            .insert_resource(PageManager::new())
+            .configure_sets(
+                Update,
+                PageSystemSet.run_if(|manager: Res<PageManager>| manager.any_active()),
+            )
             .add_systems(
                 Update,
                 (
-                    systems::interactions.in_set(PageSystemSet),
-                    spawner::spawn_page.run_if(on_message::<AssetEvent<Page>>),
+                    manager::spawn_page.run_if(on_message::<AssetEvent<Page>>),
+                    manager::de_activate_pages
+                        .run_if(|manager: Res<PageManager>| manager.has_active_requests()),
+                    (systems::update_state, systems::interactions)
+                        .chain()
+                        .in_set(PageSystemSet),
                 ),
             )
-            .add_observer(spawner::despawn_page);
+            .add_observer(manager::despawn_page);
 
         for widget in self.widgets.values() {
             widget.setup(app);

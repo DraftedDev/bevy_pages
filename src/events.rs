@@ -1,7 +1,38 @@
 use crate::element::ElementId;
 use bevy::prelude::{Entity, Event};
+use smol_str::SmolStr;
 use std::fmt::{Debug, Formatter};
 use std::hash::Hash;
+
+/// An event triggered when a [Page] is spawned into the world.
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Event)]
+pub struct SpawnPage {
+    /// The name of the page.
+    pub name: SmolStr,
+}
+
+/// An event triggered when a [Page] is despawned from the world.
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Event)]
+pub struct DespawnPage {
+    /// The name of the page.
+    pub name: SmolStr,
+}
+
+/// An event triggered when a [Page] is activated
+/// using the [PageManager::set_active](crate::PageManager::set_active) function.
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Event)]
+pub struct ActivatePage {
+    /// The name of the page.
+    pub name: SmolStr,
+}
+
+/// An event triggered when a [Page] is deactivated
+/// using the [PageManager::set_active](crate::PageManager::set_active) function.
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Event)]
+pub struct DeactivatePage {
+    /// The name of the page.
+    pub name: SmolStr,
+}
 
 /// An event triggered when an element is clicked.
 ///
@@ -53,7 +84,7 @@ impl ElementHover {
 
 /// An event triggered when an element is spawned.
 ///
-/// This event is triggered by the page spawner
+/// This event is triggered by the page manager.
 /// and is therefore not needed to be manually triggered by widget logic.
 #[derive(Clone, PartialEq, Eq, Debug, Hash, Event)]
 pub struct ElementSpawn {

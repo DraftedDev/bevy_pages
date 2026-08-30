@@ -5,9 +5,8 @@ use bevy::camera::{Camera, Camera2d};
 use bevy::prelude::{Commands, On, Query, Res, ResMut, Single, Transform};
 use bevy_pages::PagesPlugin;
 use bevy_pages::events::{ElementClick, ElementSet, ElementToggle};
-use bevy_pages::page::Page;
+use bevy_pages::manager::PageManager;
 use bevy_pages::props::Properties;
-use bevy_pages::spawner::PageSpawner;
 use bevy_pages::widgets::progress_bar::ProgressBarProps;
 use bevy_pages::widgets::text::TextProps;
 
@@ -22,62 +21,73 @@ fn main() {
         .run();
 }
 
-fn setup(mut commands: Commands, assets: Res<AssetServer>, mut spawner: ResMut<PageSpawner>) {
+fn setup(mut commands: Commands, assets: Res<AssetServer>, mut manager: ResMut<PageManager>) {
     commands.spawn((Camera2d::default(), Camera::default(), Transform::default()));
     let handle = assets.load("showcase.xml");
 
-    spawner.spawn(handle);
+    manager.spawn("showcase", handle);
+    manager.set_active("showcase", true);
 }
 
-fn counter(click: On<ElementClick>, page: Res<Page>, mut query: Query<&mut Properties<TextProps>>) {
-    let counter_entity = page.get("counter");
-    let mut props = query.get_mut(counter_entity).unwrap();
-    let counter = props.default.content.parse::<i32>().unwrap();
+fn counter(
+    click: On<ElementClick>,
+    manager: Res<PageManager>,
+    mut query: Query<&mut Properties<TextProps>>,
+) {
+    if let Some(page) = manager.get("showcase") {
+        let counter_entity = page.get("counter");
+        let mut props = query.get_mut(counter_entity).unwrap();
+        let counter = props.default.content.parse::<i32>().unwrap();
 
-    if click.matches_id("increment") {
-        props.mutate(|props| props.content = (counter + 1).to_string());
-    }
+        if click.matches_id("increment") {
+            props.mutate(|props| props.content = (counter + 1).to_string());
+        }
 
-    if click.matches_id("decrement") {
-        props.mutate(|props| props.content = (counter - 1).to_string());
+        if click.matches_id("decrement") {
+            props.mutate(|props| props.content = (counter - 1).to_string());
+        }
     }
 }
 
 fn checkbox(
     toggle: On<ElementToggle>,
-    page: Res<Page>,
+    manager: Res<PageManager>,
     mut query: Query<&mut Properties<TextProps>>,
 ) {
-    let entity = page.get("checkbox-text");
-    let mut text = query.get_mut(entity).unwrap();
+    if let Some(page) = manager.get("showcase") {
+        let entity = page.get("checkbox-text");
+        let mut text = query.get_mut(entity).unwrap();
 
-    if toggle.matches_id("checkbox") {
-        text.mutate(|props| {
-            props.content = if toggle.state {
-                "Checked".to_string()
-            } else {
-                "Not Checked".to_string()
-            }
-        });
+        if toggle.matches_id("checkbox") {
+            text.mutate(|props| {
+                props.content = if toggle.state {
+                    "Checked".to_string()
+                } else {
+                    "Not Checked".to_string()
+                }
+            });
+        }
     }
 }
 
 fn switch(
     toggle: On<ElementToggle>,
-    page: Res<Page>,
+    manager: Res<PageManager>,
     mut query: Query<&mut Properties<TextProps>>,
 ) {
-    let entity = page.get("switch-text");
-    let mut text = query.get_mut(entity).unwrap();
+    if let Some(page) = manager.get("showcase") {
+        let entity = page.get("switch-text");
+        let mut text = query.get_mut(entity).unwrap();
 
-    if toggle.matches_id("switch") {
-        text.mutate(|props| {
-            props.content = if toggle.state {
-                "Toggled".to_string()
-            } else {
-                "Not Toggled".to_string()
-            }
-        });
+        if toggle.matches_id("switch") {
+            text.mutate(|props| {
+                props.content = if toggle.state {
+                    "Toggled".to_string()
+                } else {
+                    "Not Toggled".to_string()
+                }
+            });
+        }
     }
 }
 

@@ -29,7 +29,20 @@ fn observer(event: On<SomeEvent>) {
 
 For more usage examples, see the [examples](../examples) directory.
 
-## Generic Events
+## Page Events
+
+The page manager can trigger different page events:
+
+- `SpawnPage`
+    - Triggered when a page is spawned into the world.
+- `DespawnPage`
+    - Triggered when a page is despawned.
+- `ActivatePage`
+    - Triggered when a page is activated.
+- `DeactivatePage`
+    - Triggered when a page is deactivated.
+
+## Generic Element Events
 
 Some events (we call them "generic" events for simplicity) are widget-independent and are **always** called when
 interacting with **any** widget.
@@ -41,7 +54,7 @@ interacting with **any** widget.
 - `ElementSpawn`
     - Triggered when an element is spawned.
 
-## Widget-specific Events
+## Widget-specific Element Events
 
 Some events are triggered by widget logic and are not supported by all widgets.
 
