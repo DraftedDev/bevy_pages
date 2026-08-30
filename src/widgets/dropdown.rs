@@ -1,4 +1,4 @@
-use crate::element::{ElementId, ElementProps};
+use crate::element::{ElementActive, ElementId, ElementProps};
 use crate::events::ElementSet;
 use crate::parser::AttributeMap;
 use crate::parser::color::parse_color;
@@ -15,7 +15,7 @@ fn trigger_menu(
         (&Interaction, &ChildOf),
         (With<DropdownTrigger>, Changed<Interaction>),
     >,
-    mut root_query: Query<&mut DropdownState>,
+    mut root_query: Query<&mut DropdownState, With<ElementActive>>,
 ) {
     for (interaction, child_of) in &mut trigger_query {
         if *interaction == Interaction::Pressed
@@ -31,7 +31,10 @@ fn option_select(
     interaction_query: Query<(Entity, &Interaction), Changed<Interaction>>,
     child_of_query: Query<&ChildOf>,
     menu_query: Query<&ChildOf, With<DropdownMenu>>,
-    mut root_query: Query<(Entity, &mut DropdownState, &Children, Option<&ElementId>)>,
+    mut root_query: Query<
+        (Entity, &mut DropdownState, &Children, Option<&ElementId>),
+        With<ElementActive>,
+    >,
     trigger_query: Query<&Children, With<DropdownTrigger>>,
     label_query: Query<Entity, With<DropdownLabelText>>,
     mut text_query: Query<&mut Text>,
@@ -79,7 +82,7 @@ fn option_select(
 }
 
 fn visibility(
-    root_query: Query<(&DropdownState, &Children), Changed<DropdownState>>,
+    root_query: Query<(&DropdownState, &Children), (With<ElementActive>, Changed<DropdownState>)>,
     mut menu_query: Query<(&mut Node, &mut ZIndex), With<DropdownMenu>>,
 ) {
     for (state, children) in &root_query {
@@ -99,7 +102,7 @@ fn visibility(
 
 fn close_on_outside_click(
     mouse_button: Res<ButtonInput<MouseButton>>,
-    mut root_query: Query<(Entity, &mut DropdownState)>,
+    mut root_query: Query<(Entity, &mut DropdownState), With<ElementActive>>,
     interaction_query: Query<&Interaction>,
     children_query: Query<&Children>,
 ) {
@@ -123,14 +126,20 @@ fn close_on_outside_click(
 }
 
 fn update_props(
-    root_query: Query<(&Properties<DropdownProps>, &DropdownState, &Children)>,
+    root_query: Query<(&Properties<DropdownProps>, &DropdownState, &Children), With<ElementActive>>,
     mut trigger_query: Query<
         (&Interaction, &Children, &mut BackgroundColor),
         With<DropdownTrigger>,
     >,
     mut menu_query: Query<&mut BackgroundColor, (With<DropdownMenu>, Without<DropdownTrigger>)>,
     mut label_query: Query<&mut Text, With<DropdownLabelText>>,
-    changed_roots: Query<Entity, Or<(Changed<Properties<DropdownProps>>, Changed<DropdownState>)>>,
+    changed_roots: Query<
+        Entity,
+        (
+            With<ElementActive>,
+            Or<(Changed<Properties<DropdownProps>>, Changed<DropdownState>)>,
+        ),
+    >,
     changed_triggers: Query<&ChildOf, (With<DropdownTrigger>, Changed<Interaction>)>,
 ) {
     let mut roots_to_update = std::collections::HashSet::new();

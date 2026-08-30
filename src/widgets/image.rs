@@ -1,4 +1,4 @@
-use crate::element::ElementProps;
+use crate::element::{ElementActive, ElementProps};
 use crate::parser::AttributeMap;
 use crate::parser::color::parse_color;
 use crate::parser::values::{parse_attribute, parse_border_rect, parse_float};
@@ -13,7 +13,7 @@ use bevy::image::Image;
 use bevy::math::Rect;
 use bevy::prelude::{
     BorderRect, Changed, Entity, ImageNode, Interaction, IntoScheduleConfigs, NodeImageMode, Or,
-    Query, Res, TextureSlicer, VisualBox, World,
+    Query, Res, TextureSlicer, VisualBox, With, World,
 };
 use bevy::sprite::SliceScaleMode;
 use bevy::ui::Val;
@@ -23,7 +23,10 @@ fn update_props(
     assets: Res<AssetServer>,
     mut query: Query<
         (&Interaction, &Properties<ImageProps>, &mut ImageNode),
-        Or<(Changed<Interaction>, Changed<Properties<ImageProps>>)>,
+        (
+            With<ElementActive>,
+            Or<(Changed<Interaction>, Changed<Properties<ImageProps>>)>,
+        ),
     >,
 ) {
     for (interaction, props, mut image_node) in &mut query {

@@ -1,4 +1,4 @@
-use crate::element::{ElementId, ElementProps};
+use crate::element::{ElementActive, ElementId, ElementProps};
 use crate::events::ElementSet;
 use crate::parser::AttributeMap;
 use crate::parser::color::{darken_color, lighten_color, parse_color};
@@ -25,7 +25,7 @@ fn sync_text_changes(
             &mut Properties<TextInputProps>,
             Option<&ElementId>,
         ),
-        Changed<EditableText>,
+        (With<ElementActive>, Changed<EditableText>),
     >,
 ) {
     for (entity, editable, mut state, mut props, id) in &mut query {
@@ -65,11 +65,14 @@ fn update_props(
             &mut TextColor,
             &mut EditableText,
         ),
-        Or<(
-            Changed<Interaction>,
-            Changed<Hovered>,
-            Changed<Properties<TextInputProps>>,
-        )>,
+        (
+            With<ElementActive>,
+            Or<(
+                Changed<Interaction>,
+                Changed<Hovered>,
+                Changed<Properties<TextInputProps>>,
+            )>,
+        ),
     >,
     assets: Res<AssetServer>,
 ) {

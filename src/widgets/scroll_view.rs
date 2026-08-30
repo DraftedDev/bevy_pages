@@ -1,4 +1,4 @@
-use crate::element::ElementProps;
+use crate::element::{ElementActive, ElementProps};
 use crate::parser::AttributeMap;
 use crate::parser::color::parse_color;
 use crate::parser::values::{parse_attribute, parse_bool, parse_float, parse_matches};
@@ -208,7 +208,7 @@ pub(crate) fn update_visuals(
 }
 
 fn update_props(
-    root_query: Query<(&Properties<ScrollViewProps>, &Children)>,
+    root_query: Query<(&Properties<ScrollViewProps>, &Children), With<ElementActive>>,
     children_query: Query<&Children>,
     mut area_query: Query<
         (
@@ -222,7 +222,7 @@ fn update_props(
     mut content_query: Query<&mut Node, (With<ScrollViewContent>, Without<ScrollViewArea>)>,
     mut data_query: Query<&mut ScrollViewData>,
     thumb_query: Query<&Hovered, With<ScrollViewThumb>>,
-    changed_roots: Query<Entity, Changed<Properties<ScrollViewProps>>>,
+    changed_roots: Query<Entity, (With<ElementActive>, Changed<Properties<ScrollViewProps>>)>,
     changed_areas: Query<&ChildOf, (With<ScrollViewArea>, Changed<Interaction>)>,
     changed_thumbs: Query<&ChildOf, (With<ScrollViewThumb>, Changed<Hovered>)>,
 ) {

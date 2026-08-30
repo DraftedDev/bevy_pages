@@ -1,4 +1,4 @@
-use crate::element::{ElementId, ElementProps};
+use crate::element::{ElementActive, ElementId, ElementProps};
 use crate::events::{ElementClick, ElementToggle};
 use crate::parser::AttributeMap;
 use crate::parser::color::{darken_color, lighten_color, parse_color};
@@ -14,7 +14,7 @@ use roxmltree::Node as XmlNode;
 fn toggle_switch(
     trigger: On<ElementClick>,
     mut commands: Commands,
-    mut query: Query<(&mut SwitchState, Option<&ElementId>)>,
+    mut query: Query<(&mut SwitchState, Option<&ElementId>), With<ElementActive>>,
 ) {
     if let Ok((mut state, id)) = query.get_mut(trigger.entity) {
         state.0 = !state.0;
@@ -28,7 +28,10 @@ fn toggle_switch(
 }
 
 fn sync_visuals(
-    query: Query<(&SwitchState, &Properties<SwitchProps>, &Children), Changed<SwitchState>>,
+    query: Query<
+        (&SwitchState, &Properties<SwitchProps>, &Children),
+        (With<ElementActive>, Changed<SwitchState>),
+    >,
     mut thumbs: Query<(&mut Node, &mut BackgroundColor), With<SwitchThumb>>,
 ) {
     for (state, props, children) in &query {
@@ -72,7 +75,10 @@ fn update_props(
             &SwitchState,
             &Children,
         ),
-        Or<(Changed<Interaction>, Changed<Properties<SwitchProps>>)>,
+        (
+            With<ElementActive>,
+            Or<(Changed<Interaction>, Changed<Properties<SwitchProps>>)>,
+        ),
     >,
     mut thumb_query: Query<(&mut Node, &mut BackgroundColor), With<SwitchThumb>>,
 ) {

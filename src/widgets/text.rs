@@ -1,4 +1,4 @@
-use crate::element::ElementProps;
+use crate::element::{ElementActive, ElementProps};
 use crate::parser::AttributeMap;
 use crate::parser::values::parse_attribute;
 use crate::props::Properties;
@@ -9,7 +9,7 @@ use bevy::asset::{AssetServer, Handle};
 use bevy::color::Color;
 use bevy::prelude::{
     Changed, Entity, FontSize, FontSource, FontStyle, FontWeight, FontWidth, IntoScheduleConfigs,
-    Or, Query, Res, Text, TextColor, TextFont, World,
+    Or, Query, Res, Text, TextColor, TextFont, With, World,
 };
 use bevy::ui::Interaction;
 use roxmltree::Node;
@@ -24,7 +24,10 @@ fn update_props(
             &mut TextColor,
             &mut TextFont,
         ),
-        Or<(Changed<Interaction>, Changed<Properties<TextProps>>)>,
+        (
+            With<ElementActive>,
+            Or<(Changed<Interaction>, Changed<Properties<TextProps>>)>,
+        ),
     >,
 ) {
     for (interaction, props, mut text, mut color, mut font) in &mut query {

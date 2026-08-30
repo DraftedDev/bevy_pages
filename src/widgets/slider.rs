@@ -1,4 +1,4 @@
-use crate::element::{ElementId, ElementProps};
+use crate::element::{ElementActive, ElementId, ElementProps};
 use crate::events::ElementSet;
 use crate::parser::AttributeMap;
 use crate::parser::color::parse_color;
@@ -27,7 +27,10 @@ fn sync_visuals(
             &mut SliderState,
             Option<&ElementId>,
         ),
-        Or<(Changed<SliderValue>, Changed<SliderRange>)>,
+        (
+            With<ElementActive>,
+            Or<(Changed<SliderValue>, Changed<SliderRange>)>,
+        ),
     >,
     children_query: Query<&Children>,
     mut fill_query: Query<&mut Node, (With<SliderFill>, Without<SliderThumb>)>,
@@ -71,11 +74,14 @@ fn sync_visuals(
 fn update_props(
     mut slider_query: Query<
         (Entity, &Properties<SliderProps>, &Hovered, &SliderDragState),
-        Or<(
-            Changed<Properties<SliderProps>>,
-            Changed<Hovered>,
-            Changed<SliderDragState>,
-        )>,
+        (
+            With<ElementActive>,
+            Or<(
+                Changed<Properties<SliderProps>>,
+                Changed<Hovered>,
+                Changed<SliderDragState>,
+            )>,
+        ),
     >,
     children_query: Query<&Children>,
     mut track_query: Query<

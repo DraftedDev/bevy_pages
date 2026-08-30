@@ -1,4 +1,4 @@
-use crate::element::ElementProps;
+use crate::element::{ElementActive, ElementProps};
 use crate::parser::AttributeMap;
 use crate::parser::color::parse_color;
 use crate::parser::values::{parse_attribute, parse_font_size, parse_matches};
@@ -11,7 +11,14 @@ use bevy::ui::{FocusPolicy, PositionType, UiRect, Val, ZIndex};
 use roxmltree::Node as XmlNode;
 
 fn sync_visuals(
-    query: Query<(&Interaction, &Children), (With<Properties<TooltipProps>>, Changed<Interaction>)>,
+    query: Query<
+        (&Interaction, &Children),
+        (
+            With<Properties<TooltipProps>>,
+            With<ElementActive>,
+            Changed<Interaction>,
+        ),
+    >,
     mut popup_query: Query<&mut Node, With<TooltipPopup>>,
 ) {
     for (interaction, children) in &query {
@@ -33,7 +40,11 @@ fn sync_visuals(
 fn update_props(
     mut query: Query<
         (Entity, &Interaction, &Properties<TooltipProps>),
-        Or<(Changed<Interaction>, Changed<Properties<TooltipProps>>)>,
+        Or<(
+            With<ElementActive>,
+            Changed<Interaction>,
+            Changed<Properties<TooltipProps>>,
+        )>,
     >,
     children_query: Query<&Children>,
     mut popup_query: Query<

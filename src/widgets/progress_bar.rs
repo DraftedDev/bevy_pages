@@ -1,4 +1,4 @@
-use crate::element::ElementProps;
+use crate::element::{ElementActive, ElementProps};
 use crate::parser::AttributeMap;
 use crate::parser::color::parse_color;
 use crate::parser::values::{parse_attribute, parse_float, parse_val};
@@ -11,7 +11,10 @@ use bevy::ui::{BackgroundColor, BorderRadius, Node, PositionType, Val};
 use roxmltree::Node as XmlNode;
 
 fn sync_progress_bar_visuals(
-    pb_query: Query<(&ProgressBarState, &Children), Changed<ProgressBarState>>,
+    pb_query: Query<
+        (&ProgressBarState, &Children),
+        (With<ElementActive>, Changed<ProgressBarState>),
+    >,
     mut fill_query: Query<&mut Node, With<ProgressBarFill>>,
 ) {
     for (pb, children) in &pb_query {
@@ -33,7 +36,10 @@ fn update_props(
             &Children,
             &mut ProgressBarState,
         ),
-        Or<(Changed<Properties<ProgressBarProps>>, Changed<Interaction>)>,
+        (
+            With<ElementActive>,
+            Or<(Changed<Properties<ProgressBarProps>>, Changed<Interaction>)>,
+        ),
     >,
     mut track_query: Query<
         (&mut Node, &mut BackgroundColor),

@@ -1,4 +1,4 @@
-use crate::element::{ElementId, ElementProps};
+use crate::element::{ElementActive, ElementId, ElementProps};
 use crate::events::{ElementClick, ElementToggle};
 use crate::parser::AttributeMap;
 use crate::parser::color::{darken_color, lighten_color, parse_color};
@@ -19,7 +19,7 @@ use roxmltree::Node as XmlNode;
 fn toggle_checkbox(
     trigger: On<ElementClick>,
     mut commands: Commands,
-    mut query: Query<(&mut CheckboxState, Option<&ElementId>)>,
+    mut query: Query<(&mut CheckboxState, Option<&ElementId>), With<ElementActive>>,
 ) {
     if let Ok((mut state, id)) = query.get_mut(trigger.entity) {
         state.0 = !state.0;
@@ -33,7 +33,7 @@ fn toggle_checkbox(
 }
 
 fn sync_visuals(
-    query: Query<(&CheckboxState, &Children), Changed<CheckboxState>>,
+    query: Query<(&CheckboxState, &Children), (With<ElementActive>, Changed<CheckboxState>)>,
     mut checkmarks: Query<&mut Node, With<CheckboxCheckmark>>,
 ) {
     for (state, children) in &query {
@@ -52,7 +52,10 @@ fn sync_visuals(
 fn update_props(
     mut query: Query<
         (&Interaction, &Properties<CheckboxProps>, &Children),
-        Or<(Changed<Interaction>, Changed<Properties<CheckboxProps>>)>,
+        (
+            With<ElementActive>,
+            Or<(Changed<Interaction>, Changed<Properties<CheckboxProps>>)>,
+        ),
     >,
     mut checkmark_query: Query<(&mut Node, &mut BackgroundColor), With<CheckboxCheckmark>>,
 ) {
