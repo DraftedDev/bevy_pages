@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../schema.xsd"
+        width="100vw"
+        height="100vh"
+        justify-content="center"
+        align-items="center"
+        bg-color="rgba(10, 10, 15, 0.85)"
+>
+    <Styles>
+        <Style name="modal-box"
+               flex-direction="column"
+               align-items="center"
+               justify-content="center"
+               bg-color="rgb(45, 30, 35)"
+               padding="40px"
+               border-color="rgb(180, 60, 80)"
+               border="2px"/>
+
+        <Style name="danger-btn"
+               width="180px"
+               height="45px"
+               align-items="center"
+               justify-content="center"
+               bg-color="rgb(200, 50, 60)"
+               hover.bg-color="rgb(220, 70, 80)"
+               click.bg-color="rgb(170, 30, 40)"/>
+    </Styles>
+
+    <Node styles="modal-box">
+        <Text font-size="24" margin="0 0 15px 0">Dialog Window</Text>
+        <Text font-size="14" margin="0 0 25px 0">This is a separate XML page layout.</Text>
+
+        <Button id="close" styles="danger-btn">
+            <Text font-size="16">Close Dialog</Text>
+        </Button>
+    </Node>
+</Page>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../schema.xsd"
+        width="100vw"
+        height="100vh"
+        justify-content="center"
+        align-items="center"
+        bg-color="rgb(20, 20, 25)"
+>
+    <Styles>
+        <Style name="card"
+               flex-direction="column"
+               align-items="center"
+               justify-content="center"
+               bg-color="rgb(35, 35, 42)"
+               padding="30px"
+               border-color="rgb(60, 60, 75)"
+               border="2px"/>
+
+        <Style name="primary-btn"
+               width="220px"
+               height="50px"
+               align-items="center"
+               justify-content="center"
+               bg-color="rgb(60, 100, 220)"
+               hover.bg-color="rgb(80, 120, 240)"
+               click.bg-color="rgb(40, 80, 200)"/>
+    </Styles>
+
+    <Node styles="card">
+        <Text font-size="28" margin="0 0 20px 0">Main View</Text>
+        <Text font-size="16" margin="0 0 30px 0">Click the button below to open the modal dialog.</Text>
+
+        <Button id="open" styles="primary-btn">
+            <Text font-size="18">Open Dialog</Text>
+        </Button>
+    </Node>
+</Page>
