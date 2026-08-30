@@ -71,6 +71,7 @@ fn update_props(
                 Changed<Interaction>,
                 Changed<Hovered>,
                 Changed<Properties<TextInputProps>>,
+                Added<ElementActive>,
             )>,
         ),
     >,

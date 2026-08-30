@@ -65,7 +65,10 @@ pub(crate) fn interactions(
             &mut BackgroundColor,
             &mut BorderColor,
         ),
-        (Changed<Interaction>, With<ElementActive>),
+        (
+            With<ElementActive>,
+            Or<(Changed<Interaction>, Added<ElementActive>)>,
+        ),
     >,
 ) {
     for (e, i, props, id, mut node, mut bg_color, mut border_color) in &mut query {
