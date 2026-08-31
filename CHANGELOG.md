@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0](https://github.com/DraftedDev/bevy_pages/compare/v0.3.5...v0.4.0) - 2026-08-31
+
+### Added
+
+- Add Multi Page Docs
+- Add With<ElementActive> Condition to Widget Logic
+- Add multi-page example
+- [**breaking**] Rework Page Spawner to Page Manager
+
+### Fixed
+
+- Glitched initial text input width
+
+### Other
+
+- Update README.md
+
 ## [0.3.5](https://github.com/DraftedDev/bevy_pages/compare/v0.3.4...v0.3.5) - 2026-08-27
 
 ### Other
