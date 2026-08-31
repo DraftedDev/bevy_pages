@@ -17,25 +17,41 @@
 ---
 
 This is a crate extending [bevy](https://bevy.org) to add support for XML-based UI pages. Kinda like an HTML page, but
-with XML
+supercharged and with XML.
 
 ## Features
 
-- **🪽 Lightweight:** Bevy is already huge enough. This crate focuses on extending bevy with minimum overhead and quick
-  compilation, so it only has a few core dependencies and even the XML parsing is partially done manually.
+- **🪽 Lightweight:** Bevy is already huge enough. This crate only enables actually **necessary** features and has a *
+  *minimal**
+  set of dependencies.
 
-- **⚡ Fast:** The only existent overhead is parsing the XML files, which is already very fast. The plugin itself only
-  adds basic functionality for handling events and elements.
+- **⚡ Fast:** The only existent overhead is parsing the XML files, which is already very fast. Widgets and internal
+  systems are written with **ECS-filtering** and **optimized queries**.
 
-- **📜 Expressive:** Use the power of XML to create dynamic and interactive UIs with ease and simple syntax.
+- **📜 Expressive:** Use the power of XML to create interactive UIs with ease. You can even
+  have **multiple** pages activated at once and use custom CSS-like `<Styles></Styles>`.
 
-- **✒️ Fully documented:** I added my signature `#[warn(missing_docs)]` 😊
+- **✒️ Fully documented:** I added my signature `#[warn(missing_docs)]` and you can also look at
+  the [official guide](guide/README.md) to learn more about the framework.
 
-- **👁️ Built-in Auto-Completion:** Use the official [XSD Schema](schema.xsd) to enable auto-completion inside your
+- **👁️ Built-in Auto-Completion:** Use the official [XSD Schema](schema.xsd) to enable **auto-completion** inside your
   favorite IDE.
 
-- **✨ Extended Widget Catalog:** The framework has a lot of complex extra widgets like a dropdown, a scroll view or a
-  text input widget.
+- **✨ Extended Widget Catalog:** The framework has a set of basic and advanced widgets with optimal performance and
+  customizability:
+    - `<Node></Node>`
+    - `<Button></Button>`
+    - `<Text></Text>`
+    - `<Checkbox/>`
+    - `<Divider/>`
+    - `<Slider/>`
+    - `<Dropdown></Dropdown>`
+    - `<ScrollView></ScrollView>`
+    - `<ProgressBar/>`
+    - `<TextInput/>`
+    - `<Tooltip></Tooltip>`
+    - `<Image/>`
+    - `<Switch/>`
 
 ## Getting Started
 
@@ -66,11 +82,13 @@ fn spawn_my_page(mut commands: Commands, assets: Res<AssetServer>, mut manager: 
 }
 ```
 
-### Learning Resources
+See more in [this](guide/quick-start.md) Tutorial.
 
-- [The Official Guide](guide/README.md)
-- [The Quick Start Tutorial](guide/quick-start.md)
-- [The Official Examples](examples)
+## Learning Resources
+
+- **[The Official Guide](guide/README.md)**
+- **[The Quick Start Tutorial](guide/quick-start.md)**
+- **[The Official Examples](examples)**
 
 ## Bevy Support
 
