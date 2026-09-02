@@ -8,7 +8,7 @@ use rustc_hash::FxHashMap;
 ///
 /// Spawn pages into the world using the [PageManager](crate::manager::PageManager).
 /// Don't forget to activate the page using [PageManager::set_active](crate::manager::PageManager::set_active).
-#[derive(Debug, Asset, TypePath)]
+#[derive(Clone, Debug, Asset, TypePath)]
 pub struct Page {
     root: Node,
     entity: Option<Entity>,
