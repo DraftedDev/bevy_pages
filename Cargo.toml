@@ -24,6 +24,9 @@ bevy = {
 [features]
 default = []
 
+# Enables asset hot-reloading
+hot-reload = ["bevy/file_watcher"]
+
 # Enables bevy's `debug` feature
 debug = ["bevy/debug"]
 

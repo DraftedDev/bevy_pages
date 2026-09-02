@@ -1,6 +1,6 @@
 use bevy::DefaultPlugins;
-use bevy::app::{App, Startup};
-use bevy::asset::AssetServer;
+use bevy::app::{App, PluginGroup, Startup};
+use bevy::asset::{AssetPlugin, AssetServer};
 use bevy::camera::{Camera, Camera2d};
 use bevy::prelude::{Commands, On, Query, Res, ResMut, Transform};
 use bevy_pages::PagesPlugin;
@@ -11,7 +11,13 @@ use bevy_pages::widgets::text::TextProps;
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins, PagesPlugin::default()))
+        .add_plugins((
+            DefaultPlugins.set(AssetPlugin {
+                watch_for_changes_override: Some(cfg!(feature = "hot-reload")),
+                ..Default::default()
+            }),
+            PagesPlugin::default(),
+        ))
         .add_systems(Startup, setup)
         .add_observer(on_click)
         .run();

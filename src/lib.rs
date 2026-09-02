@@ -125,6 +125,9 @@ impl Plugin for PagesPlugin {
             )
             .add_observer(manager::despawn_page);
 
+        #[cfg(feature = "hot-reload")]
+        app.add_systems(Update, systems::hot_reload);
+
         for widget in self.widgets.values() {
             widget.setup(app);
         }

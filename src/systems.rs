@@ -102,3 +102,24 @@ pub(crate) fn interactions(
         );
     }
 }
+
+#[cfg(feature = "hot-reload")]
+pub(crate) fn hot_reload(
+    mut events: MessageReader<AssetEvent<crate::page::Page>>,
+    mut manager: ResMut<crate::manager::PageManager>,
+    assets: Res<AssetServer>,
+) {
+    for event in events.read() {
+        let id = match event {
+            AssetEvent::Modified { id } => Some(id),
+            AssetEvent::LoadedWithDependencies { id } => Some(id),
+            _ => None,
+        };
+
+        if let Some(id) = id
+            && let Some(handle) = assets.get_id_handle(*id)
+        {
+            manager.reload(handle);
+        }
+    }
+}

@@ -37,6 +37,9 @@ supercharged and with XML.
 - **👁️ Built-in Auto-Completion:** Use the official [XSD Schema](schema.xsd) to enable **auto-completion** inside your
   favorite IDE.
 
+- **🔥 Integrated Hot-Reloading:** Use the `hot-reload` feature to enable integrated asset
+  hot-reloading.
+
 - **✨ Extended Widget Catalog:** The framework has a set of basic and advanced widgets with optimal performance and
   customizability:
     - `<Node></Node>`
