@@ -78,6 +78,17 @@ impl Element {
     }
 }
 
+impl Clone for Element {
+    fn clone(&self) -> Self {
+        Self {
+            widget: self.widget.dyn_clone(),
+            props: self.props.clone(),
+            id: self.id.clone(),
+            children: self.children.clone(),
+        }
+    }
+}
+
 /// Pure visual and layout properties for any element.
 #[derive(Clone, Debug, Default)]
 pub struct ElementProps {
