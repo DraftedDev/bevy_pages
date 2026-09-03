@@ -179,7 +179,7 @@ impl Widget for TextInputWidget {
             EditableText {
                 visible_width: props.visible_width,
                 allow_newlines: props.allow_newlines,
-                ..default()
+                ..EditableText::new(&props.value)
             },
             TextLayout::no_wrap(),
             TextFont {
@@ -209,7 +209,7 @@ impl Widget for TextInputWidget {
         crate::set_missing_attrs!(
             attrs,
 
-            "width" => default.node.width = Val::Px(200.0),
+            "width" => default.node.width = Val::Px(250.0),
             "hover.width" => hover.node.width = default.node.width,
             "click.width" => click.node.width = default.node.width,
 
