@@ -21,9 +21,8 @@ supercharged and with XML.
 
 ## Features
 
-- **🪽 Lightweight:** Bevy is already huge enough. This crate only enables actually **necessary** features and has a *
-  *minimal**
-  set of dependencies.
+- **🪽 Lightweight:** Bevy is already huge enough. This crate only enables actually **necessary** features and has a
+  **minimal** set of dependencies.
 
 - **⚡ Fast:** The only existent overhead is parsing the XML files, which is already very fast. Widgets and internal
   systems are written with **ECS-filtering** and **optimized queries**.
