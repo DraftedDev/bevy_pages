@@ -42,3 +42,8 @@ harness = false
 name = "showcase"
 path = "examples/showcase.rs"
 harness = false
+
+[[example]]
+name = "multi_page"
+path = "examples/multi_page.rs"
+harness = false
