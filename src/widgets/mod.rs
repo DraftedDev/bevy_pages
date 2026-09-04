@@ -44,6 +44,9 @@ pub mod scroll_view;
 /// Contains the dropdown widget and functionality.
 pub mod dropdown;
 
+/// Contains the notifier widget and functionality.
+pub mod notifier;
+
 /// A trait to define a widget.
 pub trait Widget: Debug + Send + Sync + 'static {
     /// The name of the widget.

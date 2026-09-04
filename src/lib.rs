@@ -97,6 +97,7 @@ impl PagesPlugin {
             .with_widget::<widgets::dropdown::DropdownWidget>()
             .with_widget::<widgets::divider::DividerWidget>()
             .with_widget::<widgets::scroll_view::ScrollViewWidget>()
+            .with_widget::<widgets::notifier::NotifierWidget>()
     }
 }
 

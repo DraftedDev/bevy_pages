@@ -905,6 +905,15 @@
         <xs:attribute name="font-size" type="FontSizeType"/>
     </xs:attributeGroup>
 
+    <xs:attributeGroup name="notifierAttrs">
+        <xs:attribute name="max" type="xs:int"/>
+        <xs:attribute name="duration" type="xs:float"/>
+        <xs:attribute name="notify-color" type="ColorType"/>
+        <xs:attribute name="color" type="ColorType"/>
+        <xs:attribute name="font-size" type="FontSizeType"/>
+        <xs:attribute name="gap" type="ValType"/>
+    </xs:attributeGroup>
+
     <!-- WIDGETS -->
 
     <xs:group name="AnyElementGroup">
@@ -922,6 +931,7 @@
             <xs:element ref="Divider"/>
             <xs:element ref="ScrollView"/>
             <xs:element ref="Dropdown"/>
+            <xs:element ref="Notifier"/>
         </xs:choice>
     </xs:group>
 
@@ -1055,6 +1065,18 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="Notifier">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:group ref="AnyElementGroup" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="elementAttrs"/>
+            <xs:attributeGroup ref="hoverElementAttrs"/>
+            <xs:attributeGroup ref="clickElementAttrs"/>
+            <xs:attributeGroup ref="notifierAttrs"/>
+        </xs:complexType>
+    </xs:element>
+
     <xs:element name="Page">
         <xs:complexType>
             <xs:sequence>
@@ -1090,6 +1112,7 @@
             <xs:attributeGroup ref="textAttrs"/>
             <xs:attributeGroup ref="textInputAttrs"/>
             <xs:attributeGroup ref="tooltipAttrs"/>
+            <xs:attributeGroup ref="notifierAttrs"/>
         </xs:complexType>
     </xs:element>
 

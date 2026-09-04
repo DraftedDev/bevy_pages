@@ -54,6 +54,7 @@ supercharged and with XML.
     - `<Tooltip></Tooltip>`
     - `<Image/>`
     - `<Switch/>`
+    - `<Notifier/>`
 
 ## Getting Started
 

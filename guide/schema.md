@@ -24,6 +24,7 @@ the [schema.xsd](../schema.xsd).**
     - [Slider Widget](#slider-widget)
     - [Text Input Widget](#text-input-widget)
     - [Tooltip Widget](#tooltip-widget)
+    - [Notifier Widget](#notifier-widget)
 - [Styles](#styles)
 
 ---
@@ -513,6 +514,36 @@ All the attributes listed support state overrides.
 
 Use `TooltipProps` to control the text.
 You can use generic element events to implement custom behavior.
+
+---
+
+## Notifier Widget
+
+A notification area where `NotifyMessage`s are displayed.
+
+### XML Usage
+
+Build a new notifier widget using the `<Notifier/>` tag.
+
+The widget logic will automatically handle the display of notifications.
+
+#### Attributes
+
+- `max = "<int>"`: The maximum amount of notifications to display.
+- `duration = "<float>"`: The default duration of notifications in seconds.
+- `notify-color = "<color>"`: The default background color of notifications.
+- `color = "<color>"`: The default foreground color of notifications.
+- `font-size = "<fontSize>"`: The default font size of notifications.
+- `gap = "<size>"`: The default gap between notifications.
+
+All the attributes listed support state overrides.
+
+### Logic
+
+Use `NotifierProps` to control the notification props.
+Send notifications by writing a `NotifyMessage` via `Commands::write_message`.
+
+You may also use generic element events to implement custom behavior.
 
 # Styles
 

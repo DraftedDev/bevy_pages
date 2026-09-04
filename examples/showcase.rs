@@ -7,6 +7,7 @@ use bevy_pages::PagesPlugin;
 use bevy_pages::events::{ElementClick, ElementSet, ElementToggle};
 use bevy_pages::manager::PageManager;
 use bevy_pages::props::Properties;
+use bevy_pages::widgets::notifier::NotifyMessage;
 use bevy_pages::widgets::progress_bar::ProgressBarProps;
 use bevy_pages::widgets::text::TextProps;
 
@@ -37,6 +38,7 @@ fn setup(mut commands: Commands, assets: Res<AssetServer>, mut manager: ResMut<P
 
 fn counter(
     click: On<ElementClick>,
+    mut commands: Commands,
     manager: Res<PageManager>,
     mut query: Query<&mut Properties<TextProps>>,
 ) {
@@ -46,10 +48,20 @@ fn counter(
         let counter = props.default.content.parse::<i32>().unwrap();
 
         if click.matches_id("increment") {
+            commands.write_message(NotifyMessage::new(format!(
+                "Counter set to {}",
+                counter + 1
+            )));
+
             props.mutate(|props| props.content = (counter + 1).to_string());
         }
 
         if click.matches_id("decrement") {
+            commands.write_message(NotifyMessage::new(format!(
+                "Counter set to {}",
+                counter - 1
+            )));
+
             props.mutate(|props| props.content = (counter - 1).to_string());
         }
     }
