@@ -82,6 +82,54 @@ impl ElementHover {
     }
 }
 
+/// An event triggered when the mouse pointer is pressed (down) on a widget.
+///
+/// This event is triggered by a universal interaction system
+/// and is therefore not needed to be manually triggered by widget logic.
+#[derive(Clone, PartialEq, Eq, Debug, Hash, Event)]
+pub struct ElementPointerDown {
+    /// The entity behind the target element.
+    pub entity: Entity,
+    /// The element ID of the target element.
+    pub id: Option<ElementId>,
+}
+
+impl ElementPointerDown {
+    /// Returns [true] if the target element ID matches the given ID.
+    #[inline(always)]
+    pub fn matches_id<Q>(&self, id: &Q) -> bool
+    where
+        Q: ?Sized,
+        ElementId: PartialEq<Q>,
+    {
+        self.id.as_ref().is_some_and(|i| i == id)
+    }
+}
+
+/// An event triggered when the mouse pointer is released (up) on a widget.
+///
+/// This event is triggered by a universal interaction system
+/// and is therefore not needed to be manually triggered by widget logic.
+#[derive(Clone, PartialEq, Eq, Debug, Hash, Event)]
+pub struct ElementPointerUp {
+    /// The entity behind the target element.
+    pub entity: Entity,
+    /// The element ID of the target element.
+    pub id: Option<ElementId>,
+}
+
+impl ElementPointerUp {
+    /// Returns [true] if the target element ID matches the given ID.
+    #[inline(always)]
+    pub fn matches_id<Q>(&self, id: &Q) -> bool
+    where
+        Q: ?Sized,
+        ElementId: PartialEq<Q>,
+    {
+        self.id.as_ref().is_some_and(|i| i == id)
+    }
+}
+
 /// An event triggered when an element is spawned.
 ///
 /// This event is triggered by the page manager.

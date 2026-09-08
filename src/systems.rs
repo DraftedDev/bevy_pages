@@ -1,5 +1,5 @@
 use crate::element::{ElementActive, ElementId, ElementProps, ElementState};
-use crate::events::{ElementClick, ElementHover};
+use crate::events::{ElementClick, ElementHover, ElementPointerDown, ElementPointerUp};
 use crate::props::Properties;
 use bevy::color::Color;
 use bevy::prelude::*;
@@ -79,7 +79,19 @@ pub(crate) fn interactions(
     for (e, i, prev_i, props, id, mut node, mut bg_color, mut border_color) in &mut query {
         let previous = prev_i.map(|p| p.0).unwrap_or(Interaction::None);
 
+        if *i == Interaction::Pressed && previous != Interaction::Pressed {
+            commands.trigger(ElementPointerDown {
+                entity: e,
+                id: id.cloned(),
+            });
+        }
+
         if previous == Interaction::Pressed && *i != Interaction::Pressed {
+            commands.trigger(ElementPointerUp {
+                entity: e,
+                id: id.cloned(),
+            });
+
             commands.trigger(ElementClick {
                 entity: e,
                 id: id.cloned(),
