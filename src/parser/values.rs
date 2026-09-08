@@ -6,6 +6,7 @@ use bevy::prelude::{
     UiRect, Val,
 };
 use smol_str::{ToSmolStr, format_smolstr};
+use std::time::Duration;
 
 /// Parses an attribute from an [AttributeMap].
 /// Applies the given parser to the attribute value or returns [None] if the attribute is not present.
@@ -397,6 +398,44 @@ pub fn parse_font_size(i: &str) -> Result<FontSize, String> {
 
     Err(format!(
         "Failed to parse value '{i}'. Expected <float> or <float><unit> where <unit> is one of: px, rem, vw, vh, vmin, vmax"
+    ))
+}
+
+/// Parses a duration from a string.
+///
+/// ## Format
+///
+/// - `<int>` to automatically use the seconds unit.
+/// - `<int><unit>` with possible units: `ns`, `ms`, `s`, `m`, `h`.
+pub fn parse_duration(i: &str) -> Result<Duration, String> {
+    let i = i.trim().to_lowercase();
+
+    if let Ok(i) = i.parse::<u64>() {
+        return Ok(Duration::from_secs(i));
+    }
+
+    if let Some(i) = i.strip_suffix("ns") {
+        return Ok(Duration::from_nanos(parse_int(i)? as u64));
+    }
+
+    if let Some(i) = i.strip_suffix("ms") {
+        return Ok(Duration::from_millis(parse_int(i)? as u64));
+    }
+
+    if let Some(i) = i.strip_suffix("s") {
+        return Ok(Duration::from_secs(parse_int(i)? as u64));
+    }
+
+    if let Some(i) = i.strip_suffix("m") {
+        return Ok(Duration::from_mins(parse_int(i)? as u64));
+    }
+
+    if let Some(i) = i.strip_suffix("h") {
+        return Ok(Duration::from_hours(parse_int(i)? as u64));
+    }
+
+    Err(format!(
+        "Failed to parse duration '{i}'. Expected <int> or <int><unit> where <unit> is one of: ns, ms, s, m, h"
     ))
 }
 
