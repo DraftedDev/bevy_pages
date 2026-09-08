@@ -5,6 +5,10 @@ use bevy::color::Color;
 use bevy::prelude::*;
 use bevy::ui::{BackgroundColor, BorderColor, Node};
 
+/// Tracks the interaction state from the previous frame.
+#[derive(Component, Debug, Copy, Clone, PartialEq, Eq, Deref, DerefMut)]
+pub struct PreviousInteraction(pub Interaction);
+
 /// System set grouping UI layout, input interaction, and scrolling systems.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
 pub struct PageSystemSet;
@@ -59,6 +63,7 @@ pub(crate) fn interactions(
         (
             Entity,
             &Interaction,
+            Option<&PreviousInteraction>,
             &Properties<ElementProps>,
             Option<&ElementId>,
             &mut Node,
@@ -71,22 +76,25 @@ pub(crate) fn interactions(
         ),
     >,
 ) {
-    for (e, i, props, id, mut node, mut bg_color, mut border_color) in &mut query {
+    for (e, i, prev_i, props, id, mut node, mut bg_color, mut border_color) in &mut query {
+        let previous = prev_i.map(|p| p.0).unwrap_or(Interaction::None);
+
+        if previous == Interaction::Pressed && *i != Interaction::Pressed {
+            commands.trigger(ElementClick {
+                entity: e,
+                id: id.cloned(),
+            });
+        }
+
         let props = match i {
-            Interaction::Pressed => {
-                commands.trigger(ElementClick {
-                    entity: e,
-                    id: id.cloned(),
-                });
-
-                &props.click
-            }
+            Interaction::Pressed => &props.click,
             Interaction::Hovered => {
-                commands.trigger(ElementHover {
-                    entity: e,
-                    id: id.cloned(),
-                });
-
+                if previous != Interaction::Hovered {
+                    commands.trigger(ElementHover {
+                        entity: e,
+                        id: id.cloned(),
+                    });
+                }
                 &props.hover
             }
             Interaction::None => &props.default,
@@ -100,6 +108,8 @@ pub(crate) fn interactions(
             *border_color, target_border;
             *node, props.node => props.node.clone();
         );
+
+        commands.entity(e).insert(PreviousInteraction(*i));
     }
 }
 

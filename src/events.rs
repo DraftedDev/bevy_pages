@@ -34,7 +34,7 @@ pub struct DeactivatePage {
     pub name: SmolStr,
 }
 
-/// An event triggered when an element is clicked.
+/// An event triggered when an element is clicked (on mouse up).
 ///
 /// This event is triggered by a universal interaction system
 /// and is therefore not needed to be manually triggered by widget logic.
