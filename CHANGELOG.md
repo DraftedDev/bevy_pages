@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0](https://github.com/DraftedDev/bevy_pages/compare/v0.4.1...v0.5.0) - 2026-09-08
+
+### Added
+
+- `ElementPointerDown` and `ElementPointerUp` events
+- Image Asset Caching
+- `parse_duration` function to parser module
+
+### Fixed
+
+- BorderRectType Validation inside schema.xsd
+
+### Other
+
+- Make `ElementClick` trigger on mouse release
+- Make WIdget::spawn take `&mut self`
+
 ## [0.4.1](https://github.com/DraftedDev/bevy_pages/compare/v0.4.0...v0.4.1) - 2026-09-04
 
 ### Added
