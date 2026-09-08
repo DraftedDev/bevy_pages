@@ -187,7 +187,7 @@ impl Widget for SwitchWidget {
         Ok(())
     }
 
-    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
+    fn spawn(&mut self, entity: Entity, world: &mut World) -> Entity {
         let props = &self.props.default;
 
         let active_thumb_color = if props.state {

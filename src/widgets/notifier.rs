@@ -311,7 +311,7 @@ impl Widget for NotifierWidget {
         Ok(())
     }
 
-    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
+    fn spawn(&mut self, entity: Entity, world: &mut World) -> Entity {
         let props = &self.props.default;
 
         let container_node = Node {

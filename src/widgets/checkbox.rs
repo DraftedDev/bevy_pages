@@ -143,7 +143,7 @@ impl Widget for CheckboxWidget {
         Ok(())
     }
 
-    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
+    fn spawn(&mut self, entity: Entity, world: &mut World) -> Entity {
         let props = &self.props.default;
 
         world

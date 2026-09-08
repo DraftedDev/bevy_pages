@@ -110,7 +110,7 @@ impl Widget for TextWidget {
         Ok(())
     }
 
-    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
+    fn spawn(&mut self, entity: Entity, world: &mut World) -> Entity {
         let assets = world.resource::<AssetServer>();
         let props = &self.props.default;
 

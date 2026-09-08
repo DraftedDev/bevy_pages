@@ -43,7 +43,7 @@ impl Page {
             ))
             .id();
 
-        for element in &self.elements {
+        for element in &mut self.elements {
             element.spawn(world, Some(root_entity), &mut self.registry);
         }
 

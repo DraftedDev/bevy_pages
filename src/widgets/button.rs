@@ -45,7 +45,7 @@ impl Widget for ButtonWidget {
         Ok(())
     }
 
-    fn spawn(&self, entity: Entity, _: &mut World) -> Entity {
+    fn spawn(&mut self, entity: Entity, _: &mut World) -> Entity {
         entity
     }
 

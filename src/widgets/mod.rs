@@ -65,7 +65,7 @@ pub trait Widget: Debug + Send + Sync + 'static {
     fn parse(&mut self, node: &Node, attrs: &AttributeMap) -> Result<(), String>;
 
     /// Spawns the widget. Called inside [Element::spawn](crate::element::Element::spawn).
-    fn spawn(&self, entity: Entity, world: &mut World) -> Entity;
+    fn spawn(&mut self, entity: Entity, world: &mut World) -> Entity;
 
     /// Apply this widget's default properties.
     fn apply_defaults(

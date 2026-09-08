@@ -78,7 +78,7 @@ impl Widget for DividerWidget {
         Ok(())
     }
 
-    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
+    fn spawn(&mut self, entity: Entity, world: &mut World) -> Entity {
         world.entity_mut(entity).insert(self.props.clone());
 
         entity

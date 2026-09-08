@@ -25,7 +25,7 @@ pub struct Element {
 impl Element {
     /// Spawn the element into the world.
     pub fn spawn(
-        &self,
+        &mut self,
         world: &mut World,
         parent: Option<Entity>,
         reg: &mut FxHashMap<ElementId, Entity>,
@@ -55,7 +55,7 @@ impl Element {
 
         let target_entity = self.widget.spawn(root_entity, world);
 
-        for child in &self.children {
+        for child in &mut self.children {
             child.spawn(world, Some(target_entity), reg);
         }
 

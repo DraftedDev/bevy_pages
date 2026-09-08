@@ -359,7 +359,7 @@ impl Widget for DropdownWidget {
         Ok(())
     }
 
-    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
+    fn spawn(&mut self, entity: Entity, world: &mut World) -> Entity {
         let props = &self.props.default;
 
         world.entity_mut(entity).insert((

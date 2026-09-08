@@ -27,7 +27,7 @@ pub trait Widget: Debug + Send + Sync + 'static {
     fn parse(&mut self, node: &Node, attrs: AttributeMap) -> Result<(), String>;
 
     /// Spawns the widget. Called inside [Element::spawn](crate::element::Element::spawn).
-    fn spawn(&self, entity: Entity, world: &mut World) -> Entity;
+    fn spawn(&mut self, entity: Entity, world: &mut World) -> Entity;
     //                                     ^^^^^^^^^^^ 
     // Notice the `&mut World` here. This gives your widget complete access to the bevy world, so you have full control.
 
@@ -209,7 +209,7 @@ impl Widget for CheckboxWidget {
     }
 
     // Spawn the checkbox and its checkmark.
-    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
+    fn spawn(&mut self, entity: Entity, world: &mut World) -> Entity {
         let props = &self.props.default;
 
         world

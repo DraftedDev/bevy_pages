@@ -18,6 +18,7 @@ use bevy::prelude::{
 use bevy::sprite::SliceScaleMode;
 use bevy::ui::Val;
 use roxmltree::Node;
+use smol_str::{SmolStr, ToSmolStr};
 
 fn update_props(
     assets: Res<AssetServer>,
@@ -54,12 +55,20 @@ fn update_props(
 #[derive(Clone, Debug)]
 pub enum ImageSource {
     /// Load the image from the given path via [AssetServer::load].
-    Path(String),
+    Path(SmolStr),
     /// Directly use the given image handle.
     Handle(Handle<Image>),
 }
 
 impl ImageSource {
+    /// Pre-loads and caches the asset handle so switching sources is immediate.
+    pub fn preload(&mut self, assets: &AssetServer) {
+        if let ImageSource::Path(path) = self {
+            let handle = assets.load(path.to_string());
+            *self = ImageSource::Handle(handle);
+        }
+    }
+
     /// Fetch the image handle from this source.
     ///
     /// This will load the image from the asset server if the source is a path.
@@ -67,7 +76,7 @@ impl ImageSource {
     /// If the source is a handle, it will return the handle directly.
     pub fn fetch(&self, assets: &AssetServer) -> Handle<Image> {
         match self {
-            ImageSource::Path(path) => assets.load(path),
+            ImageSource::Path(path) => assets.load(path.to_string()),
             ImageSource::Handle(image) => image.clone(),
         }
     }
@@ -96,8 +105,9 @@ impl ImageSource {
 /// - `tiled-x = "<bool>"`: Whether to tile the image horizontally, when `mode = "tiled"`.
 /// - `tiled-y = "<bool>"`: Whether to tile the image vertically, when `mode = "tiled"`.
 /// - `tiled-stretch = "<float>"`: The stretch scale when `mode = "tiled"`.
+/// - `cache = "<bool>"`: Whether to cache images across state overrides. If disabled, you may see a flicker when the image is changed via `hover.src` or `click.src`.
 ///
-/// All the attributes listed support state overrides.
+/// All the attributes listed, except `cache`, support state overrides.
 ///
 /// ## Logic
 ///
@@ -137,7 +147,7 @@ impl Widget for ImageWidget {
         Ok(())
     }
 
-    fn spawn(&self, entity: Entity, world: &mut World) -> Entity {
+    fn spawn(&mut self, entity: Entity, world: &mut World) -> Entity {
         let assets = world.resource::<AssetServer>();
 
         let props = &self.props.default;
@@ -241,6 +251,10 @@ pub struct ImageProps {
     ///
     /// Unused when `mode` is not `"tiled"`.
     pub tiled_stretch: f32,
+    /// If different images should be cached across state overrides.
+    ///
+    /// Does not cache manually specified handles.
+    pub cache: bool,
 }
 
 impl ImageProps {
@@ -250,7 +264,7 @@ impl ImageProps {
         base: &Self,
     ) -> bevy::prelude::Result<Self, String> {
         let src = parse_attribute(attrs, "src", prefix, |s| {
-            Ok(ImageSource::Path(s.to_string()))
+            Ok(ImageSource::Path(s.to_smolstr()))
         })?
         .unwrap_or_else(|| base.src.clone());
 
@@ -349,6 +363,8 @@ impl ImageProps {
         })?
         .unwrap_or(base.visual_box);
 
+        let cache = parse_attribute(attrs, "cache", prefix, parse_bool)?.unwrap_or(base.cache);
+
         let mut props = Self {
             src,
             color,
@@ -366,6 +382,7 @@ impl ImageProps {
             tiled_x,
             tiled_y,
             tiled_stretch,
+            cache,
         };
 
         props.mode = props.compute_mode();
@@ -413,7 +430,7 @@ impl Default for ImageProps {
     #[inline(always)]
     fn default() -> Self {
         Self {
-            src: ImageSource::Path("".to_string()),
+            src: ImageSource::Path("".to_smolstr()),
             color: Color::WHITE,
             flip_x: false,
             flip_y: false,
@@ -429,6 +446,7 @@ impl Default for ImageProps {
             tiled_x: true,
             tiled_y: true,
             tiled_stretch: 1.0,
+            cache: true,
         }
     }
 }
