@@ -23,35 +23,43 @@ use smol_str::{SmolStr, ToSmolStr};
 fn update_props(
     assets: Res<AssetServer>,
     mut query: Query<
-        (&Interaction, &Properties<ImageProps>, &mut ImageNode),
+        (&Interaction, &mut Properties<ImageProps>, &mut ImageNode),
         (
             With<ElementActive>,
             Or<(Changed<Interaction>, Changed<Properties<ImageProps>>)>,
         ),
     >,
 ) {
-    for (interaction, props, mut image_node) in &mut query {
-        let props = match interaction {
+    for (interaction, mut props, mut image_node) in &mut query {
+        if props.default.cache {
+            props.default.src.preload(&assets);
+            props.hover.src.preload(&assets);
+            props.click.src.preload(&assets);
+        }
+
+        let active_props = match interaction {
             Interaction::Pressed => &props.click,
             Interaction::Hovered => &props.hover,
             Interaction::None => &props.default,
         };
 
-        let image = props.src.fetch(&assets);
+        let image = active_props.src.fetch(&assets);
 
         crate::set_if_changed!(
-            image_node.color, props.color;
-            image_node.flip_x, props.flip_x;
-            image_node.flip_y, props.flip_y;
-            image_node.rect, props.rect;
-            image_node.image_mode, props.mode => props.mode.clone();
-            image_node.visual_box, props.visual_box;
+            image_node.color, active_props.color;
+            image_node.flip_x, active_props.flip_x;
+            image_node.flip_y, active_props.flip_y;
+            image_node.rect, active_props.rect;
+            image_node.image_mode, active_props.mode => active_props.mode.clone();
+            image_node.visual_box, active_props.visual_box;
             image_node.image, image;
         );
     }
 }
 
 /// The source of an [ImageWidget].
+///
+/// When the `cache` field of [ImageProps] is true, any [ImageSource::Path] will change to an [ImageSource::Handle] using [ImageSource::preload].
 #[derive(Clone, Debug)]
 pub enum ImageSource {
     /// Load the image from the given path via [AssetServer::load].
@@ -62,6 +70,8 @@ pub enum ImageSource {
 
 impl ImageSource {
     /// Pre-loads and caches the asset handle so switching sources is immediate.
+    ///
+    /// Changes from [ImageSource::Path] to [ImageSource::Handle].
     pub fn preload(&mut self, assets: &AssetServer) {
         if let ImageSource::Path(path) = self {
             let handle = assets.load(path.to_string());
@@ -109,6 +119,8 @@ impl ImageSource {
 ///
 /// All the attributes listed, except `cache`, support state overrides.
 ///
+///
+///
 /// ## Logic
 ///
 /// Use [ImageProps] to control the image widget.
@@ -149,6 +161,12 @@ impl Widget for ImageWidget {
 
     fn spawn(&mut self, entity: Entity, world: &mut World) -> Entity {
         let assets = world.resource::<AssetServer>();
+
+        if self.props.default.cache {
+            self.props.default.src.preload(assets);
+            self.props.hover.src.preload(assets);
+            self.props.click.src.preload(assets);
+        }
 
         let props = &self.props.default;
         let image = ImageNode {

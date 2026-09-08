@@ -368,6 +368,8 @@ Build a new image widget using the `<Image />` tag.
 - `tiled-x = "<bool>"`: Whether to tile the image horizontally, when `mode = "tiled"`.
 - `tiled-y = "<bool>"`: Whether to tile the image vertically, when `mode = "tiled"`.
 - `tiled-stretch = "<float>"`: The stretch scale when `mode = "tiled"`.
+- `cache = "<bool>"`: Whether to cache images across state overrides. If disabled, you may see a flicker when the image
+  is changed via `hover.src` or `click.src`.
 
 All the attributes listed support state overrides.
 
